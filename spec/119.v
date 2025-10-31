@@ -1,0 +1,57 @@
+(* You are given a list of two strings, both strings consist of open
+parentheses '(' or close parentheses ')' only.
+Your job is to check if it is possible to concatenate the two strings in
+some order, that the resulting string will be good.
+A string S is considered to be good if and only if all parentheses in S
+are balanced. For example: the string '(())()' is good, while the string
+'())' is not.
+Return 'Yes' if there's a way to make a good string, and return 'No' otherwise.
+
+Examples:
+match_parens(['()(', ')']) == 'Yes'
+match_parens([')', ')']) == 'No' *)
+
+(* 导入 Coq 的标准库 *)
+Require Import Coq.Strings.String.
+Require Import Coq.Strings.Ascii.
+Require Import Coq.Lists.List.
+Require Import Coq.Arith.PeanoNat.
+Import ListNotations.
+
+(*
+  辅助函数 check_parens_inner
+  这个函数保持不变，因为它已经是在处理 list ascii。
+*)
+Fixpoint check_parens_inner (l : list ascii) (counter : nat) : bool :=
+  match l with
+  | [] => Nat.eqb counter 0
+  | "(" % char :: t => check_parens_inner t (S counter)
+  | ")" % char :: t =>
+    match counter with
+    | 0 => false
+    | S n' => check_parens_inner t n'
+    end
+  | _ :: t => check_parens_inner t counter
+  end.
+
+(*
+  is_balanced 函数
+  修正：现在直接接收一个 list ascii 作为输入。
+*)
+Definition is_balanced (l : list ascii) : bool :=
+  check_parens_inner l 0.
+
+(*
+  match_parens_spec (程序规约)
+  修正：输入类型从 list string 改为 list (list ascii)。
+  这表示输入是一个列表，其中包含两个元素，每个元素本身就是一个字符列表。
+*)
+Definition match_parens_spec (inputs : list (list ascii)) : string :=
+  match inputs with
+  | [s1; s2] =>
+    (* "++" 现在是列表拼接操作符 *)
+    if orb (is_balanced (s1 ++ s2)) (is_balanced (s2 ++ s1))
+    then "Yes"
+    else "No"
+  | _ => "No" (* 处理非预期输入，例如列表长度不为2 *)
+  end.

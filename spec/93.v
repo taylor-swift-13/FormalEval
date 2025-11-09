@@ -54,7 +54,5 @@ Inductive encode_char_spec (c_in c_out : ascii) : Prop :=
     encode_char_spec c_in c_out.
 
 (* 完整 encode 函数的规约 *)
-Definition encode_spec (message_in message_out : list ascii) : Prop :=
-  match (message_in), (message_out) with
-  | l_in, l_out => Forall2 encode_char_spec l_in l_out
-  end.
+Definition encode_spec (l_in l_out : list ascii) : Prop :=
+ Forall2 encode_char_spec l_in l_out.

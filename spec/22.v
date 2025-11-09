@@ -51,7 +51,6 @@ Inductive is_subsequence {A : Type} : list A -> list A -> Prop :=
 
 (*
   步骤 4: 定义最终的规约 Spec。
-  结构与上一题完全相同，只是替换了过滤条件。
   - input: 输入的值列表。
   - output: 函数过滤后输出的整数值列表。
 *)

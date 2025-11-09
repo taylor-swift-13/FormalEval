@@ -74,7 +74,6 @@ Definition anti_shuffle_spec (s s_out : list ascii) : Prop :=
     ->
     (* 如果以上条件成立，从而确定了一个单词片段，则必须满足以下属性： *)
     (
-      (* 修正：使用 firstn 和 skipn 组合来实现 sublist 的功能。 *)
       let len := end_ - start + 1 in
       let word_in  := firstn len (skipn start s) in
       let word_out := firstn len (skipn start s_out) in

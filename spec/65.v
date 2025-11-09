@@ -17,7 +17,7 @@ Import ListNotations.
 Open Scope string_scope.
 
 (* ================================================================= *)
-(* 1. 实现 to_digits (使用 "fuel" 技巧)                          *)
+(* 1. 实现 to_digits                         *)
 (* ================================================================= *)
 
 Fixpoint to_digits_fuel (n fuel : nat) : list nat :=
@@ -42,7 +42,7 @@ Definition to_digits (n : nat) : list nat :=
 
 
 (* ================================================================= *)
-(* 2. 实现 from_digits_to_string (这部分无需修改)              *)
+(* 2. 实现 from_digits_to_string            *)
 (* ================================================================= *)
 
 Definition digit_to_string (d : nat) : string :=
@@ -59,13 +59,13 @@ Fixpoint from_digits_to_string (l : list nat) : string :=
   end.
 
 (* ================================================================= *)
-(* 3. 最终的程序规约 (Spec) (现在可以正确解析 "0")               *)
+(* 3. 最终的程序规约 (Spec)              *)
 (* ================================================================= *)
 
 Definition circular_shift_spec (x : nat) (shift : nat) (result : string) : Prop :=
   let digits := to_digits x in
   let len := length digits in
-  (x = 0 /\ result = "0") (* 此处的 "0" 现在可以被正确解释 *)
+  (x = 0 /\ result = "0")
   \/
   (x > 0 /\ (
     (len < shift /\ result = from_digits_to_string (rev digits))

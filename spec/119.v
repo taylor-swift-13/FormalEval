@@ -20,7 +20,6 @@ Import ListNotations.
 
 (*
   辅助函数 check_parens_inner
-  这个函数保持不变，因为它已经是在处理 list ascii。
 *)
 Fixpoint check_parens_inner (l : list ascii) (counter : nat) : bool :=
   match l with
@@ -36,14 +35,12 @@ Fixpoint check_parens_inner (l : list ascii) (counter : nat) : bool :=
 
 (*
   is_balanced 函数
-  修正：现在直接接收一个 list ascii 作为输入。
 *)
 Definition is_balanced (l : list ascii) : bool :=
   check_parens_inner l 0.
 
 (*
   match_parens_spec (程序规约)
-  修正：输入类型从 list string 改为 list (list ascii)。
   这表示输入是一个列表，其中包含两个元素，每个元素本身就是一个字符列表。
 *)
 Definition match_parens_spec (inputs : list (list ascii)) : string :=

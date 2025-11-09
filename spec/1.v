@@ -74,12 +74,11 @@ Definition is_paren_or_space (c : ascii) : Prop :=
 (*
   前提条件: separate_paren_groups_pre
   1. 输入列表中的所有字符都必须是括号或空格。
-  2. 移除空格后的输入列表必须是平衡的。
-  (这部分定义保持不变，因为它正确地使用了上面修正后的 is_paren_or_space)
+  2. 输入列表必须是平衡的。
 *)
 Definition separate_paren_groups_pre (input : list ascii) : Prop :=
   (Forall is_paren_or_space input) /\
-  (IsBalanced (remove_spaces input)).
+  (IsBalanced input).
 (*
   最终的程序规约: separate_paren_groups_spec(input, output)
   输入和输出都使用 list ascii。

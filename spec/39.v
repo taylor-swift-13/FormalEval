@@ -25,16 +25,18 @@ Import ListNotations.
 Definition IsPrime (n : nat) : Prop :=
   1 < n /\ (forall d : nat, n mod d = 0 -> d = 1 \/ d = n).
 
-(* IsFib 命题：一个数是斐波那契数 *)
-Definition IsFib (n : nat) : Prop :=
-  exists (Fib : nat -> nat),
-    (* 1. 基本情况 *)
-    Fib 0 = 0 /\
-    Fib 1 = 1 /\
-    (* 2. 归纳规则 *)
-    (forall i : nat, 2 <= i ->
-      Fib i = Fib (i - 1) + Fib (i - 2)) /\
-  (exists i : nat, n = Fib i).
+(* IsFib 命题：一个数是斐波那契数。*)
+
+(* 关系：fib_at i v 表示 v 是第 i 个斐波那契数 *)
+Inductive fib_at : nat -> nat -> Prop :=
+| fib_at_0 : fib_at 0 0
+| fib_at_1 : fib_at 1 1
+| fib_at_S : forall i a b,
+    fib_at i a ->
+    fib_at (S i) b ->
+    fib_at (S (S i)) (a + b).
+
+Definition IsFib (n : nat) : Prop := exists i : nat, fib_at i n.
 
 (* IsPrimeFib 命题：一个数既是素数又是斐波那契数 *)
 Definition IsPrimeFib (n : nat) : Prop :=

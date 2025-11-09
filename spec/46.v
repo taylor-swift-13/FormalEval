@@ -23,15 +23,18 @@ Please write a function to efficiently compute the n-th element of the fib4 numb
 
 Require Import Coq.Arith.Arith.
 
-Definition fib4_spec_existential (input : nat) (output : nat) : Prop :=
-  exists (Fib : nat -> nat),
-    (* 1. 基本情况 *)
-    Fib 0 = 0 /\
-    Fib 1 = 0 /\
-    Fib 2 = 2 /\
-    Fib 3 = 0 /\
-    (* 2. 归纳规则 *)
-    (forall i : nat, 4 <= i ->
-      Fib i = Fib (i - 1) + Fib (i - 2) + Fib (i - 3) + Fib (i - 4)) /\
-    (* 3. 与程序输出的关联 *)
-    output = Fib input.
+(* 使用归纳关系表示 fib4 序列*)
+Inductive fib4_at : nat -> nat -> Prop :=
+| fib4_at_0 : fib4_at 0 0
+| fib4_at_1 : fib4_at 1 0
+| fib4_at_2 : fib4_at 2 2
+| fib4_at_3 : fib4_at 3 0
+| fib4_at_SSSS : forall i a b c d,
+    fib4_at i a ->
+    fib4_at (S i) b ->
+    fib4_at (S (S i)) c ->
+    fib4_at (S (S (S i))) d ->
+    fib4_at (S (S (S (S i)))) (a + b + c + d).
+
+Definition fib4_spec (input : nat) (output : nat) : Prop :=
+  fib4_at input output.

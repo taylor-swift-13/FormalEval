@@ -25,7 +25,6 @@ Fixpoint sum_transformed (l : list Z) (n : nat) : Z :=
     (* 根据索引 n 的值对头部元素 h 进行转换 *)
     (if (n mod 3)%nat =? 0%nat then h * h (* 如果索引是 3 的倍数，则平方 *)
      (*
-       [修正]: 将之前的 '&&' 替换为函数 'andb'
        如果索引是 4 的倍数但不是 3 的倍数，则立方
      *)
      else if andb ((n mod 4)%nat =? 0%nat) (negb ((n mod 3)%nat =? 0%nat)) then h * h * h

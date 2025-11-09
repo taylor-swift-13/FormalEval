@@ -26,18 +26,16 @@ Open Scope Z_scope.
 
 Definition Spec (input : list Z) (output : bool) : Prop :=
   (*
-    定义一个命题 "triple_exists"，表示存在三个不同的索引 i, j, k，
+    存在三个不同的索引 i, j, k，
     使得对应元素之和为 0。
     我们必须同时检查索引 i, j, k 在列表的有效范围内。
     nth 函数需要一个默认值 (这里是0)，如果索引越界，它会返回该默认值。
     但因为我们已经用 i < length input 等条件确保了索引有效，所以默认值不会被用到。
   *)
-  let triple_exists := exists i j k : nat,
+  (exists i j k : nat,
     (i <> j) /\ (i <> k) /\ (j <> k) /\
     (i < length input)%nat /\
     (j < length input)%nat /\
     (k < length input)%nat /\
-    (nth i input 0 + nth j input 0 + nth k input 0 = 0)
-  in
-
-  triple_exists <-> (output = true).
+    (nth i input 0 + nth j input 0 + nth k input 0 = 0))
+  <-> (output = true).

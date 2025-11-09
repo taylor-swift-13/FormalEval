@@ -24,16 +24,15 @@ Open Scope Z_scope.
 
 Definition Spec (input : list Z) (output : bool) : Prop :=
   (*
-    定义一个命题 "double_exists"，表示存在两个不同的索引 i, j，
+    存在两个不同的索引 i, j，
     使得对应元素之和为 0。
     我们必须同时检查索引 i, j 在列表的有效范围内。
     nth 函数需要一个默认值 (这里是0)，如果索引越界，它会返回该默认值。
     但因为我们已经用 i < length input 等条件确保了索引有效，所以默认值不会被用到。
   *)
-  let double_exists := exists i j : nat,
+  (exists i j : nat,
     (i <> j)  /\
     (i < length input)%nat /\
     (j < length input)%nat /\
-    (nth i input 0 + nth j input 0 = 0)
-  in
-  double_exists <-> (output = true).
+    (nth i input 0 + nth j input 0 = 0))
+  <-> (output = true).

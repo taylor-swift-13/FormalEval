@@ -27,15 +27,9 @@ Fixpoint sum_1_to_n (i : nat) : nat :=
 
 
 Definition f_spec (n : nat) (l : list nat) : Prop :=
-  (* 规约的核心：l 必须等于一个通过映射生成的列表 *)
-  l = map (fun i =>
-             (* 问题描述中的索引 i 从 1 开始，而 Coq 的列表索引从 0 开始。*)
-             (* 因此，我们使用 (i + 1) 来代表问题描述中的索引。*)
-             let problem_index := i + 1 in
-             (* 检查索引是偶数还是奇数 *)
-             if even problem_index then
-               factorial problem_index
-             else
-               sum_1_to_n problem_index)
-          (* (seq 0 n) 会生成一个从 0 到 n-1 的列表: [0; 1; ...; n-1] *)
-          (seq 0 n).
+  (* 规约作为输入/输出关系，而不是直接计算输出。
+     l 的长度必须为 n，并且对于每个位置 i (问题陈述中从 1 开始)，
+     l 中第 i 个元素（在 Coq 列表中为 index i-1）当 i 为偶数时等于 factorial i，
+     否则等于 sum_1_to_n i。 *)
+  length l = n /\
+  (forall i, 1 <= i -> i <= n -> nth_error l (i - 1) = Some (if even i then factorial i else sum_1_to_n i)).

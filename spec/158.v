@@ -15,11 +15,6 @@ Require Import Coq.Arith.PeanoNat.
 Import ListNotations.
 
 (*
-  在 Coq 中，字符串通常表示为 `list ascii`。
-  字符字面量可以写作 "a"%char。
-*)
-
-(*
   辅助定义 1：检查一个元素是否在一个列表中（使用布尔相等性测试）。
   这是 `remove_duplicates` 函数需要用到的辅助函数。
 *)

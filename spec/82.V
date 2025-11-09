@@ -18,7 +18,7 @@ Require Import Coq.Arith.Arith.
  * 定义：n 是素数，当且仅当 n > 1 且对于所有在 1 和 n 之间的数 d，d 都不能整除 n。
  *)
 Definition is_prime (n : nat) : Prop :=
-  (1 < n)%nat /\ (forall d, (1 < d)%nat -> (d < n)%nat -> (n mod d <> 0)%nat).
+  (1 < n) /\ (forall d, (1 < d) -> (d < n) -> (n mod d <> 0)).
 
 (*
  * prime_length_spec s b

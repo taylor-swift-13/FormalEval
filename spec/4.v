@@ -5,7 +5,7 @@ element and a centerpoint (mean in this case):
 MAD = average | x - x_mean |
 >>> mean_absolute_deviation([1.0, 2.0, 3.0, 4.0])
 1.0 *)
-(* 要求生成bool类型的predicate， 可以给出一个函数头*)
+
 Require Import Coq.Reals.Reals.
 Require Import Coq.Lists.List.
 Require Import Coq.micromega.Lra.

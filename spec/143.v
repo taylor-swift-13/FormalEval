@@ -28,9 +28,6 @@ Import ListNotations.
 (*
   has_divisor_from n d 检查 n 是否有
   一个从 d 到 2 的除数。这是一个可计算的布尔函数。
-  
-  修正版：通过对 d 进行标准的 O / S d' 模式匹配，
-  使得 Coq 可以自动验证递归的终止性。
 *)
 Fixpoint has_divisor_from (n d : nat) : bool :=
   match d with

@@ -14,12 +14,14 @@ Require Import List.
 Require Import Ascii.
 Require Import Bool.
 Import ListNotations.
+Open Scope char_scope.
 
+(* 定义 Spec 规约 *)
 
 Definition Spec (a b output : list ascii) : Prop :=
   length a = length b /\
   length output = length a /\
   forall i,
     i < length output ->
-    (nth i a "0"%char = nth i b "0"%char -> nth i output "0"%char = "0"%char) /\
-    (nth i a "0"%char <> nth i b "0"%char -> nth i output "0"%char = "1"%char).
+    (nth i a "0" = nth i b "0" -> nth i output "0" = "0") /\
+    (nth i a "0" <> nth i b "0" -> nth i output "0" = "1").

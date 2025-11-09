@@ -21,7 +21,6 @@ Import Nat.
 
 (*
   辅助定义（返回 bool）: 检查一个字符是否为数字。
-  这个版本返回一个可计算的 bool 值，用于像 filter 这样的函数。
   我们使用 <=? 这个符号，它代表返回 bool 的比较运算。
 *)
 Definition is_digit_bool (c : ascii) : bool :=
@@ -30,7 +29,6 @@ Definition is_digit_bool (c : ascii) : bool :=
 
 (*
   辅助定义（返回 Prop）: 检查一个字符是否为拉丁字母。
-  由于这个定义仅在最终的 Prop 中使用，我们不需要 bool 版本。
 *)
 Definition is_alpha (c : ascii) : Prop :=
   let n := nat_of_ascii c in
@@ -42,7 +40,6 @@ Definition file_name_check_spec (file_name : list ascii) (result : list ascii) :
   (* 定义一个命题 `is_valid` 来描述一个文件名是否有效 *)
   let is_valid :=
     (* 条件1: 文件名中数字的数量不能超过三个 *)
-    (* 注意：这里我们使用了返回 bool 的 is_digit_bool *)
     (length (filter is_digit_bool file_name) <= 3) /\
 
     (* 将文件名按唯一的'.'分割成前缀和后缀 *)

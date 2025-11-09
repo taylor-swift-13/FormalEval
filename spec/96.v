@@ -18,7 +18,7 @@ Import ListNotations.
 Definition is_prime (p : nat) : Prop :=
   p > 1 /\ forall n : nat, 1 < n < p -> ~ (n mod p = 0).
 
-(* 修正后的程序规约 *)
+
 Definition count_up_to_spec (n : nat) (result : list nat) : Prop :=
   (* 属性1: 结果列表中的所有元素都是素数 *)
   (forall p, In p result -> is_prime p) /\

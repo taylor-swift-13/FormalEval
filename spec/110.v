@@ -20,8 +20,6 @@ Import ListNotations.
 Definition exchange_spec (lst1 lst2 : list nat) (result : string) : Prop :=
   let odds_in_lst1 := List.length (List.filter Nat.odd lst1) in
   let evens_in_lst2 := List.length (List.filter Nat.even lst2) in
-  
-  (* 这个 if/then/else 结构是正确的 *)
   if Nat.leb odds_in_lst1 evens_in_lst2
   then result = "YES"%string
   else result = "NO"%string.

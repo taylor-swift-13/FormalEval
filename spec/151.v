@@ -15,21 +15,7 @@ Require Import List.   (* 用于列表操作 *)
 Require Import Bool.   (* 用于布尔操作, 比如 && *)
 Import ListNotations.
 Open Scope bool_scope. (* 打开布尔作用域以使用 && 符号 *)
-
-(*
-  sum_sq_odd 是一个辅助的计算函数，它递归地处理列表：
-  - 如果列表为空，结果为 0。
-  - 如果列表的头部元素 h 是一个非负奇数，则将其平方加入到剩余列表的计算结果中。
-  - 否则，忽略当前元素，继续处理剩余的列表。
-*)
-Fixpoint sum_sq_odd (l : list Z) : Z :=
-  match l with
-  | [] => 0
-  | h :: t =>
-    if (Z.leb 0 h) && (Z.odd h)
-    then h * h + sum_sq_odd t
-    else sum_sq_odd t
-  end.
+Open Scope Z_scope.
 
 (*
   double_the_difference_spec 是程序的规约 (Spec)。
@@ -37,4 +23,6 @@ Fixpoint sum_sq_odd (l : list Z) : Z :=
   这个关系是：res 必须等于对输入列表 l 调用 sum_sq_odd 函数的结果。
 *)
 Definition double_the_difference_spec (l : list Z) (res : Z) : Prop :=
-  res = sum_sq_odd l.
+  res = fold_left (fun acc h => if (Z.leb 0 h) && (Z.odd h)
+                          then Z.add acc (Z.mul h h)
+                          else acc) l 0.

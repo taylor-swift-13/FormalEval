@@ -19,13 +19,6 @@ will_it_fly([3], 5) ➞ True
 Require Import List.
 Import ListNotations.
 
-(* 定义一个辅助函数来计算列表元素的总和 *)
-Fixpoint sum_list (l : list nat) : nat :=
-  match l with
-  | [] => 0
-  | h :: t => h + sum_list t
-  end.
-
-(* will_it_fly 函数的程序规约 *)
+(* will_it_fly 函数的程序规约*)
 Definition will_it_fly_spec (q : list nat) (w : nat) (output : bool) : Prop :=
-  (output = true <-> (q = rev q) /\ (sum_list q <= w)).
+  (output = true <-> (q = rev q) /\ (fold_left (fun acc x => acc + x) q 0 <= w)).

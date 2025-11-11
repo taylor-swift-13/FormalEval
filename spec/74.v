@@ -26,24 +26,21 @@ Import ListNotations.
  * @param l: 一个字符串列表 (list string)。
  * @return: 列表中所有字符串长度之和 (nat)。
  *)
-Fixpoint total_chars (l : list string) : nat :=
-  match l with
-  | [] => 0
-  | h :: t => String.length h + total_chars t
-  end.
-
 (**
  * @spec total_match_spec
- * @brief total_match 函数的程序规约。
- * 该规约描述了输入列表 lst1, lst2 与输出列表 output 之间的关系。
+ * @brief 程序规约：选择两个字符串列表中总字符数较少的那个作为输出（若相等则选择第一个）。
+ *
+ * 使用局部函数 `sum` 将表达式简化：
+ *   sum l = fold_left (fun acc s => acc + String.length s) l 0
  *
  * @param lst1: 第一个输入字符串列表。
  * @param lst2: 第二个输入字符串列表。
  * @param output: 函数的输出字符串列表。
  * @prop:
- *   如果 lst1 的总字符数小于或等于 lst2，则输出必须是 lst1。
- *   否则（即 lst1 的总字符数大于 lst2），输出必须是 lst2。
+ *   - 如果 lst1 的总字符数小于或等于 lst2，则输出必须是 lst1。
+ *   - 否则（即 lst1 的总字符数大于 lst2），输出必须是 lst2。
  *)
 Definition total_match_spec (lst1 lst2 output : list string) : Prop :=
-  (total_chars lst1 <= total_chars lst2 /\ output = lst1) \/
-  (total_chars lst1 > total_chars lst2 /\ output = lst2).
+  let sum := fun l => fold_left (fun acc s => acc + String.length s) l 0 in
+  (sum lst1 <= sum lst2 /\ output = lst1) \/
+  (sum lst1 > sum lst2 /\ output = lst2).

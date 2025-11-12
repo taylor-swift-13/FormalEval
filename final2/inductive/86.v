@@ -52,49 +52,22 @@ Inductive sort_chars_rel : list ascii -> list ascii -> Prop :=
 Inductive process_word_rel : list ascii -> list ascii -> Prop :=
   | pwr_base : forall l sorted, sort_chars_rel l sorted -> process_word_rel l sorted.
 
-Inductive split_words_rel : list ascii -> list ascii -> list (list ascii) -> Prop :=
-  | swr_nil_empty : forall current_word, current_word = [] -> split_words_rel current_word [] []
-  | swr_nil_nonempty : forall current_word, current_word <> [] -> split_words_rel current_word [] [current_word]
-  | swr_space_empty : forall current_word h t result,
+(* 精确保留空白：以流式关系在遇到空格时冲刷当前词（排序后输出），空格原样输出。 *)
+Inductive anti_shuffle_aux_rel : list ascii -> list ascii (* current word rev *) -> list ascii (* out *) -> Prop :=
+  | asar_nil_empty : anti_shuffle_aux_rel [] [] []
+  | asar_nil_nonempty : forall cur_rev sorted,
+      sort_chars_rel cur_rev sorted ->
+      anti_shuffle_aux_rel [] cur_rev sorted
+  | asar_space : forall h t cur_rev sorted out_tail out,
       is_space_bool h = true ->
-      current_word = [] ->
-      split_words_rel [] t result ->
-      split_words_rel current_word (h :: t) result
-  | swr_space_nonempty : forall current_word h t result,
-      is_space_bool h = true ->
-      current_word <> [] ->
-      split_words_rel [] t result ->
-      split_words_rel current_word (h :: t) (current_word :: result)
-  | swr_char : forall current_word h t result,
+      sort_chars_rel cur_rev sorted ->
+      anti_shuffle_aux_rel t [] out_tail ->
+      out = sorted ++ [h] ++ out_tail ->
+      anti_shuffle_aux_rel (h :: t) cur_rev out
+  | asar_char : forall h t cur_rev out,
       is_space_bool h = false ->
-      split_words_rel (current_word ++ [h]) t result ->
-      split_words_rel current_word (h :: t) result.
-
-Inductive merge_words_rel : list (list ascii) -> list ascii -> list ascii -> Prop :=
-  | mwr_nil : forall spaces, merge_words_rel [] spaces []
-  | mwr_single : forall w spaces processed,
-      process_word_rel w processed ->
-      spaces = [] ->
-      merge_words_rel [w] spaces processed
-  | mwr_cons : forall w rest_words s rest_spaces processed_w result_rest result,
-      process_word_rel w processed_w ->
-      merge_words_rel rest_words rest_spaces result_rest ->
-      result = processed_w ++ [s] ++ result_rest ->
-      merge_words_rel (w :: rest_words) (s :: rest_spaces) result.
-
-Inductive extract_spaces_rel : list ascii -> list ascii -> Prop :=
-  | esr_nil : extract_spaces_rel [] []
-  | esr_space : forall h t result,
-      is_space_bool h = true ->
-      extract_spaces_rel t result ->
-      extract_spaces_rel (h :: t) (h :: result)
-  | esr_char : forall h t result,
-      is_space_bool h = false ->
-      extract_spaces_rel t result ->
-      extract_spaces_rel (h :: t) result.
+      anti_shuffle_aux_rel t (h :: cur_rev) out ->
+      anti_shuffle_aux_rel (h :: t) cur_rev out.
 
 Definition anti_shuffle_spec (s s_out : list ascii) : Prop :=
-  exists words spaces,
-    split_words_rel [] s words /\
-    extract_spaces_rel s spaces /\
-    merge_words_rel words spaces s_out.
+  anti_shuffle_aux_rel s [] s_out.

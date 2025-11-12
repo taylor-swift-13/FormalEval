@@ -38,7 +38,7 @@ Inductive interp_op_rel : ascii -> Z -> Z -> Z -> Prop :=
   | ior_add : forall z1 z2, interp_op_rel "+"%char z1 z2 (z1 + z2)
   | ior_sub : forall z1 z2, interp_op_rel "-"%char z1 z2 (z1 - z2)
   | ior_mul : forall z1 z2, interp_op_rel "*"%char z1 z2 (z1 * z2)
-  | ior_div : forall z1 z2, interp_op_rel "/"%char z1 z2 (Z.div z1 z2)
+  | ior_div : forall z1 z2, z2 <> 0 -> interp_op_rel "/"%char z1 z2 (Z.div z1 z2)
   | ior_pow : forall z1 z2, interp_op_rel "^"%char z1 z2 (Z.pow z1 z2)
   | ior_other : forall op z1 z2, op <> "+"%char -> op <> "-"%char -> op <> "*"%char -> op <> "/"%char -> op <> "^"%char -> interp_op_rel op z1 z2 0.
 

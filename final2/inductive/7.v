@@ -11,12 +11,11 @@ Import ListNotations.
 
 Open Scope string_scope.
 
+(* sub 是 s 的子串，当且仅当存在前缀 pre 与后缀 suf 使得 s = pre ++ sub ++ suf。
+   约定：空串是任何字符串的子串。 *)
 Inductive contains_substring_rel : string -> string -> Prop :=
-  | csr_empty : forall sub, sub = EmptyString -> contains_substring_rel EmptyString sub
-  | csr_prefix : forall s sub, String.prefix s sub = true -> contains_substring_rel s sub
-  | csr_cons : forall c rest sub,
-      contains_substring_rel rest sub ->
-      contains_substring_rel (String c rest) sub.
+  | csr_empty_any : forall s, contains_substring_rel s EmptyString
+  | csr_split : forall pre sub suf, contains_substring_rel (pre ++ sub ++ suf) sub.
 
 Inductive filter_by_substring_impl_rel : list string -> string -> list string -> Prop :=
   | fbsir_nil : forall sub, filter_by_substring_impl_rel [] sub []

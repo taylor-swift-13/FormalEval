@@ -92,9 +92,17 @@ Inductive sort_words_rel : list (list ascii) -> list (list ascii) -> Prop :=
       insert_sorted_rel h sorted_tail result ->
       sort_words_rel (h :: t) result.
 
+(* 用单个空格拼接单词列表（无尾随空格） *)
+Inductive join_with_single_spaces_rel : list (list ascii) -> list ascii -> Prop :=
+  | jwss_nil : join_with_single_spaces_rel [] []
+  | jwss_single : forall w, join_with_single_spaces_rel [w] w
+  | jwss_cons : forall w rest out_rest,
+      join_with_single_spaces_rel rest out_rest ->
+      join_with_single_spaces_rel (w :: rest) (w ++ [" "%char] ++ out_rest).
+
 
 Definition Spec (input output : list ascii) : Prop :=
   exists words sorted_words,
     SplitOnSpaces_rel input words /\
     sort_words_rel words sorted_words /\
-    output = List.concat (List.map (fun w => w ++ [" "%char]) sorted_words).
+    join_with_single_spaces_rel sorted_words output.

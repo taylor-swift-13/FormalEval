@@ -15,7 +15,7 @@ Require Import Coq.Lists.List.
 Import ListNotations.
 
 Definition IsPrime (n : nat) : Prop :=
-  n > 1 /\ (forall d : nat, 1 < d /\ d < n -> d mod n <> 0).
+  n > 1 /\ (forall d : nat, 1 < d /\ d < n -> n mod d <> 0).
 
 Inductive sum_digits_fueled_rel : nat -> nat -> nat -> Prop :=
   | sdfr_zero_fuel : forall n, sum_digits_fueled_rel n 0 0

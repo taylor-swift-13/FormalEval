@@ -37,6 +37,7 @@ Inductive nat_to_digits_rel : nat -> list nat -> Prop :=
 
 Inductive has_only_odd_digits_rel : nat -> Prop :=
   | hodd_base : forall n digits,
+      n > 0 ->
       nat_to_digits_rel n digits ->
       all_digits_odd_list_rel digits ->
       has_only_odd_digits_rel n.
@@ -71,6 +72,7 @@ Inductive sort_list_rel : list nat -> list nat -> Prop :=
 
 
 Definition unique_digits_spec (x y : list nat) : Prop :=
+  (forall n, In n x -> n > 0) /\
   exists filtered,
     filter_odd_digits_rel x filtered /\
     sort_list_rel filtered y.

@@ -20,14 +20,30 @@ Inductive is_sentence_delimiter : ascii -> Prop :=
 | isd_quest : is_sentence_delimiter "?"%char
 | isd_excl : is_sentence_delimiter "!"%char.
 
+(* 将字符追加到字符串末尾的关系式定义（函数式追加的命题化描述） *)
+Inductive append_char_end_rel : string -> ascii -> string -> Prop :=
+| acer_empty : forall c, append_char_end_rel "" c (String c "")
+| acer_cons : forall h t c t', append_char_end_rel t c t' ->
+   append_char_end_rel (String h t) c (String h t').
+
+(* 辅助关系：按句子分隔符切分，携带当前累积句子 cur *)
+Inductive split_sentences_aux_rel : string -> string (*cur*) -> list string -> Prop :=
+| ssar_empty : forall cur, split_sentences_aux_rel "" cur (cur :: nil)
+| ssar_delim : forall c s cur sents_tail,
+   is_sentence_delimiter c ->
+   split_sentences_aux_rel s "" sents_tail ->
+   split_sentences_aux_rel (String c s) cur (cur :: sents_tail)
+| ssar_char : forall c s cur cur' sents,
+   ~ is_sentence_delimiter c ->
+   append_char_end_rel cur c cur' ->
+   split_sentences_aux_rel s cur' sents ->
+   split_sentences_aux_rel (String c s) cur sents.
+
+(* 对外关系：从空的当前句子开始切分 *)
 Inductive split_sentences_rel : string -> list string -> Prop :=
-| ssr_empty : split_sentences_rel "" ("" :: nil)
-| ssr_delim : forall c s sents, is_sentence_delimiter c ->
-   split_sentences_rel s sents ->
-   split_sentences_rel (String c s) sents
-| ssr_char : forall c s sents, ~ is_sentence_delimiter c ->
-   split_sentences_rel s sents ->
-   split_sentences_rel (String c s) sents.
+| ssr_build : forall s sents,
+   split_sentences_aux_rel s "" sents ->
+   split_sentences_rel s sents.
 
 Inductive trim_leading_whitespace_rel : string -> string -> Prop :=
 | tlwr_none : trim_leading_whitespace_rel "" ""

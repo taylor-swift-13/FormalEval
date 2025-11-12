@@ -11,6 +11,7 @@ of odd digits in the i'th string of the input.
 
 Require Import Coq.Strings.String Coq.Lists.List Coq.Strings.Ascii Coq.Arith.PeanoNat.
 Import ListNotations.
+Open Scope string_scope.
 
 Inductive is_odd_digit : ascii -> Prop :=
 | iod_1 : is_odd_digit "1"%char
@@ -45,12 +46,16 @@ Inductive nat_to_digit_char_rel : nat -> ascii -> Prop :=
 | ndcr_8 : nat_to_digit_char_rel 8%nat "8"%char
 | ndcr_9 : nat_to_digit_char_rel 9%nat "9"%char.
 
+(* 固定模板：将其中的字符 'i' 替换为计数字符 *)
+Definition odd_count_template : string :=
+    "the number of odd elements i n the str i ng i of the i nput.".
+
 Inductive process_string_rel : string -> string -> Prop :=
-| psr_build : forall s cnt ch templ res,
-   count_odd_digits_rel s cnt ->
-   nat_to_digit_char_rel cnt ch ->
-   replace_char_rel "i"%char ch templ res ->
-   process_string_rel s res.
+| psr_build : forall s cnt ch res,
+    count_odd_digits_rel s cnt ->
+    nat_to_digit_char_rel cnt ch ->
+    replace_char_rel "i"%char ch odd_count_template res ->
+    process_string_rel s res.
 
 Inductive odd_count_rel : list string -> list string -> Prop :=
 | ocr_nil : odd_count_rel nil nil

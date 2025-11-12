@@ -30,17 +30,28 @@ Inductive is_prime_rel : nat -> Prop :=
 | ipr_prime : forall n, n > 1 -> ~ (exists d, 2 <= d <= n - 1 /\ has_divisor_from_rel n d) ->
    is_prime_rel n.
 
+(* 辅助：按空格分词（携带当前累计的单词 cur，并在 words_rev 中按出现顺序的反向收集） *)
+Inductive split_words_aux_rel : list ascii -> list ascii -> list (list ascii) -> Prop :=
+| swar_nil_empty : split_words_aux_rel nil nil nil
+| swar_nil_word : forall cur, cur <> nil -> split_words_aux_rel nil cur ((rev cur) :: nil)
+| swar_space_skip : forall cs words_rev,
+    split_words_aux_rel cs nil words_rev ->
+    split_words_aux_rel (" "%char :: cs) nil words_rev
+| swar_space_finish : forall cs cur words_rev,
+    cur <> nil ->
+    split_words_aux_rel cs nil words_rev ->
+    split_words_aux_rel (" "%char :: cs) cur ((rev cur) :: words_rev)
+| swar_char : forall c cs cur words_rev,
+    Ascii.eqb c " "%char = false ->
+    split_words_aux_rel cs (c :: cur) words_rev ->
+    split_words_aux_rel (c :: cs) cur words_rev.
+
+(* 对外关系：将反向收集的 words_rev 反转成正向顺序 *)
 Inductive split_words_rel : list ascii -> list (list ascii) -> Prop :=
-| swr_nil : split_words_rel nil nil
-| swr_space_skip : forall c cs words, Ascii.eqb c " "%char = true ->
-    split_words_rel cs words ->
-    split_words_rel (c :: cs) words
-| swr_space_finish : forall c cs cur words, Ascii.eqb c " "%char = true ->
-    cur <> nil -> split_words_rel cs words ->
-    split_words_rel (c :: cs) ((rev cur) :: words)
-| swr_char : forall c cs cur words, Ascii.eqb c " "%char = false ->
-    split_words_rel cs words ->
-    split_words_rel (c :: cs) ((c :: cur) :: words).
+| swr_build : forall s words_rev words,
+    split_words_aux_rel s nil words_rev ->
+    words = rev words_rev ->
+    split_words_rel s words.
 
 Inductive filter_prime_length_rel : list (list ascii) -> list (list ascii) -> Prop :=
 | fplr_nil : filter_prime_length_rel nil nil

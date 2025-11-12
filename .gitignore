@@ -3,4 +3,4 @@
 
 # (optional) Ignore compiled Coq files
 *.vo
-*.vos
+*.vosX

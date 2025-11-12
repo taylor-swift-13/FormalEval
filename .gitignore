@@ -1,0 +1,6 @@
+# Ignore VS Code workspace settings and local configs
+.vscode/
+
+# (optional) Ignore compiled Coq files
+*.vo
+*.vos

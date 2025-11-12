@@ -25,12 +25,24 @@ Inductive sum_digits_rel_from_list : list nat -> Z -> Prop :=
 | sdrfl_cons : forall d ds s, sum_digits_rel_from_list ds s ->
    sum_digits_rel_from_list (d :: ds) (Z.of_nat d + s).
 
+(* most-significant digit: since digits lists are produced with least-significant
+   digit at head, the msd is the last element of the list *)
+Inductive msd_of_digits : list nat -> nat -> Prop :=
+| mod_single : forall d, msd_of_digits (d :: nil) d
+| mod_cons : forall d ds m, msd_of_digits ds m -> msd_of_digits (d :: ds) m.
+
 Inductive sum_digits_rel : Z -> Z -> Prop :=
 | sdr_zero : sum_digits_rel 0%Z 0%Z
 | sdr_pos : forall n s ds, 0 < n -> digits_of_Z_rel n ds -> sum_digits_rel_from_list ds s ->
    sum_digits_rel n s
-| sdr_neg : forall n s p, n < 0 -> p = Z.to_nat (- n) -> sum_digits_rel (Z.of_nat p) s ->
-   sum_digits_rel n s.
+| sdr_neg : forall n s p ds s_pos m,
+    n < 0 ->
+    p = Z.to_nat (- n) ->
+    digits_of_Z_rel (Z.of_nat p) ds ->
+    sum_digits_rel_from_list ds s_pos ->
+    msd_of_digits ds m ->
+    s = s_pos - 2 * (Z.of_nat m) ->
+    sum_digits_rel n s.
 
 Inductive count_nums_rel : list Z -> nat -> Prop :=
 | cnr_nil : count_nums_rel nil 0%nat

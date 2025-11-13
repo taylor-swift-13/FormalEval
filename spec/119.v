@@ -40,15 +40,20 @@ Definition is_balanced (l : list ascii) : bool :=
   check_parens_inner l 0.
 
 (*
-  match_parens_spec (程序规约)
-  这表示输入是一个列表，其中包含两个元素，每个元素本身就是一个字符列表。
+  先用命题刻画：是否存在一种拼接顺序得到“平衡”的字符串。
 *)
-Definition match_parens_spec (inputs : list (list ascii)) : string :=
-  match inputs with
-  | [s1; s2] =>
-    (* "++" 现在是列表拼接操作符 *)
-    if orb (is_balanced (s1 ++ s2)) (is_balanced (s2 ++ s1))
-    then "Yes"
-    else "No"
-  | _ => "No" (* 处理非预期输入，例如列表长度不为2 *)
-  end.
+Definition can_make_good (inputs : list (list ascii)) : Prop :=
+  exists s1 s2,
+    inputs = [s1; s2] /
+    (is_balanced (s1 ++ s2) = true \/ is_balanced (s2 ++ s1) = true).
+
+(*
+  match_parens 的程序规约：
+  - 如果可以通过某种拼接得到平衡串，则返回 "Yes"；
+  - 否则返回 "No"；
+  - 对于长度不是 2 的输入，也视为不可行，返回 "No"。
+  说明：本规约为纯命题（Prop），不直接计算结果。
+*)
+Definition match_parens_spec (inputs : list (list ascii)) (result : string) : Prop :=
+  (can_make_good inputs /\ result = "Yes"%string) \/
+  (~ can_make_good inputs /\ result = "No"%string).

@@ -23,6 +23,8 @@ Require Import Coq.Lists.List.
 Require Import Coq.ZArith.ZArith.
 Import ListNotations.
 Open Scope Z_scope.
+(* Pre: no additional constraints for `triples_sum_to_zero` by default *)
+Definition Pre (input : list Z) : Prop := True.
 
 Definition Spec (input : list Z) (output : bool) : Prop :=
   (*

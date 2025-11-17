@@ -26,6 +26,9 @@ Definition is_list_max (l : list R) (m : R) : Prop :=
   In m l /\ (forall x, In x l -> m >= x).
 
 
+(* Pre: no additional constraints for `rescale_to_unit` by default *)
+Definition Pre (input : list R) : Prop := True.
+
 Definition Spec' (input output : list R) : Prop :=
   exists min_val max_val,
     is_list_min input min_val /\

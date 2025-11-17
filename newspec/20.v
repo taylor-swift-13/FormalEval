@@ -23,6 +23,9 @@ Import ListNotations.
 
 Local Open Scope R_scope.
 
+(* Pre: no additional constraints for `find_closest_elements` by default *)
+Definition Pre (input : list R) : Prop := (length input >= 2)%nat.
+
 Definition Spec (input : list R) (output1 output2 : R) : Prop :=
   (* 1. 前提条件：输入列表长度至少为 2 *)
   (length input >= 2)%nat /\  (* 使用 %nat 明确指出这是自然数比较 *)

@@ -17,6 +17,9 @@ assert list_sort(["ab", "a", "aaa", "cd"]) => ["ab", "cd"]
 Require Import Coq.Lists.List Coq.Strings.Ascii Coq.Arith.PeanoNat.
 Import ListNotations.
 
+(* 任意字符串列表输入均可 *)
+Definition Pre (input : list (list ascii)) : Prop := True.
+
 Fixpoint lex_le (s1 s2 : list ascii) : bool :=
   match s1,s2 with
   | [], _ => true

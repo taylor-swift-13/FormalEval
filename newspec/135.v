@@ -14,6 +14,9 @@ Import ListNotations.
 
 Open Scope Z_scope.
 
+(* 输入数组不包含重复元素 *)
+Definition Pre (lst : list Z) : Prop := NoDup lst.
+
 (* 辅助：在位置 k (nat) 存在相邻不满足非降的情况，即 1 <= k < length lst 且 lst[k] < lst[k-1] *)
 Definition drop_at (lst : list Z) (k : nat) : Prop :=
   (1 <= k)%nat /\ (k < length lst)%nat /\

@@ -20,6 +20,7 @@ Require Import Coq.Arith.Arith.
 Definition is_prime (n : nat) : Prop :=
   (1 < n) /\ (forall d, (1 < d) -> (d < n) -> (n mod d <> 0)).
 
+Definition Pre (s : string) : Prop := True.
 (*
  * prime_length_spec s b
  * 
@@ -33,4 +34,6 @@ Definition is_prime (n : nat) : Prop :=
  *)
 Definition prime_length_spec (s : string) (b : bool) : Prop :=
   b = true <-> is_prime (length s).
+
+
 

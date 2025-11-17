@@ -16,6 +16,9 @@ Require Import Coq.Strings.String.
 Require Import Coq.Arith.Arith.
 
 
+(* Pre: no special constraints for `is_palindrome` *)
+Definition Pre (input : string) : Prop := True.
+
 Definition Spec (input : string) (output : bool) : Prop :=
   (*
     output 为 true 当且仅当 (<->) 以下条件成立:

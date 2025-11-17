@@ -18,6 +18,9 @@ Import ListNotations.
   一个辅助规约，用于定义单个数字（0-9）到其小写罗马数字字符（作为 list ascii）的映射。
   - roman_char:  i, v, x
 *)
+(* 输入限制：1 <= number <= 1000 *)
+Definition Pre (number : nat) : Prop := 1 <= number /\ number <= 1000.
+
 Definition roman_digit_spec (one ten five : ascii) (digit : nat) (res : list ascii) : Prop :=
   (digit = 0 /\ res = []) \/
   (digit = 1 /\ res = [one]) \/

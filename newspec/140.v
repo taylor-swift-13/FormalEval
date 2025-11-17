@@ -17,6 +17,9 @@ Definition space : ascii := " ".
 Definition underscore : ascii := "_".
 Definition dash : ascii := "-".
 
+(* 输入文本任意 *)
+Definition Pre (input_list : list ascii) : Prop := True.
+
 (*
   辅助关系: `skip_leading_spaces input remaining`
   这个关系为真，当且仅当 `remaining` 是 `input` 列表移除所有前导空格后的结果。
@@ -73,3 +76,4 @@ Inductive fix_spaces_relation : list ascii -> list ascii -> Prop :=
 *)
 Definition Spec (input_list output_list : list ascii) : Prop :=
   fix_spaces_relation input_list output_list.
+

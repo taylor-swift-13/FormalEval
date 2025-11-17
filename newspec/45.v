@@ -8,5 +8,8 @@
 Require Import Reals.
 Open Scope R_scope.
 
+(* Pre: side and high should be non-negative for a valid triangle area *)
+Definition Pre (side high : R) : Prop := side >= 0 /\ high >= 0.
+
 Definition Spec(side high output : R) : Prop :=
-  output = side * high / 2.
+	output = side * high / 2.

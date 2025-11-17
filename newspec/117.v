@@ -13,6 +13,10 @@ select_words("Uncle sam", 3) ==> ["Uncle"] *)
 Require Import Coq.Strings.Ascii Coq.Lists.List Coq.Arith.Arith Coq.Bool.Bool.
 Import ListNotations.
 
+(* 字符串只含字母与空格 *)
+Definition Pre (s : list ascii) : Prop :=
+  Forall (fun c => c = " "%char \/ let n := nat_of_ascii c in (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122)) s.
+
 Definition is_vowel (c : ascii) : bool :=
   match c with
   | "a"%char | "e"%char | "i"%char | "o"%char | "u"%char

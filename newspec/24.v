@@ -12,6 +12,9 @@
 ​	∀i ∈ [1, input), input % i = 0 → i  ≤  output *)
 
 Require Import Arith.
+ 
+(* Pre: require `input >= 2` so that a largest proper divisor exists *)
+Definition Pre (input : nat) : Prop := (input >= 2)%nat.
 
 Definition Spec (input output : nat) : Prop :=
   (* 1. output 是 input 的一个因数 *)

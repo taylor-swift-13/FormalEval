@@ -61,5 +61,12 @@ Definition simplify_impl (x n : list ascii) : bool :=
   | _, _ => false
   end.
 
+(* 约束：x 与 n 均为有效分数串，且分子/分母为正整数 *)
+Definition Pre (x n : list ascii) : Prop :=
+  exists nx dx ny dy,
+    parse_fraction_impl x = Some (nx, dx) /\
+    parse_fraction_impl n = Some (ny, dy) /\
+    nx > 0 /\ dx > 0 /\ ny > 0 /\ dy > 0.
+
 Definition simplify_spec (x n : list ascii) (output : bool) : Prop :=
   output = simplify_impl x n.

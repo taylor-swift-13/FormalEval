@@ -17,6 +17,9 @@ Import ListNotations.
 
 Local Open Scope string_scope.
 
+(* 输入单词列表需非空 *)
+Definition Pre (words : list string) : Prop := words <> [].
+
 (*
   辅助定义 1：检查一个元素是否在一个列表中（使用布尔相等性测试）。
   这是 `remove_duplicates` 函数需要用到的辅助函数。

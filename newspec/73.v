@@ -35,5 +35,7 @@ Definition smallest_change_impl (arr: list nat): nat :=
   let second_half := skipn (len - half_len) arr in
   count_diff first_half (rev second_half) 0.
 
+Definition Pre (arr : list nat) : Prop := True.
+
 Definition smallest_change_spec (arr: list nat) (n: nat): Prop :=
   n = smallest_change_impl arr.

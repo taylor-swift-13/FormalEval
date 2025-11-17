@@ -12,6 +12,16 @@ of odd digits in the i'th string of the input.
 Require Import Coq.Strings.String Coq.Lists.List Coq.Strings.Ascii Coq.Arith.PeanoNat.
 Import ListNotations.
 
+(* 每个字符串只包含数字字符 *)
+Definition Pre (input : list string) : Prop :=
+  Forall (fun s =>
+    let fix all_digits (t : string) : Prop :=
+      match t with
+      | EmptyString => True
+      | String ch rest =>
+          let n := nat_of_ascii ch in (48 <= n /\ n <= 57) /\ all_digits rest
+      end in all_digits s) input.
+
 Definition is_odd_digit (c : ascii) : bool :=
   match c with "1"%char|"3"%char|"5"%char|"7"%char|"9"%char => true | _ => false end.
 

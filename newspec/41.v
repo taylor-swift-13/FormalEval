@@ -13,6 +13,8 @@ This function outputs the number of such collisions. *)
 ​	output = input * input *)
 
 Require Import Arith.
+(* Pre: no special constraints for this numeric square function *)
+Definition Pre (input : nat) : Prop := True.
 
 Definition Spec(input output : nat) : Prop :=
   output = input * input.

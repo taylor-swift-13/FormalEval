@@ -19,6 +19,9 @@ Require Import Coq.Arith.PeanoNat.
 Import ListNotations.
 Import Nat.
 
+(* 输入文件名为任意字符列表，无额外约束 *)
+Definition Pre (file_name : list ascii) : Prop := True.
+
 (*
   辅助定义（返回 bool）: 检查一个字符是否为数字。
   我们使用 <=? 这个符号，它代表返回 bool 的比较运算。

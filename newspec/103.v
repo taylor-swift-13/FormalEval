@@ -15,6 +15,9 @@ Require Import PArith. (* 用于 positive 类型 *)
 Open Scope Z_scope.
 Open Scope string_scope.
 
+(* n 与 m 为正整数 *)
+Definition Pre (n m : Z) : Prop := n > 0 /\ m > 0.
+
 (* 定义一个表示输出的类型：可以是二进制字符串或-1 *)
 Inductive result : Type :=
   | Binary : string -> result

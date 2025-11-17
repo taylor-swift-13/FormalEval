@@ -7,6 +7,7 @@ Require Import Arith.
 Require Import PeanoNat.  (* Import the library for natural number properties, including Nat.pow *)
 Import Nat.              (* This allows you to write 'pow' instead of 'Nat.pow' *)
 
+Definition Pre (n : nat) : Prop := (n > 0)%nat.
 (*
   The efficient spec using the standard library's power function.
   This is the recommended approach.

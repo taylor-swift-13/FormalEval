@@ -19,6 +19,9 @@ Require Import Coq.Lists.List.
 Require Import Coq.ZArith.ZArith.
 Require Import Arith.PeanoNat.
 Import ListNotations.
+(* Pre: no additional constraints for `sort_even` by default *)
+Definition Pre (input : list Z) : Prop := True.
+
 (* Spec 的定义 *)
 Definition Spec (input output : list Z) : Prop :=
   (* 1. 输入和输出列表的长度必须相等 *)

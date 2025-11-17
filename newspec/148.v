@@ -47,6 +47,9 @@ Definition get_planet_index (p_name : string) : option nat :=
   - 输入: planet1 (list ascii), planet2 (list ascii)
   - 输出: result (list (list ascii))
 *)
+(* 独立的输入前置条件 *)
+Definition Pre (planet1 planet2 : string) : Prop := True.
+
 Definition bf_spec (planet1 planet2 : string) (result : list string) : Prop :=
   match (get_planet_index planet1), (get_planet_index planet2) with
   | Some idx1, Some idx2 =>

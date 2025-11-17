@@ -25,6 +25,8 @@ Require Import Coq.Init.Nat.
 Import ListNotations.
 Local Open Scope Z_scope.
 
+Definition Pre (input : list Z): Prop := True.
+
 (* 程序规约 Spec 的 Coq 定义 *)
 Definition Spec (input : list Z) (output : list Z) : Prop :=
   (*  1: output 中的每个元素 v 都存在于 input 中，

@@ -23,6 +23,10 @@ Require Import Bool.
 Import ListNotations.
 Open Scope bool_scope.
 
+(* 扩展列表必须非空 *)
+Definition Pre (class_name : list ascii) (extensions : list (list ascii)) : Prop :=
+  extensions <> [].
+
 (* 定义：检查一个字符是否为大写字母 *)
 Definition is_uppercase (c : ascii) : bool :=
   ("A" <=? c)%char && (c <=? "Z")%char.

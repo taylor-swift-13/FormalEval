@@ -19,6 +19,8 @@ will_it_fly([3], 5) ➞ True
 Require Import List.
 Import ListNotations.
 
+Definition Pre (q : list nat) (w : nat) : Prop := True.
+
 (* will_it_fly 函数的程序规约*)
 Definition will_it_fly_spec (q : list nat) (w : nat) (output : bool) : Prop :=
   (output = true <-> (q = rev q) /\ (fold_left (fun acc x => acc + x) q 0 <= w)).

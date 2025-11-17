@@ -70,6 +70,9 @@ Definition nat_to_binary_list (n : nat) : list bool :=
 Definition decimal_to_binary_impl (decimal : nat) : string :=
   let bl := nat_to_binary_list decimal in
   "db" ++ binary_list_to_string bl ++ "db".
+  
+Definition Pre (decimal : nat) : Prop := True.
 
 Definition decimal_to_binary_spec (decimal : nat) (output : string) : Prop :=
   output = decimal_to_binary_impl decimal.
+

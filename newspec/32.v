@@ -36,6 +36,9 @@ Inductive EvalPolyPred : list R -> R -> R -> Prop :=
 (*
  * 程序规约 Spec (保持不变，但现在依赖于正确的 EvalPolyPred 定义)
  *)
+(* Pre: input list must be non-empty and have even length (as required by Spec) *)
+Definition Pre (input : list R) : Prop := length input > 0 /\ Nat.Even (length input).
+
 Definition Spec (input : list R) (output : R) : Prop :=
   (* 前提条件: 输入列表的长度必须为正数且为偶数。*)
   length input > 0 /\ Nat.Even (length input) /\

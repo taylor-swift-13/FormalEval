@@ -31,6 +31,8 @@ Inductive is_subsequence {A : Type} : list A -> list A -> Prop :=
 Definition is_positive (r : R) : Prop :=
   r > 0.
 
+(* Pre: no additional constraints for `get_positive` by default *)
+Definition Pre (input : list R) : Prop := True.
 
 Definition Spec (input : list R) (output : list R) : Prop :=
   (* 1. 保证 output 是 input 的子序列。

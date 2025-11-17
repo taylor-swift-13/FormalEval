@@ -9,6 +9,12 @@ Require Import Coq.Strings.Ascii.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
+(* 输入为仅包含字母、逗号或空格的字符列表 *)
+Definition Pre (s : list ascii) : Prop :=
+  Forall (fun c =>
+    let n := nat_of_ascii c in
+      (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122) \/ c = ","%char \/ c = " "%char) s.
+
 Definition is_delimiter (c : ascii) : bool :=
   match c with
   | ","%char | " "%char => true | _ => false end.

@@ -39,6 +39,8 @@ Require Import Coq.micromega.Lia.
 (* 定义一个辅助函数来检查一个数是否为偶数 *)
 Definition is_even (n : nat) : Prop := exists k, n = 2 * k.
 
+Definition Pre (arr : list nat) : Prop := True.
+
 (* pluck 函数的程序规约 *)
 Definition pluck_spec (arr : list nat) (output : option (nat * nat)) : Prop :=
   match output with
@@ -55,3 +57,4 @@ Definition pluck_spec (arr : list nat) (output : option (nat * nat)) : Prop :=
     (* 4. i 必须是 v 在 arr 中首次出现的最小索引 *)
     (forall j, j < i -> nth j arr v <> v)
   end.
+

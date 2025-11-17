@@ -70,6 +70,7 @@ with StrangeSort_Max : list nat -> list nat -> Prop :=
       StrangeSort_Min l_rem ys ->
       StrangeSort_Max l (y :: ys).
 
+Definition Pre (l_in : list nat) : Prop := True.
 (*
   程序规约 (Spec): strange_sort_list_spec l_in l_out
   
@@ -80,3 +81,4 @@ with StrangeSort_Max : list nat -> list nat -> Prop :=
 *)
 Definition strange_sort_list_spec (l_in l_out : list nat) : Prop :=
   StrangeSort_Min l_in l_out.
+

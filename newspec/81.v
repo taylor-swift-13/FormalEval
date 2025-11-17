@@ -57,6 +57,9 @@ Definition grade_relation (gpa : R) (grade : string) : Prop :=
   (0.0 < gpa /\ gpa <= 0.7 /\ grade = "D-") \/
   (gpa = 0.0 /\ grade = "E").
 
+Definition Pre (gpas : list R) : Prop :=
+  Forall (fun g => 0 <= g /\ g <= 4) gpas.
+
 (*
  * @name numerical_letter_grade_spec
  * @description 这是 `numerical_letter_grade` 函数的完整规约。

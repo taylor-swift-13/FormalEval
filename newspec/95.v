@@ -15,6 +15,9 @@ Require Import Coq.Strings.Ascii.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
+(* 字典类型已保证键值均为字符串，无附加约束；空字典由规约处理 *)
+Definition Pre (d : dictionary) : Prop := True.
+
 (* 定义字符串是否为小写的谓词 *)
 Definition is_lowercase (s : string) : Prop :=
   (* Convert string to list of ascii and ensure every character is a lowercase letter *)

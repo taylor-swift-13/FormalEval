@@ -40,5 +40,7 @@ Definition hex_key_impl (s : list ascii) : nat :=
   count_prime_hex s.
 
 
+Definition Pre (s : list ascii) : Prop := True.
+
 Definition hex_key_spec (s : list ascii) (output : nat) : Prop :=
   output = hex_key_impl s.

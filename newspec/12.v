@@ -22,6 +22,9 @@ Require Import Coq.Lists.List.
 Require Import Coq.Strings.Ascii.
 Import ListNotations.
 
+(* Pre: no specific requirements for `longest` — accept any list of strings by default *)
+Definition Pre (input : list (list ascii)) : Prop := True.
+
 Definition longest_spec (input : list (list ascii)) (output : option (list ascii)) : Prop :=
   (input = [] /\ output = None) \/
   (exists out i,

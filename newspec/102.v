@@ -12,6 +12,9 @@ Require Import Coq.ZArith.ZArith.
 (* 打开 Z 的作用域，这样就可以直接使用像 +, -, <= 等符号，而不用写 Z.add, Z.sub, Z.le *)
 Open Scope Z_scope.
 
+(* x 与 y 均为正整数 *)
+Definition Pre (x y : Z) : Prop := x > 0 /\ y > 0.
+
 (* 
    定义 choose_num 函数的规约 (Specification)
    它描述了输入 x, y 和输出 res 之间必须满足的关系。

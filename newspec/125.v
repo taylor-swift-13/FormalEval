@@ -12,6 +12,9 @@ Require Import Coq.Strings.Ascii.
 Require Import Coq.Arith.PeanoNat.
 Import ListNotations.
 
+(* 输入可为任意字符列表 *)
+Definition Pre (input : list ascii) : Prop := True.
+
 (*
   辅助函数定义
 *)

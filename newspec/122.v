@@ -15,6 +15,10 @@ Import ListNotations.
 Require Import Coq.ZArith.ZArith.
 Open Scope Z_scope.
 
+(* 1 <= length arr <= 100 且 1 <= k <= length arr *)
+Definition Pre (arr : list Z) (k : nat) : Prop :=
+  length arr >= 1 /\ length arr <= 100 /\ 1 <= k /\ k <= length arr.
+
 (* 定义一个辅助函数来检查一个整数是否最多有两位数。
    这里我们使用 Z.ltb (less than boolean) 和 andb (boolean and)
    来确保返回类型是 bool。 *)

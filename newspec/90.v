@@ -13,6 +13,9 @@ Require Import Coq.Lists.List.
 Require Import Coq.ZArith.ZArith.
 Import ListNotations.
 Open Scope Z_scope.
+
+Definition Pre (l : list Z) : Prop := True.
+
 (*
   next_smallest_spec l res
 

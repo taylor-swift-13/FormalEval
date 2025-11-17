@@ -11,8 +11,30 @@ Require Import Coq.Strings.String.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
-(* 假设有一个函数把自然数转成字符串 *)
-Parameter string_of_nat : nat -> string.
+(* Pre: no additional constraints for `string_sequence` by default *)
+Definition Pre (n : nat) : Prop := True.
+
+(* 将自然数转换为十进制字符串的实现 *)
+Fixpoint string_of_nat (n : nat) : string :=
+  (* 对 0 做特殊处理 *)
+  match n with
+  | 0 => String (Ascii.ascii_of_nat 48) EmptyString
+  | _ =>
+    (* 生成数字的倒序 ascii 列表，然后反转并组装为 string.
+     为了满足 Coq 的递归终止检查，我们使用带有 fuel 参数的辅助递归，
+     对 fuel 进行结构递归（每次递归 fuel-1）。初始时传入 fuel = n，
+     这对于所有 n>0 来说足够大以完成所有位的拆分。 *)
+    let fix digits_rev_aux (m fuel : nat) : list ascii :=
+      match fuel with
+      | 0 => [] (* unreachable for adequate initial fuel; 保守返回空列表 *)
+      | S fuel' =>
+        if m <? 10 then [Ascii.ascii_of_nat (48 + m)]
+        else Ascii.ascii_of_nat (48 + (Nat.modulo m 10)) :: digits_rev_aux (Nat.div m 10) fuel'
+      end in
+    let digits := rev (digits_rev_aux n n) in
+      fold_right (fun a acc => String a acc) EmptyString digits
+  end.
+
 
 (* 用来连接数字字符串，中间用空格隔开 *)
 Fixpoint seq_string (start limit : nat) : string :=

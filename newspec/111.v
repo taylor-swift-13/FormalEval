@@ -15,6 +15,10 @@ Require Import Coq.Strings.Ascii.
 Require Import Coq.Arith.Arith.
 Import ListNotations.
 
+(* 仅包含空格或小写字母 *)
+Definition Pre (letters : list ascii) : Prop :=
+  Forall (fun c => c = " "%char \/ let n := nat_of_ascii c in 97 <= n /\ n <= 122) letters.
+
 (*
   程序规约 Spec
   输入：letters : list ascii (一个由字符组成的列表)

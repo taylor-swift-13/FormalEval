@@ -17,6 +17,16 @@ Import ListNotations.
 Open Scope char_scope.
 
 (* 定义 Spec 规约 *)
+ 
+(* Pre: inputs have equal length and contain only '0' or '1' characters *)
+Definition Pre (a b : list ascii) : Prop :=
+  length a = length b /\
+  forall i,
+    i < length a ->
+      ((nth i a "0" = "0") \/ (nth i a "0" = "1")) /\
+      ((nth i b "0" = "0") \/ (nth i b "0" = "1")).
+
+(* 定义 Spec 规约 *)
 
 Definition Spec (a b output : list ascii) : Prop :=
   length a = length b /\

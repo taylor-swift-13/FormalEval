@@ -15,6 +15,9 @@ Require Import Coq.ZArith.ZArith.
 Import ListNotations.
 Open Scope Z_scope.
 
+(* 任意整数列表均可 *)
+Definition Pre (lst : list Z) : Prop := True.
+
 (* a 是 lst 中最大的负整数（Some z）或不存在负整数（None） *)
 Definition is_largest_negative (lst : list Z) (a : option Z) : Prop :=
   match a with

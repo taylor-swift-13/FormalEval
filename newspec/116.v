@@ -13,6 +13,9 @@ Require Import Permutation.
 Require Import Sorting.Sorted.
 Import ListNotations.
 
+(* 输入为非负整数列表（nat 已保证） *)
+Definition Pre (input : list nat) : Prop := True.
+
 (*
   定义一个带有 "燃料" 参数的辅助函数。
   递归在燃料参数 `fuel` 上是结构性的 (S fuel' -> fuel')，

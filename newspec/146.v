@@ -11,6 +11,9 @@ Require Import Coq.Lists.List Coq.ZArith.ZArith Coq.Strings.Ascii.
 Import ListNotations.
 Open Scope Z_scope.
 
+(* 任意整数列表输入均可 *)
+Definition Pre (nums : list Z) : Prop := True.
+
 Definition last_digit (n : Z) : Z := Z.abs (n mod 10).
 Fixpoint msd_fuel (fuel : nat) (n : Z) : Z :=
   match fuel with

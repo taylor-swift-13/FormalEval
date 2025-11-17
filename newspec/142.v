@@ -12,6 +12,9 @@ For lst = [-1,-5,2,-1,-5] the output should be -126
 Require Import Coq.Lists.List Coq.ZArith.ZArith Coq.NArith.NArith Coq.Bool.Bool.
 Import ListNotations.
 
+(* 任意整数列表（允许为空） *)
+Definition Pre (lst : list Z) : Prop := True.
+
 Fixpoint sum_transformed (l : list Z) (n : nat) : Z :=
   match l with
   | [] => 0%Z

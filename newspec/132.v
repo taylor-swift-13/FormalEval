@@ -17,6 +17,10 @@ Require Import Coq.Strings.Ascii.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
+(* 仅允许 '[' 或 ']' 字符 *)
+Definition Pre (s_in : list ascii) : Prop :=
+  Forall (fun c => c = "["%char \/ c = "]"%char) s_in.
+
 (* 定义开方括号和闭方括号的 Ascii 字符表示 *)
 Definition open_bracket : ascii := "["%char.
 Definition close_bracket : ascii := "]"%char.

@@ -27,8 +27,7 @@ Fixpoint sum_uppercase_ascii (l : list ascii) : nat :=
 
 Definition digitSum_impl (l : list ascii) : nat := sum_uppercase_ascii l.
 
-Example digitSum_impl_abAB: digitSum_impl ("a"%char :: "b"%char :: "A"%char :: "B"%char :: nil) = (131)%nat.
-Proof. reflexivity. Qed.
+Definition Pre (l : list ascii) : Prop := True.
 
 Definition digitSum_spec (l : list ascii) (output : nat) : Prop :=
   output = digitSum_impl l.

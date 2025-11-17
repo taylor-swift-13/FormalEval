@@ -19,6 +19,9 @@ Require Import Coq.Bool.Bool.
 
 Import ListNotations.
 
+(* 列表元素均为正整数 *)
+Definition Pre (x : list nat) : Prop := Forall (fun n => n > 0) x.
+
 
 
 (* 辅助定义：判断单个数字是否为奇数 (与之前相同) *)

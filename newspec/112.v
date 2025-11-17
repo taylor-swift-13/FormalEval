@@ -12,6 +12,11 @@ For s = "abcdedcba", c = "ab", the result should be ('cdedc',True)
 Require Import Coq.Lists.List Coq.Strings.Ascii Coq.Bool.Bool.
 Import ListNotations.
 
+(* s 与 c 仅包含小写字母 *)
+Definition Pre (s c : list ascii) : Prop :=
+  Forall (fun ch => let n := nat_of_ascii ch in 97 <= n /\ n <= 122) s /\
+  Forall (fun ch => let n := nat_of_ascii ch in 97 <= n /\ n <= 122) c.
+
 Fixpoint list_eqb {A} (eq : A -> A -> bool) (l1 l2 : list A) : bool :=
   match l1,l2 with
   | [],[] => true

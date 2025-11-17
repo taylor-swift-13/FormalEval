@@ -36,5 +36,8 @@ Inductive fib4_at : nat -> nat -> Prop :=
     fib4_at (S (S (S i))) d ->
     fib4_at (S (S (S (S i)))) (a + b + c + d).
 
+(* Pre: no additional constraints for `fib4` *)
+Definition Pre (input : nat) : Prop := True.
+
 Definition fib4_spec (input : nat) (output : nat) : Prop :=
   fib4_at input output.

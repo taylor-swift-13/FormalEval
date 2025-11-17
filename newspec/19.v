@@ -164,5 +164,8 @@ Fixpoint sort_numbers_impl (input : list ascii) : list ascii :=
   let sorted_words := sort_words words in
   List.concat (List.map (fun w => w ++ [" "%char]) sorted_words).
 
+(* Pre: no additional constraints for `sort_numbers` by default *)
+Definition Pre (input : list ascii) : Prop := True.
+
 Definition Spec (input output : list ascii) : Prop :=
   output = sort_numbers_impl input.

@@ -27,6 +27,9 @@ Import ListNotations.
 
 Open Scope nat_scope.
 
+(* Pre: no additional constraints for `count_distinct_characters` by default *)
+Definition Pre (s : list ascii) : Prop := True.
+
 (* 判断字符是否是大写字母 *)
 Definition is_upper (a: ascii) : bool :=
   let n := nat_of_ascii a in

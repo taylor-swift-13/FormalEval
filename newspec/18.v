@@ -38,6 +38,9 @@ Definition match_at (i : nat) (input substr : list ascii) : Prop :=
   (forall j, j < length substr -> nth_error input (i + j) = nth_error substr j).
 
 (* Spec: output是input中substring出现的次数 *)
+(* Pre: no additional constraints for `how_many_times` by default *)
+Definition Pre (input substring : list ascii) : Prop := True.
+
 Definition Spec (input substring : list ascii) (output : nat) : Prop :=
   exists indices : list nat,
     NoDup indices /\

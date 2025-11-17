@@ -42,7 +42,6 @@ Inductive coord_order (c1 c2 : nat * nat) : Prop :=
   | col_gt : fst c1 = fst c2 -> snd c1 > snd c2 -> coord_order c1 c2.
 
 (*
- * 修正后的 is_sorted 定义：
  * 检查一个坐标列表是否根据 coord_order 关系进行了排序。
  * 这个版本可以通过 Coq 的终止性检查。
  *)
@@ -93,6 +92,8 @@ Fixpoint sort_coords (coords : list (nat * nat)) : list (nat * nat) :=
 
 Definition get_row_impl (lst : list (list nat)) (x : nat) : list (nat * nat) :=
   sort_coords (collect_all_coords lst 0 x).
+
+Definition Pre (lst : list (list nat)) (x : nat) : Prop := True.
 
 Definition get_row_spec (lst : list (list nat)) (x : nat) (res : list (nat * nat)) : Prop :=
   res = get_row_impl lst x.

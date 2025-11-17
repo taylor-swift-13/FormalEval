@@ -8,6 +8,9 @@ is_equal_to_sum_even(8) == True
 Require Import Coq.ZArith.ZArith.
 Open Scope Z_scope.
 
+(* 任意整数 n 均可 *)
+Definition Pre (n : Z) : Prop := True.
+
 (* 正的偶数：存在 k>0 使 e = 2*k *)
 Definition is_positive_even (e : Z) : Prop :=
   exists k : Z, e = 2 * k /\ (k > 0)%Z.

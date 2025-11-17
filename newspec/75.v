@@ -13,14 +13,9 @@ Require Import Arith.
 Definition is_prime (n : nat) : Prop :=
   n > 1 /\ forall d : nat, d mod n = 0 -> d = 1 \/ d = n.
 
-(*
-  程序规约：is_multiply_prime_spec
-  - a: 输入的自然数
-  - b: 程序的布尔输出
+Definition Pre (a : nat) : Prop := (a < 100)%nat.
 
-  规约描述了在 a < 100 的前提下，输出 b 为 true
-  当且仅当 a 是三个素数的乘积。
-*)
 Definition is_multiply_prime_spec (a : nat) (b : bool) : Prop :=
   (a < 100) ->
   (b = true <-> exists p1 p2 p3, is_prime p1 /\ is_prime p2 /\ is_prime p3 /\ a = p1 * p2 * p3).
+

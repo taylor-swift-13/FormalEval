@@ -58,5 +58,8 @@ Fixpoint parse_music_impl_aux (notes : list (list ascii)) : list nat :=
 Definition parse_music_impl (input : list ascii) : list nat :=
   parse_music_impl_aux (SplitOnSpaces input).
 
+(* Pre: no additional constraints for `parse_music` by default *)
+Definition Pre (input : list ascii) : Prop := True.
+
 Definition parse_music_Spec (input : list ascii) (output : list nat) : Prop :=
   output = parse_music_impl input.

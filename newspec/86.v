@@ -97,6 +97,8 @@ Fixpoint extract_spaces (l : list ascii) : list ascii :=
         extract_spaces t
   end.
 
+Definition Pre (s : list ascii) : Prop := True.
+
 Definition anti_shuffle_impl (s : list ascii) : list ascii :=
   let words := split_words s [] in
   let spaces := extract_spaces s in

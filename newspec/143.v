@@ -22,6 +22,12 @@ Constraints:
 Require Import Coq.Lists.List Coq.Strings.Ascii Coq.Arith.Arith Coq.Bool.Bool.
 Import ListNotations.
 
+(* 约束：1 <= 长度 <= 100；内容为英文字母或空格 *)
+Definition Pre (sentence : list ascii) : Prop :=
+  1 <= length sentence /\ length sentence <= 100 /\
+  Forall (fun c =>
+    let n := nat_of_ascii c in c = " "%char \/ (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122)) sentence.
+
 Fixpoint has_divisor_from (n d : nat) : bool :=
   match d with
   | 0 => false

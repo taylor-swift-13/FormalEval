@@ -18,6 +18,9 @@ Require Import Coq.ZArith.ZArith.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
+(* 输入两个列表长度必须相等 *)
+Definition Pre (game guess : list Z) : Prop := length game = length guess.
+
 (*
   compare_spec 定义了 'compare' 函数的规约。
 

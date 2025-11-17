@@ -1,3 +1,14 @@
+(* def encrypt(s):
+"""Create a function encrypt that takes a string as an argument and
+returns a string encrypted with the alphabet being rotated.
+The alphabet should be rotated in a manner such that the letters
+shift down by two multiplied to two places.
+For example:
+encrypt('hi') returns 'lm'
+encrypt('asdfghjkl') returns 'ewhjklnop'
+encrypt('gf') returns 'kj'
+encrypt('et') returns 'ix'
+""" *)
 Require Import Coq.Lists.List.
 Require Import Coq.Strings.Ascii.
 Import ListNotations.
@@ -18,6 +29,8 @@ Definition char_relation (c_in c_out : ascii) : Prop :=
   (* 对于非小写字母的任何其他字符，它保持不变 *)
   | _ => c_out = c_in
   end.
+
+Definition Pre (s : list ascii) : Prop := True.
 
 (*
   encrypt_spec (程序规约)

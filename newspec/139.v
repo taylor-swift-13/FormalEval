@@ -15,6 +15,9 @@ Require Import Coq.Lists.List.
 Require Import Coq.Init.Nat.
 Import ListNotations.
 
+(* n > 0 *)
+Definition Pre (n : nat) : Prop := n > 0.
+
 Fixpoint fact (n : nat) : nat :=
   match n with
   | 0 => 1

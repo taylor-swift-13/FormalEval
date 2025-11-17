@@ -39,5 +39,8 @@ Definition fizz_buzz_impl (n : nat) : nat :=
     0.
 
 
+(* Pre: no additional constraints for `fizz_buzz` by default *)
+Definition Pre (n : nat) : Prop := True.
+
 Definition fizz_buzz_spec (n : nat) (output : nat) : Prop :=
   output = fizz_buzz_impl n.

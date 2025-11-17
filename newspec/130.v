@@ -19,6 +19,9 @@ Require Import Arith.
 Require Import List.
 Import ListNotations.
 
+(* n 为非负整数（nat 已满足），无额外约束 *)
+Definition Pre (n : nat) : Prop := True.
+
 (* 定义一个归纳关系来描述Tribonacci序列中每个元素的值 *)
 Inductive trib_val : nat -> nat -> Prop :=
   | trib_1 : trib_val 1 3

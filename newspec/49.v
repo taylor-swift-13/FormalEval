@@ -14,5 +14,8 @@ Require Import ZArith.
 Open Scope Z_scope.
 
 
+(* Pre: require non-negative exponent and positive modulus *)
+Definition Pre (n p : Z) : Prop := (n >= 0 /\, p > 0).
+
 Definition Spec (n p output : Z) : Prop :=
   (n >= 0 /\ p > 0) -> output = (2 ^ n) mod p.

@@ -20,6 +20,9 @@ Definition decode_char (c : ascii) : ascii :=
   let a := nat_of_ascii "a" in
   ascii_of_nat (a + (n - a + 21) mod 26).
 
+(* Pre: no special constraints for `decode_shift` *)
+Definition Pre (l' : list ascii) : Prop := True.
+
 (* decode_shift 程序的规约 *)
 Definition decode_shift_spec (l' l : list ascii) : Prop :=
   l = map decode_char l'.

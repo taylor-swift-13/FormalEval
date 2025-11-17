@@ -9,6 +9,9 @@ even_odd_count(123) ==> (1, 2)
 Require Import Coq.Lists.List Coq.Strings.Ascii Coq.ZArith.ZArith Coq.Arith.Arith.
 Open Scope Z_scope.
 
+(* 任意整数输入 *)
+Definition Pre (num : Z) : Prop := True.
+
 Fixpoint count_digits_acc (l : list Z) (acc : nat * nat) : nat * nat :=
   match l with
   | nil => acc

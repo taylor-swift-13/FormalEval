@@ -31,6 +31,9 @@ Definition odd_filter (l : list Z) : list Z := filter (fun x => Z.odd x) l.
 Fixpoint insert_asc (x : Z) (l : list Z) : list Z := match l with []=>[x] | h::t => if Z.leb x h then x::l else h::insert_asc x t end.
 Fixpoint sort_asc (l : list Z) : list Z := match l with []=>[] | h::t => insert_asc h (sort_asc t) end.
 
+(* n 为正整数 *)
+Definition Pre (n : Z) : Prop := n > 0.
+
 Definition get_odd_collatz_impl (n : Z) : list Z :=
   let seq := collatz_list_compute (Z.to_nat (Z.abs n) + 10000)%nat (Z.max 1 n) in
   sort_asc (odd_filter seq).

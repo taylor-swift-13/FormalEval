@@ -43,6 +43,9 @@ Definition IsPrimeFib (n : nat) : Prop :=
   IsPrime n /\ IsFib n.
 
 
+(* Pre: n must be at least 1 to have a valid n-th prime-fibonacci number *)
+Definition Pre (n : nat) : Prop := (n >= 1)%nat.
+
 Definition prime_fib_spec (n r : nat) : Prop :=
   IsPrimeFib r /\
   (exists (S : list nat),

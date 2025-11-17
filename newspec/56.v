@@ -28,5 +28,8 @@ Inductive is_correctly_bracketed : list ascii -> Prop :=
                   is_correctly_bracketed (l1 ++ l2).
 
 
+(* Pre: no special constraints for `correct_bracketing` *)
+Definition Pre (brackets : list ascii) : Prop := True.
+
 Definition correct_bracketing_spec (brackets : list ascii) (b : bool) : Prop :=
   b = true <-> is_correctly_bracketed brackets.

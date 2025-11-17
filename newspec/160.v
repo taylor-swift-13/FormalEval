@@ -35,6 +35,17 @@ Open Scope Z_scope.
 (* Python的 '//' (floor division) 对于非负数与Coq的Z.div行为一致。*)
 Definition Zdiv_floor := Z.div.
 
+(* 约束：
+   - 操作符长度 = 操作数长度 - 1，且操作符至少1个、操作数至少2个
+   - 操作数非负
+   - 操作符仅限于 + - * / ^
+*)
+Definition Pre (operators : list ascii) (operands : list Z) : Prop :=
+  S (length operators) = length operands /\
+  (1 <= length operators)%nat /\ (2 <= length operands)%nat /\
+  Forall (fun z => 0 <= z) operands /\
+  Forall (fun c => c = "+"%char \/ c = "-"%char \/ c = "*"%char \/ c = "/"%char \/ c = "^"%char) operators.
+
 (* 此函数将字符形式的运算符解释为对应的二元整数运算。*)
 Definition interp_op (op : ascii) : (Z -> Z -> Z) :=
   match op with

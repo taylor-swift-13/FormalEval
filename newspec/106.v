@@ -12,6 +12,9 @@ Require Import List.
 Require Import Factorial.
 Import ListNotations.
 
+(* n 为自然数，无额外约束 *)
+Definition Pre (n : nat) : Prop := True.
+
 Definition f_spec (n : nat) (l : list nat) : Prop :=
   (* 规约作为输入/输出关系，而不是直接计算输出。
      l 的长度必须为 n，并且对于每个位置 i (问题陈述中从 1 开始)，

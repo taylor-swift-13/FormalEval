@@ -14,6 +14,9 @@ Require Import Coq.Arith.Arith.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
+(* 输入列表可含任意自然数（允许为空） *)
+Definition Pre (lst : list nat) : Prop := True.
+
 (* 辅助定义1: 判断一个数是否为素数 *)
 Definition IsPrime (n : nat) : Prop :=
   n > 1 /\ (forall d : nat, d mod n = 0 -> d = 1 \/ d = n).

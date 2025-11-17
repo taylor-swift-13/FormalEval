@@ -18,6 +18,11 @@ Require Import Coq.Lists.List.
 Require Import Coq.Arith.PeanoNat.
 Import ListNotations.
 
+(* 输入列表长度为 2，且每个字符仅为 '(' 或 ')' *)
+Definition Pre (inputs : list (list ascii)) : Prop :=
+  length inputs = 2 /\ Forall (fun s =>
+    Forall (fun c => c = "("%char \/ c = ")"%char) s) inputs.
+
 (*
   辅助函数 check_parens_inner
   这个函数保持不变，因为它已经是在处理 list ascii。

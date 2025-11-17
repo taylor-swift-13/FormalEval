@@ -18,6 +18,10 @@ Require Import Arith.
 Import ListNotations.
 Open Scope string_scope. (* 打开作用域以使用 "%char" 表示法 *)
 
+(* 预条件：消息只包含英文字母大小写 *)
+Definition Pre (l_in : list ascii) : Prop :=
+  Forall (fun c => let n := nat_of_ascii c in (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122)) l_in.
+
 (* 辅助函数：检查一个字符是否是元音 *)
 Definition is_vowel (c : ascii) : bool :=
   match c with

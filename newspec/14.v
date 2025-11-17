@@ -16,6 +16,9 @@
 Require Import List Ascii.
 Import ListNotations.
 
+(* Pre: no additional constraints for `all_prefixes` by default *)
+Definition Pre (input : list ascii) : Prop := True.
+
 (* prefix p s := p 是 s 的前缀 *)
 Definition prefix  (l1 l2 : list ascii) : Prop :=
   exists rest : list ascii, l2 = l1 ++ rest.

@@ -34,6 +34,9 @@ Definition nat_of_digit (c : ascii) : nat :=
   - base:   转换的目标基数 (>= 2)。
   - output: 转换后得到的字符串。
 *)
+(* Pre: base must be at least 2 for a valid base conversion *)
+Definition Pre (x : nat) (base : nat) : Prop := (base >= 2)%nat.
+
 Definition Spec (x : nat) (base : nat) (output : list ascii) : Prop :=
   (* 将字符列表转换为一个由数字组成的列表 *)
   let digits := List.map nat_of_digit output in
@@ -52,3 +55,6 @@ Definition Spec (x : nat) (base : nat) (output : list ascii) : Prop :=
     这等价于 ∑ (d_i * base^(k-i))。
    *)
   (fold_left (fun acc d => acc * base + d) digits 0 = x).
+
+(* Pre: base must be at least 2 for a valid base conversion *)
+Definition Pre (x : nat) (base : nat) : Prop := (base >= 2)%nat.

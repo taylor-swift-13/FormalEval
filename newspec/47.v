@@ -18,6 +18,9 @@ Require Import Coq.Arith.Arith.
 Import ListNotations.
 Open Scope R_scope.
 
+(* Pre: input must be non-empty to define median *)
+Definition Pre (input : list R) : Prop := input <> []%list.
+
 Definition Spec(input : list R) (output : R) : Prop :=
   exists Sorted_input,
     Sorted Rle Sorted_input /\

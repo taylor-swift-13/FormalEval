@@ -12,9 +12,11 @@ is_simple_power(5, 3) => false
 """ *)
 Require Import Arith. (* 导入包含自然数和幂运算的算术库 *)
 
+Definition Pre (x n : nat) : Prop := True.
 (*
   is_simple_power_spec 定义了输入 x, n 和布尔值输出 result 之间的关系。
   它规定：当且仅当存在一个自然数 k，使得 x = n^k 成立时，函数的返回结果 result 为 true。
 *)
 Definition is_simple_power_spec (x n : nat) (result : bool) : Prop :=
   result = true <-> (exists k : nat, x = n ^ k).
+

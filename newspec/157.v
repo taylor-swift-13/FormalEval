@@ -11,6 +11,9 @@ right_angle_triangle(1, 2, 3) == False
 Require Import ZArith.
 Open Scope Z_scope.
 
+(* 任意整数边长输入 *)
+Definition Pre (a b c : Z) : Prop := True.
+
 (*
   right_angle_triangle_spec a b c res
 

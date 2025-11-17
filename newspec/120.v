@@ -31,6 +31,12 @@ Require Import Coq.Sorting.Sorted.      (* Sorted定义 *)
 Open Scope Z_scope.
 Open Scope list_scope.
 
+(* 约束：1 <= length arr <= 1000；元素绝对值 <= 1000；0 <= k <= length arr *)
+Definition Pre (arr : list Z) (k : nat) : Prop :=
+       length arr >= 1 /\ length arr <= 1000 /\
+       Forall (fun z => (-1000 <= z /\ z <= 1000)) arr /\
+       k <= length arr.
+
 (*
  * @brief 程序规约：top_k_spec
  * @param arr 输入的整数列表

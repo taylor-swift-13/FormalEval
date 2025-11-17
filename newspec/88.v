@@ -26,6 +26,8 @@ Definition is_sorted_ascending (l : list nat) : Prop :=
 Definition is_sorted_descending (l : list nat) : Prop :=
   forall i j, i < j -> j < length l -> nth i l 0 >= nth j l 0.
 
+Definition Pre (input : list nat) : Prop := True.
+
 (* sort_array 函数的程序规约 *)
 Definition sort_array_spec (input output : list nat) : Prop :=
   (* 输出必须是输入的排列 *)

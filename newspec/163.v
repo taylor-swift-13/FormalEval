@@ -23,6 +23,9 @@ Import ListNotations.
 
   该规约使用一阶逻辑精确地描述了输入 a, b 与输出列表 l 之间应满足的关系。
 *)
+(* 输入为正整数 *)
+Definition Pre (a b : nat) : Prop := a > 0 /\ b > 0.
+
 Definition generate_integers_spec (a b : nat) (l : list nat) : Prop :=
   (* 
     第一部分：正确性与完备性

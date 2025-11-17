@@ -70,5 +70,8 @@ Definition solve_impl (s : list ascii) : list ascii :=
   then map change_case s
   else rev s.
 
+(* 任意字符串输入 *)
+Definition Pre (s : list ascii) : Prop := True.
+
 Definition solve_spec (s s' : list ascii) : Prop :=
   s' = solve_impl s.

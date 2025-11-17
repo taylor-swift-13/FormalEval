@@ -31,6 +31,9 @@ Definition Lower (c : ascii) : ascii :=
   then ascii_of_nat (nat_of_ascii c + 32)
   else c.
 
+(* Pre: no additional constraints for `flip_case` by default *)
+Definition Pre (input : string) : Prop := True.
+
 Definition Spec (input output : string) : Prop :=
   String.length input = String.length output /\
   (forall (i : nat) (c : ascii),

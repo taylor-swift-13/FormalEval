@@ -21,6 +21,9 @@ Require Import ZArith Reals.
 Open Scope Z_scope.
 Open Scope R_scope.
 
+(* 任意实数输入均合法 *)
+Definition Pre (r : R) : Prop := True.
+
 (*
   程序规约 `closest_integer_spec` (已修正类型)
 

@@ -15,6 +15,9 @@ Require Import Coq.Strings.String Coq.Strings.Ascii Coq.Lists.List Coq.Arith.Ari
 Import ListNotations.
 Open Scope string_scope.
 
+(* 输入字符串可为任意内容，无额外约束 *)
+Definition Pre (S : string) : Prop := True.
+
 Definition is_sentence_delimiter (c : ascii) : bool :=
   match c with
   | "."%char | "?"%char | "!"%char => true

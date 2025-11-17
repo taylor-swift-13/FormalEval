@@ -14,6 +14,10 @@
 Require Import ZArith.
 Open Scope Z_scope.
 
+(* Pre: at least one of `a` or `b` is non-zero (gcd(0,0) is undefined) *)
+Definition Pre (a b : Z) : Prop :=
+  a <> 0 \/ b <> 0.
+
 Definition Spec (a b output : Z) : Prop :=
   (a mod output = 0) /\
   (b mod output = 0) /\

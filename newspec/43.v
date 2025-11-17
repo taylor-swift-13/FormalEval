@@ -22,6 +22,9 @@ Require Import Coq.ZArith.ZArith.
 Import ListNotations.
 Open Scope Z_scope.
 
+(* Pre: no special constraints for `pairs_sum_to_zero` *)
+Definition Pre (input : list Z) : Prop := True.
+
 Definition Spec (input : list Z) (output : bool) : Prop :=
   (*
     存在两个不同的索引 i, j，

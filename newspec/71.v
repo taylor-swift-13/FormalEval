@@ -43,6 +43,7 @@ Definition is_rounded_to_2_decimals (rounded_val original_val : R) : Prop :=
   (exists z : Z, rounded_val = IZR z / 100) /\
   Rabs (rounded_val - original_val) <= /200. (* 1/200 = 0.005 *)
 
+Definition Pre (a b c : R) : Prop := True.
 (*
   triangle_area_spec: 这是最终的程序规约。
   它将输入 a, b, c 与输出 ret 关联起来。

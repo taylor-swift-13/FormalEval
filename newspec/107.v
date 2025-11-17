@@ -19,6 +19,9 @@ Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and
 Require Import Coq.Arith.Arith Coq.Lists.List Coq.Bool.Bool.
 Import ListNotations.
 
+(* n 为正整数 *)
+Definition Pre (n : nat) : Prop := n > 0.
+
 Fixpoint to_digits_helper (n k : nat) {struct k} : list nat :=
   match k with
   | 0 => []

@@ -54,6 +54,9 @@ Inductive is_subsequence {A : Type} : list A -> list A -> Prop :=
   - input: 输入的值列表。
   - output: 函数过滤后输出的整数值列表。
 *)
+(* Pre: no additional constraints for `filter_integers` by default *)
+Definition Pre (input : list py_value) : Prop := True.
+
 Definition Spec (input : list py_value) (output : list py_value) : Prop :=
   (* 1. 保证 output 是 input 的子序列。
         这同时保证了 output 中的元素都来自 input，并且它们的相对顺序不变。

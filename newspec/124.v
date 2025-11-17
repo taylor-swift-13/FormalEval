@@ -21,6 +21,9 @@ Require Import Coq.Arith.Arith.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
+(* 作为校验函数，输入可为任意字符列表 *)
+Definition Pre (s : list ascii) : Prop := True.
+
 (* 辅助函数：将一个数字字符转换为 nat *)
 Definition nat_of_digit (c : ascii) : option nat :=
   match c with

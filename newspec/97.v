@@ -12,6 +12,9 @@ multiply(14,-15) should return 20.
 Require Import ZArith.
 Open Scope Z_scope.
 
+(* 任意两个整数输入均合法 *)
+Definition Pre (a b : Z) : Prop := True.
+
 (*
   multiply_spec_abs 定义了程序 multiply 的一个更精确的规约。
   它是一个命题（Prop），描述了输入 a, b 和输出 r 之间的关系。

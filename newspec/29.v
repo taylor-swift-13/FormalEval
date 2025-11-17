@@ -25,6 +25,9 @@ Inductive is_subsequence {A : Type} : list A -> list A -> Prop :=
   | sub_cons_tl : forall x l1 l2, is_subsequence l1 l2 -> is_subsequence l1 (x :: l2).
 
 
+(* Pre: no additional constraints for `filter_by_prefix` by default *)
+Definition Pre (input : list string) : Prop := True.
+
 Definition Spec (input : list string) (substring : string) (output : list string) : Prop :=
   (* 1. output 是 input 的一个子序列。
         这个自定义的 is_subsequence 保证了：

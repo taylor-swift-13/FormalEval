@@ -14,6 +14,9 @@ Require Import Coq.Lists.List.
 Require Import Coq.Arith.Arith.
 Import ListNotations.
 
+(* n 必须是正整数 *)
+Definition Pre (n : nat) : Prop := n > 0.
+
 
 Definition make_a_pile_spec (n : nat) (out : list nat) : Prop :=
   length out = n /\

@@ -13,6 +13,8 @@ Require Import Coq.ZArith.ZArith.
 Import ListNotations.
 
 Open Scope Z_scope.
+
+Definition Pre (xs : list Z) : Prop := True.
 (*
   [derivative_spec xs ys] 定义了输入列表 xs 和输出列表 ys 之间的关系。
   xs: 代表多项式 P(x) 系数的列表，其中 (nth i xs 0) 是 x^i 的系数。
@@ -33,3 +35,5 @@ Definition derivative_spec (xs ys : list Z) : Prop :=
        - `nth (i + 1) xs 0` 获取 xs 在索引 i+1 处的值。
        - `Z.of_nat (i + 1)` 将自然数索引 i+1 转换为整数类型以进行乘法。*)
     nth i ys 0 = (Z.of_nat (i + 1)) * (nth (i + 1) xs 0).
+
+

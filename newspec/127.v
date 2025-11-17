@@ -28,6 +28,11 @@ Import ListNotations.
 Open Scope Z_scope.
 Open Scope nat_scope.
 
+(* 区间为闭区间，且满足 start <= end *)
+Definition Pre (i1 i2 : Z * Z) : Prop :=
+  let '(s1,e1) := i1 in
+  let '(s2,e2) := i2 in s1 <= e1 /\ s2 <= e2.
+
 
 Definition Is_prime (n : nat) : Prop :=
   n > 1 /\ (forall d, 1 < d < n -> n mod d <> 0).

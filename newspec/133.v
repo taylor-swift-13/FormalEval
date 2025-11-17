@@ -13,6 +13,9 @@ Require Import Coq.Reals.Reals.
 Require Import Coq.ZArith.ZArith.
 Import ListNotations.
 
+(* 任意实数列表均可 *)
+Definition Pre (lst : list R) : Prop := True.
+
 Open Scope R_scope.
 (* z 是 x 的 ceiling 的一个等价刻画： IZR z - 1 < x <= IZR z *)
 Definition is_ceil (x : R) (z : Z) : Prop :=

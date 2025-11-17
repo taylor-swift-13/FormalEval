@@ -29,6 +29,9 @@ Require Import Coq.Sorting.Sorted.
 Open Scope Z_scope.
 Import ListNotations.
 
+(* 输入数组元素互不相同（唯一性），可空列表允许直接返回 True *)
+Definition Pre (arr : list Z) : Prop := NoDup arr.
+
 Fixpoint is_sorted_bool (l : list Z) : bool :=
   match l with
   | [] => true

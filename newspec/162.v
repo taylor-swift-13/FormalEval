@@ -10,6 +10,9 @@ Require Import Coq.Strings.Ascii.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
+(* 任意字符串输入 *)
+Definition Pre (text : list ascii) : Prop := True.
+
 (*
   我们无法在 Coq 的规约中直接计算 MD5。
   因此，我们声明一个“参数”（Parameter），把它当作一个已知的、理想的 MD5 函数。

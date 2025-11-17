@@ -25,6 +25,10 @@ Output: [1] *)
 Require Import Coq.Lists.List Coq.Arith.Arith.
 Import ListNotations.
 
+(* k 至少为 1；网格非空且每行非空 *)
+Definition Pre (grid : Grid) (k : nat) : Prop :=
+  k >= 1 /\ grid <> [] /\ Forall (fun row => row <> []) grid.
+
 
 Definition Grid := list (list nat).
 Definition Pos := (nat * nat)%type.

@@ -14,6 +14,9 @@ Require Import Coq.ZArith.ZArith.    (* 提供整数类型 Z 及其操作 *)
 Require Import Coq.Sorting.Sorted.    (* 提供 Sorted 的定义 *)
 Import ListNotations.
 
+(* Pre: no additional constraints for `unique` by default *)
+Definition Pre (input : list Z) : Prop := True.
+
 (*
   规约 Spec(input, output) 定义了 "output 是 input 的排序后去重版本"
 *)

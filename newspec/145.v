@@ -18,6 +18,9 @@ Require Import Arith.
 Import ListNotations.
 Open Scope Z_scope.
 
+(* 任意整数列表输入均可 *)
+Definition Pre (l_in : list Z) : Prop := True.
+
 Fixpoint sum_digits_pos_fuel (fuel : nat) (n : Z) : Z :=
   match fuel with
   | O => 0

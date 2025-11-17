@@ -30,7 +30,8 @@ Definition Is_Sorted(l : list nat) : Prop :=
   forall i j : nat,
     i < j /\ j < length l -> nth i l 0 <= nth j l 0.
 
-
+(* Pre: no additional constraints for `factorize` by default *)
+Definition Pre (input : nat) : Prop := True.
 
 Definition Spec (input : nat) (output : list nat) : Prop :=
   Is_Sorted output /\

@@ -30,6 +30,9 @@ Import ListNotations.
 (* 为了使用 nth 函数，我们需要一个默认的 ascii 字符 *)
 Definition default_ascii : ascii := " "%char.
 
+(* Pre: no additional constraints for `encode/decode_cyclic` by default *)
+Definition Pre (input : list ascii) : Prop := True.
+
 Definition Spec_logic (input output : list ascii) : Prop :=
   (* 1. 基础约束：长度相等 *)
   length input = length output /\

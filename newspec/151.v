@@ -17,6 +17,9 @@ Import ListNotations.
 Open Scope bool_scope. (* 打开布尔作用域以使用 && 符号 *)
 Open Scope Z_scope.
 
+(* 输入为任意整数列表，允许为空 *)
+Definition Pre (l : list Z) : Prop := True.
+
 (*
   double_the_difference_spec 是程序的规约 (Spec)。
   它是一个一阶逻辑断言，描述了输入 l (一个整数列表) 和输出 res (一个整数) 之间的关系。

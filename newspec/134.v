@@ -17,6 +17,9 @@ Require Import Coq.Arith.PeanoNat.
 Require Import Coq.Init.Nat.
 Import ListNotations.
 
+(* 任意字符列表均可 *)
+Definition Pre (s : list ascii) : Prop := True.
+
 (* 空格字符 *)
 Definition space : ascii := Ascii.ascii_of_nat 32.
 

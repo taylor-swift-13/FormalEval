@@ -17,6 +17,15 @@ Require Import Coq.Strings.String Coq.Strings.Ascii.
 Require Import Arith.
 Require Import Coq.Logic.FunctionalExtensionality.
 
+(* 输入字符串只包含英文字母 *)
+Definition Pre (word : string) : Prop :=
+  let fix all_letters (w : string) : Prop :=
+    match w with
+    | EmptyString => True
+    | String ch rest =>
+        let n := nat_of_ascii ch in (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122) /\ all_letters rest
+    end in all_letters word.
+
 (*
  * 辅助定义
  *)

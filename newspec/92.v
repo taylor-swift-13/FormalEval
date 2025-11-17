@@ -21,6 +21,9 @@ Require Import QArith ZArith.
 Open Scope Q_scope.
 Open Scope Z_scope.
 
+(* 任意三个有理数输入均可，无附加约束 *)
+Definition Pre (x y z : Q) : Prop := True.
+
 (*
   any_int_spec is the program specification for the any_int function.
   It describes the relationship between the inputs x, y, z and the output b.

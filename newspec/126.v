@@ -19,6 +19,9 @@ Import ListNotations.
 
 
 
+(* 仅非负整数（nat 已满足），无额外约束 *)
+Definition Pre (l : list nat) : Prop := True.
+
 (* 程序规约 (Spec) *)
 Definition is_sorted_spec (l : list nat) (b : bool) : Prop :=
   Sorted Nat.lt l <-> b = true.

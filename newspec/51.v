@@ -23,7 +23,8 @@ Import ListNotations.
  * 描述: 判断一个 ASCII 字符是否是元音字母（包括大小写）。
  * @param c: ascii - 输入的字符。
  * @return: bool - 如果是元音则返回 true，否则返回 false。
- *)
+ * )
+*)
 Definition is_vowel (c : ascii) : bool :=
   match c with
   | "a"%char | "e"%char | "i"%char | "o"%char | "u"%char => true
@@ -39,5 +40,8 @@ Definition is_vowel (c : ascii) : bool :=
  * @param output: list ascii - 函数的输出字符列表。
  * @return: Prop - 一个表示输入和输出之间关系的命题。
  *)
+(* Pre: no special constraints for `remove_vowels` *)
+Definition Pre (input : list ascii) : Prop := True.
+
 Definition remove_vowels_spec (input : list ascii) (output : list ascii) : Prop :=
   output = filter (fun c => negb (is_vowel c)) input.

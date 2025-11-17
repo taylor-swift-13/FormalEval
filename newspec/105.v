@@ -26,6 +26,10 @@ Require Import Coq.Sorting.Sorted.     (* 引入 Sorted 属性的定义 *)
 Require Import Permutation.
 Import ListNotations. (* 启用列表的 [a; b; c] 写法 *)
 Open Scope Z_scope.
+
+(* 输入可以包含任意整数 *)
+Definition Pre (l_in : list Z) : Prop := True.
+
 (*
   辅助函数 (1):
   定义一个布尔函数，用于检查一个整数 `z` 是否在 1 到 9 之间（包含边界）。

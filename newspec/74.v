@@ -20,25 +20,11 @@ Require Import Coq.Arith.Arith.
 (* 允许使用列表的标准表示法，例如 [a; b; c] *)
 Import ListNotations.
 
-(**
- * @function total_chars
- * @brief 计算一个字符串列表中所有字符的总数。
- * @param l: 一个字符串列表 (list string)。
- * @return: 列表中所有字符串长度之和 (nat)。
- *)
+Definition Pre (lst1 lst2 : list string) : Prop := True.
+
 (**
  * @spec total_match_spec
  * @brief 程序规约：选择两个字符串列表中总字符数较少的那个作为输出（若相等则选择第一个）。
- *
- * 使用局部函数 `sum` 将表达式简化：
- *   sum l = fold_left (fun acc s => acc + String.length s) l 0
- *
- * @param lst1: 第一个输入字符串列表。
- * @param lst2: 第二个输入字符串列表。
- * @param output: 函数的输出字符串列表。
- * @prop:
- *   - 如果 lst1 的总字符数小于或等于 lst2，则输出必须是 lst1。
- *   - 否则（即 lst1 的总字符数大于 lst2），输出必须是 lst2。
  *)
 Definition total_match_spec (lst1 lst2 output : list string) : Prop :=
   let sum := fun l => fold_left (fun acc s => acc + String.length s) l 0 in

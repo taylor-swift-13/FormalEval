@@ -10,6 +10,9 @@ Require Import Coq.ZArith.ZArith.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
+(* Pre: input must be non-empty *)
+Definition Pre (input : list Z) : Prop := input <> []%list.
+
 Definition Spec(input : list Z) (output : Z) : Prop :=
   In output input /\
   forall x, In x input -> (x <= output)%Z.

@@ -9,6 +9,9 @@ Require Import Coq.ZArith.ZArith.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
+(* nums 非空 *)
+Definition Pre (nums : list Z) : Prop := nums <> [].
+
 Open Scope Z_scope.
 (* 定义一个函数来计算整数列表的和 *)
 Definition list_sum (l : list Z) : Z :=

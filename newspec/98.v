@@ -15,6 +15,9 @@ Require Import Coq.Arith.Arith.
 Open Scope string_scope.
 Import ListNotations.
 
+(* 输入字符串可为任意内容 *)
+Definition Pre (s : string) : Prop := True.
+
 Definition is_uppercase_vowel_bool (c : ascii) : bool :=
   match c with
   | "A"%char | "E"%char | "I"%char | "O"%char | "U"%char => true

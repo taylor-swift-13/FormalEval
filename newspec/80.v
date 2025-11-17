@@ -15,6 +15,7 @@ Require Import Coq.Lists.List.
 Require Import Arith.
 Import ListNotations.
 
+Definition Pre (s : list ascii) : Prop := True.
 (*
   is_happy_spec s output
 

@@ -31,6 +31,11 @@ Require Import ZArith.
 Require Import List.
 Import ListNotations.
 Open Scope Z_scope.
+
+(* 约束：0 <= number,need,remaining <= 1000 *)
+Definition Pre (number need remaining : Z) : Prop :=
+  0 <= number /\ 0 <= need /\ 0 <= remaining /\
+  number <= 1000 /\ need <= 1000 /\ remaining <= 1000.
 (*
   number: 已吃的胡萝卜数量
   need: 需要吃的胡萝卜数量

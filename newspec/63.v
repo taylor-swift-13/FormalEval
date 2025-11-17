@@ -40,6 +40,7 @@ Inductive is_fibfib : nat -> nat -> Prop :=
       is_fibfib (S (S n)) res_n2 ->
       is_fibfib (S (S (S n))) (res_n + res_n1 + res_n2).
 
+Definition Pre (n : nat) : Prop := True.
 (*
   fibfib_spec 是对 fibfib 函数的程序规约。
 
@@ -52,3 +53,4 @@ Inductive is_fibfib : nat -> nat -> Prop :=
 *)
 Definition fibfib_spec (n : nat) (res : nat) : Prop :=
   is_fibfib n res.
+

@@ -14,6 +14,9 @@ Require Import Coq.Arith.Arith.
 Require Import Coq.Sorting.Sorted. (* 引入 Sorted 定义 *)
 Import ListNotations.
 
+(* n 是自然数即非负，无附加约束 *)
+Definition Pre (n : nat) : Prop := True.
+
 (* is_prime 的定义保持不变 *)
 Definition is_prime (p : nat) : Prop :=
   p > 1 /\ forall n : nat, 1 < n < p -> ~ (n mod p = 0).

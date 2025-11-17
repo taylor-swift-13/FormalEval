@@ -10,6 +10,9 @@ for x_or_y(15, 8, 5) == 5
 (* 导入Coq算术库，以使用取模运算(mod)和大小比较 *)
 Require Import Arith.
 
+(* 任意自然数输入均可 *)
+Definition Pre (n x y : nat) : Prop := True.
+
 (*
   1. 自定义 'MyPrime' (素数) 规约，使用取模运算
   这个定义更加接近于一个可执行的素数判断逻辑。

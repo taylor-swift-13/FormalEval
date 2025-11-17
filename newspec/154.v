@@ -13,6 +13,9 @@ Require Import Coq.Lists.List.
 Require Import Coq.Strings.Ascii.
 Import ListNotations.
 
+(* 任意字符串输入，无额外约束 *)
+Definition Pre (a b : list ascii) : Prop := True.
+
 (* 定义：sub 是 main 的子串 *)
 Definition is_substring (sub main : list ascii) : Prop :=
   exists prefix suffix, main = prefix ++ sub ++ suffix.

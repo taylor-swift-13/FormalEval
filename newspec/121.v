@@ -7,6 +7,9 @@ solution([30, 13, 24, 321]) ==>0*)
 Require Import Coq.Arith.Arith Coq.Lists.List Coq.Bool.Bool.
 Import ListNotations.
 
+(* 非空整数列表 *)
+Definition Pre (l : list nat) : Prop := l <> [].
+
 Fixpoint sum_odd_in_even_pos_aux (l : list nat) (idx : nat) : nat :=
   match l with
   | [] => 0

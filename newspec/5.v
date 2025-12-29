@@ -13,9 +13,9 @@ Require Import Coq.Arith.PeanoNat.
 
 Import ListNotations.
 
-Definition intersperse_pre (input output : list Z) : Prop := True.
+Definition problem_5_pre (input output : list Z) : Prop := True.
 
-Definition intersperse_spec (input output : list Z) (d : Z) : Prop :=
+Definition problem_5_spec (input output : list Z) (d : Z) : Prop :=
   (input = [] -> output = []) /\
   (forall n : nat,
       length input = n -> 1 <= n ->

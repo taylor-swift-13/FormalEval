@@ -71,15 +71,6 @@ Fixpoint ForallChars (P : ascii -> Prop) (s : string) : Prop :=
 
 
 (*
-  辅助函数: 将 list ascii 转换为 string
-*)
-Fixpoint string_of_list (l : list ascii) : string :=
-  match l with
-  | [] => EmptyString
-  | c :: l' => String c (string_of_list l')
-  end.
-
-(*
   实现函数: separate_paren_groups_impl
 *)
 Fixpoint separate_paren_groups_aux (s : string) (count : nat) (current : list ascii) (acc : list string) : list string :=
@@ -87,7 +78,7 @@ Fixpoint separate_paren_groups_aux (s : string) (count : nat) (current : list as
   | EmptyString => 
     match current with
     | [] => acc
-    | _ => acc ++ [string_of_list (List.rev current)]
+    | _ => acc ++ [string_of_list_ascii (List.rev current)]
     end
   | String h t =>
     if ascii_dec h lparen then
@@ -98,7 +89,7 @@ Fixpoint separate_paren_groups_aux (s : string) (count : nat) (current : list as
       | S n' =>
         let new_current := h :: current in
         if Nat.eqb n' 0 then
-          separate_paren_groups_aux t n' [] (acc ++ [string_of_list (List.rev new_current)])
+          separate_paren_groups_aux t n' [] (acc ++ [string_of_list_ascii (List.rev new_current)])
         else
           separate_paren_groups_aux t n' new_current acc
       end

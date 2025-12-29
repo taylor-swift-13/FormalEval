@@ -27,27 +27,29 @@ Spec(input, substring, output) :=
 Require Import List.
 Import ListNotations.
 Require Import Ascii.
+Require Import String.
 Require Import Nat.
+Open Scope string_scope.
 
 
 
 (* 表示从 input 的第 i 位开始，与 substr 完全匹配 *)
-Definition match_at (i : nat) (input substr : list ascii) : Prop :=
-  length substr > 0 /\
-  i + length substr <= length input /\
-  (forall j, j < length substr -> nth_error input (i + j) = nth_error substr j).
+Definition match_at (i : nat) (input substr : string) : Prop :=
+  String.length substr > 0 /\
+  i + String.length substr <= String.length input /\
+  (forall j, j < String.length substr -> String.get (i + j) input = String.get j substr).
 
 (* Spec: output是input中substring出现的次数 *)
 (* Pre: no additional constraints for `how_many_times` by default *)
-Definition Pre (input substring : list ascii) : Prop := True.
+Definition Pre (input substring : string) : Prop := True.
 
-Definition Spec (input substring : list ascii) (output : nat) : Prop :=
+Definition Spec (input substring : string) (output : nat) : Prop :=
   exists indices : list nat,
     NoDup indices /\
     (* indices中所有位置都匹配 *)
     (forall i, In i indices -> match_at i input substring) /\
     (* 所有匹配位置都在indices中 *)
-    (forall i, i + length substring <= length input ->
+    (forall i, i + String.length substring <= String.length input ->
                match_at i input substring -> In i indices) /\
     (* output是匹配次数 *)
-    output = length indices.
+    output = List.length indices.

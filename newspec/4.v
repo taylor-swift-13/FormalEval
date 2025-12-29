@@ -14,10 +14,9 @@ Import ListNotations.
 
 Open Scope R_scope.
 
-Definition mean_absolute_deviation_pre (l : list R) : Prop := True.
+Definition problem_4_pre (l : list R) : Prop := l <> [].
 
-Definition mean_absolute_deviation_spec (l : list R) (mad : R) : Prop :=
-  l <> [] ->
+Definition problem_4_spec (l : list R) (mad : R) : Prop :=
   let n := length l in
   let mu := fold_right Rplus 0 l / INR n in
   mad = fold_right (fun x acc => acc + Rabs (x - mu)) 0 l / INR n.

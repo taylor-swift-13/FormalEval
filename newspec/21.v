@@ -27,9 +27,9 @@ Definition is_list_max (l : list R) (m : R) : Prop :=
 
 
 (* Pre: no additional constraints for `rescale_to_unit` by default *)
-Definition Pre (input : list R) : Prop := True.
+Definition problem_21_pre (input : list R) : Prop := length input >= 2.
 
-Definition Spec' (input output : list R) : Prop :=
+Definition problem_21_spec (input output : list R) : Prop :=
   exists min_val max_val,
     is_list_min input min_val /\
     is_list_max input max_val /\

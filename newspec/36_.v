@@ -36,5 +36,8 @@ Inductive fizz_buzz_rel : nat -> nat -> Prop :=
     ~(n mod 11 = 0 \/ n mod 13 = 0) ->
     fizz_buzz_rel (S n) acc.
 
-Definition fizz_buzz_spec (n : nat) (output : nat) : Prop :=
+(* Pre: no additional constraints for `fizz_buzz` by default *)
+Definition problem_36_pre (n : nat) : Prop := True.
+
+Definition problem_36_spec (n : nat) (output : nat) : Prop :=
   fizz_buzz_rel n output.

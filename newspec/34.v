@@ -15,12 +15,12 @@ Require Import Coq.Sorting.Sorted.    (* 提供 Sorted 的定义 *)
 Import ListNotations.
 
 (* Pre: no additional constraints for `unique` by default *)
-Definition Pre (input : list Z) : Prop := True.
+Definition problem_34_pre (input : list Z) : Prop := True.
 
 (*
   规约 Spec(input, output) 定义了 "output 是 input 的排序后去重版本"
 *)
-Definition Spec (input : list Z) (output : list Z) : Prop :=
+Definition problem_34_spec (input : list Z) (output : list Z) : Prop :=
   (* 1. 输出列表是根据小于等于 (Z.le) 关系排序的 *)
   Sorted Z.le output /\
 

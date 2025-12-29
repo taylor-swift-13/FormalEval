@@ -11,8 +11,8 @@ Require Import Coq.Lists.List.
 Import ListNotations.
 
 (* Pre: input must be non-empty *)
-Definition Pre (input : list Z) : Prop := input <> []%list.
+Definition problem_35_pre (input : list Z) : Prop := input <> []%list.
 
-Definition Spec(input : list Z) (output : Z) : Prop :=
+Definition problem_35_spec (input : list Z) (output : Z) : Prop :=
   In output input /\
   forall x, In x input -> (x <= output)%Z.

@@ -27,17 +27,16 @@ Definition IsPrime (n : nat) : Prop :=
 
 (* IsFib 命题：一个数是斐波那契数。*)
 
-(* fib i returns the i-th Fibonacci number *)
-Fixpoint fib (n : nat) : nat :=
-  match n with
-  | 0 => 0
-  | S n' => match n' with
-            | 0 => 1
-            | S n'' => fib n' + fib n''
-            end
-  end.
+(* 关系：fib_at i v 表示 v 是第 i 个斐波那契数 *)
+Inductive fib_at : nat -> nat -> Prop :=
+| fib_at_0 : fib_at 0 0
+| fib_at_1 : fib_at 1 1
+| fib_at_S : forall i a b,
+    fib_at i a ->
+    fib_at (S i) b ->
+    fib_at (S (S i)) (a + b).
 
-Definition IsFib (n : nat) : Prop := exists i : nat, fib i = n.
+Definition IsFib (n : nat) : Prop := exists i : nat, fib_at i n.
 
 (* IsPrimeFib 命题：一个数既是素数又是斐波那契数 *)
 Definition IsPrimeFib (n : nat) : Prop :=

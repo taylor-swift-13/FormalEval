@@ -17,24 +17,21 @@ palindrome(output) ∧
 ∀ p, 
   (prefix(input, p) ∧ palindrome(p)) → length(output) ≤ length(p)) *)
 
-From Coq Require Import Ascii List Arith Lia.
+From Coq Require Import Ascii String List Arith Lia.
 Import ListNotations.
-
-(* 前缀定义：l1 是 l2 的前缀 *)
-Definition prefix  (l1 l2 : list ascii) : Prop :=
-  exists rest : list ascii, l2 = l1 ++ rest.
+Open Scope string_scope.
 
 (* 回文定义：反转后等于自己 *)
-Definition palindrome  (l : list ascii) : Prop :=
-  l = rev l.
+Definition palindrome (s : string) : Prop :=
+  s = string_of_list_ascii (List.rev (list_ascii_of_string s)).
 
-Definition pre  : Prop := True.
+Definition problem_10_pre : Prop := True.
 
 (* 规格定义：最短的回文，且以 input 为前缀 *)
-Definition Spec (input output : list ascii) : Prop :=
-  prefix input output /\
+Definition problem_10_spec (input output : string) : Prop :=
+  prefix input output = true /\
   palindrome output /\
-  forall p : list ascii,
-    prefix input p /\
+ forall p : string,
+    prefix input p = true /\
     palindrome p ->
-    length output <= length p.
+    String.length output <= String.length p.

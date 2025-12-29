@@ -8,17 +8,17 @@
 (*  *)
 
 Require Import Coq.Strings.String.
+Require Import Coq.Strings.Ascii.
 Require Import Coq.Lists.List.
+Require Import Coq.Arith.Arith.
 Import ListNotations.
-
-(* Pre: no additional constraints for `string_sequence` by default *)
-Definition Pre (n : nat) : Prop := True.
+Open Scope string_scope.
 
 (* 将自然数转换为十进制字符串的实现 *)
-Fixpoint string_of_nat (n : nat) : string :=
+Definition string_of_nat (n : nat) : string :=
   (* 对 0 做特殊处理 *)
   match n with
-  | 0 => String (Ascii.ascii_of_nat 48) EmptyString
+  | 0 => "0"
   | _ =>
     (* 生成数字的倒序 ascii 列表，然后反转并组装为 string.
      为了满足 Coq 的递归终止检查，我们使用带有 fuel 参数的辅助递归，
@@ -28,7 +28,7 @@ Fixpoint string_of_nat (n : nat) : string :=
       match fuel with
       | 0 => [] (* unreachable for adequate initial fuel; 保守返回空列表 *)
       | S fuel' =>
-        if m <? 10 then [Ascii.ascii_of_nat (48 + m)]
+        if Nat.ltb m 10 then [Ascii.ascii_of_nat (48 + m)]
         else Ascii.ascii_of_nat (48 + (Nat.modulo m 10)) :: digits_rev_aux (Nat.div m 10) fuel'
       end in
     let digits := rev (digits_rev_aux n n) in
@@ -47,5 +47,8 @@ Fixpoint seq_string (start limit : nat) : string :=
 Definition string_sequence_impl (n : nat) : string :=
   seq_string 0 n.
 
-Definition Spec (n : nat) (output : string) : Prop :=
+(* Pre: no additional constraints for `string_sequence` by default *)
+Definition problem_15_pre (n : nat) : Prop := True.
+
+Definition problem_15_spec (n : nat) (output : string) : Prop :=
   output = string_sequence_impl n.

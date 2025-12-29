@@ -15,7 +15,7 @@ Open Scope Z_scope.
 
 
 (* Pre: require non-negative exponent and positive modulus *)
-Definition Pre (n p : Z) : Prop := (n >= 0 /\, p > 0).
+Definition problem_49_pre (n p : Z) : Prop := (n >= 0 /\, p > 0).
 
-Definition Spec (n p output : Z) : Prop :=
+Definition problem_49_spec (n p output : Z) : Prop :=
   (n >= 0 /\ p > 0) -> output = (2 ^ n) mod p.

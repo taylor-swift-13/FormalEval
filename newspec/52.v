@@ -9,7 +9,7 @@ Require Import Coq.Lists.List.
 Import ListNotations.
 
 (* Pre: no special constraints for `below_threshold` *)
-Definition Pre (l : list nat) : Prop := True.
+Definition problem_52_pre (l : list nat) : Prop := True.
 
-Definition below_threshold_spec (l : list nat) (t : nat) (output : bool) : Prop :=
+Definition problem_52_spec (l : list nat) (t : nat) (output : bool) : Prop :=
   (forall x, In x l -> x < t) <-> (output = true).

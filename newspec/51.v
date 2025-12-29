@@ -41,7 +41,7 @@ Definition is_vowel (c : ascii) : bool :=
  * @return: Prop - 一个表示输入和输出之间关系的命题。
  *)
 (* Pre: no special constraints for `remove_vowels` *)
-Definition Pre (input : list ascii) : Prop := True.
+Definition problem_51_pre (input : list ascii) : Prop := True.
 
-Definition remove_vowels_spec (input : list ascii) (output : list ascii) : Prop :=
+Definition problem_51_spec (input : list ascii) (output : list ascii) : Prop :=
   output = filter (fun c => negb (is_vowel c)) input.

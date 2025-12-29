@@ -19,7 +19,7 @@ Require Import Coq.Strings.Ascii.
 
 
 (* Pre: no special constraints for `same_chars` *)
-Definition Pre (s0 s1 : list ascii) : Prop := True.
+Definition problem_54_pre (s0 s1 : list ascii) : Prop := True.
 
-Definition same_chars_spec (s0 s1 : list ascii) (b : bool) : Prop :=
+Definition problem_54_spec (s0 s1 : list ascii) (b : bool) : Prop :=
   b = true <-> (forall (c : ascii), In c s0 <-> In c s1).

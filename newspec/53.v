@@ -6,7 +6,7 @@
 12
 """ *）
 (* Pre: no special constraints for `add` *)
-Definition Pre (x y : nat) : Prop := True.
+Definition problem_53_pre (x y : nat) : Prop := True.
 
-Definition add_spec (x : nat) (y : nat) (output : nat) : Prop :=
+Definition problem_53_spec (x : nat) (y : nat) (output : nat) : Prop :=
   output = x + y.

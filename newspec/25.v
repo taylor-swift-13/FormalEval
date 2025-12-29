@@ -20,20 +20,17 @@ Input number should be equal to the product of all factors
 
 Require Import Coq.Lists.List.
 Require Import Coq.Arith.Arith.
+Require Import Coq.Sorting.Sorted.
 Import ListNotations.
 
 
 Definition IsPrime (n : nat) : Prop :=
   1 < n /\ (forall d : nat, n mod d = 0 -> d = 1 \/ d = n).
 
-Definition Is_Sorted(l : list nat) : Prop :=
-  forall i j : nat,
-    i < j /\ j < length l -> nth i l 0 <= nth j l 0.
-
 (* Pre: no additional constraints for `factorize` by default *)
-Definition Pre (input : nat) : Prop := True.
+Definition problem_25_pre (input : nat) : Prop := True.
 
-Definition Spec (input : nat) (output : list nat) : Prop :=
-  Is_Sorted output /\
+Definition problem_25_spec (input : nat) (output : list nat) : Prop :=
+  Sorted le output /\
   fold_right Nat.mul 1 output = input /\
   Forall IsPrime output.

@@ -25,17 +25,6 @@ Fixpoint contains_substring (s sub : string) : bool :=
       else contains_substring rest sub
   end.
 
-(*
-  子列表定义
-*)
-Inductive is_subsequence {A : Type} : list A -> list A -> Prop :=
-  | sub_nil : is_subsequence [] []
-  | sub_cons_hd : forall x l1 l2, is_subsequence l1 l2 -> is_subsequence (x :: l1) (x :: l2)
-  | sub_cons_tl : forall x l1 l2, is_subsequence l1 l2 -> is_subsequence l1 (x :: l2).
-
-
-Definition spec_filter_by_pre : Prop:= True.
-
 Fixpoint filter_by_substring_impl (input : list string) (sub : string) : list string :=
   match input with
   | [] => []
@@ -46,5 +35,7 @@ Fixpoint filter_by_substring_impl (input : list string) (sub : string) : list st
       filter_by_substring_impl t sub
   end.
 
-Definition spec_filter_by_substring (input output : list string) (sub : string) : Prop :=
+Definition problem_7_pre : Prop:= True.
+
+Definition problem_7_spec (input output : list string) (sub : string) : Prop :=
   output = filter_by_substring_impl input sub.

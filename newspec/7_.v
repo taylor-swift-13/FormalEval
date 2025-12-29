@@ -28,5 +28,7 @@ Inductive filter_by_substring_impl_rel : list string -> string -> list string ->
       filter_by_substring_impl_rel t sub output ->
       filter_by_substring_impl_rel (h :: t) sub output.
 
-Definition spec_filter_by_substring (input output : list string) (sub : string) : Prop :=
+Definition problem_7_pre : Prop:= True.
+
+Definition problem_7_spec (input output : list string) (sub : string) : Prop :=
   filter_by_substring_impl_rel input sub output.

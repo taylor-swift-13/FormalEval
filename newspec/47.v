@@ -2,7 +2,7 @@
 >>> median([3, 1, 2, 4, 5])
 3
 >>> median([-10, 4, 6, 1000, 10, 20])
-15.0 *)
+8.0 *)
 
 (* Spec(input : list float, output : float) :=
 
@@ -19,9 +19,9 @@ Import ListNotations.
 Open Scope R_scope.
 
 (* Pre: input must be non-empty to define median *)
-Definition Pre (input : list R) : Prop := input <> []%list.
+Definition problem_47_pre (input : list R) : Prop := input <> [].
 
-Definition Spec(input : list R) (output : R) : Prop :=
+Definition problem_47_spec(input : list R) (output : R) : Prop :=
   exists Sorted_input,
     Sorted Rle Sorted_input /\
     forall r : R, In r input <-> In r Sorted_input /\

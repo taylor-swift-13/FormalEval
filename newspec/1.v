@@ -7,9 +7,11 @@ Ignore any spaces in the input string.
 
 (* 引入所需的基础库 *)
 Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
 Require Import Coq.Lists.List.
 Require Import Arith.
 Import ListNotations.
+Open Scope string_scope.
 
 (* 定义 '(' 和 ')' 的 ASCII 表示 *)
 Definition lparen : ascii := "(".
@@ -17,13 +19,13 @@ Definition rparen : ascii := ")".
 Definition space : ascii := " ".
 
 (*
-  规约 1: IsBalanced(l)
+  规约 1: IsBalanced(s)
   使用一个辅助递归函数，其中 count 代表当前未闭合的左括号数。
 *)
-Fixpoint IsBalanced_aux (l : list ascii) (count : nat) : Prop :=
-  match l with
-  | [] => count = 0
-  | h :: t =>
+Fixpoint IsBalanced_aux (s : string) (count : nat) : Prop :=
+  match s with
+  | EmptyString => count = 0
+  | String h t =>
     if ascii_dec h lparen then
       IsBalanced_aux t (S count)
     else if ascii_dec h rparen then
@@ -35,33 +37,20 @@ Fixpoint IsBalanced_aux (l : list ascii) (count : nat) : Prop :=
       IsBalanced_aux t count (* 忽略其他字符 *)
   end.
 
-Definition IsBalanced (l : list ascii) : Prop :=
-  IsBalanced_aux l 0.
-
-(*
-  规约 2: IsMinimalBalanced(l)
-  l 是平衡的，且不能被分解为两个更小的非空平衡列表。
-*)
-Definition IsMinimalBalanced (l : list ascii) : Prop :=
-  IsBalanced l /\
-  ~ (exists l1 l2,
-       l1 <> [] /\
-       l2 <> [] /\
-       l = l1 ++ l2 /\
-       IsBalanced l1 /\
-       IsBalanced l2).
+Definition IsBalanced (s : string) : Prop :=
+  IsBalanced_aux s 0.
 
 (*
   辅助函数: 移除列表中的空格
 *)
-Fixpoint remove_spaces (l : list ascii) : list ascii :=
-  match l with
-  | [] => []
-  | h :: t =>
+Fixpoint remove_spaces (s : string) : string :=
+  match s with
+  | EmptyString => EmptyString
+  | String h t =>
     if ascii_dec h space then
       remove_spaces t
     else
-      h :: remove_spaces t
+      String h (remove_spaces t)
   end.
 
 (*
@@ -72,25 +61,35 @@ Definition is_paren_or_space (c : ascii) : Prop :=
   c = lparen \/ c = rparen \/ c = space.
 
 (*
-  前提条件: separate_paren_groups_pre
-  1. 输入列表中的所有字符都必须是括号或空格。
-  2. 移除空格后的输入列表必须是平衡的。
-  (这部分定义保持不变，因为它正确地使用了上面修正后的 is_paren_or_space)
+  辅助函数: 检查字符串中的所有字符是否满足属性 P
 *)
-Definition separate_paren_groups_pre (input : list ascii) : Prop :=
-  (Forall is_paren_or_space input) /\
-  (IsBalanced (remove_spaces input)).
+Fixpoint ForallChars (P : ascii -> Prop) (s : string) : Prop :=
+  match s with
+  | EmptyString => True
+  | String h t => P h /\ ForallChars P t
+  end.
+
+
+(*
+  辅助函数: 将 list ascii 转换为 string
+*)
+Fixpoint string_of_list (l : list ascii) : string :=
+  match l with
+  | [] => EmptyString
+  | c :: l' => String c (string_of_list l')
+  end.
+
 (*
   实现函数: separate_paren_groups_impl
 *)
-Fixpoint separate_paren_groups_aux (l : list ascii) (count : nat) (current : list ascii) (acc : list (list ascii)) : list (list ascii) :=
-  match l with
-  | [] => 
+Fixpoint separate_paren_groups_aux (s : string) (count : nat) (current : list ascii) (acc : list string) : list string :=
+  match s with
+  | EmptyString => 
     match current with
     | [] => acc
-    | _ => acc ++ [List.rev current]
+    | _ => acc ++ [string_of_list (List.rev current)]
     end
-  | h :: t =>
+  | String h t =>
     if ascii_dec h lparen then
       separate_paren_groups_aux t (S count) (h :: current) acc
     else if ascii_dec h rparen then
@@ -98,8 +97,8 @@ Fixpoint separate_paren_groups_aux (l : list ascii) (count : nat) (current : lis
       | 0 => acc
       | S n' =>
         let new_current := h :: current in
-        if n' =? 0 then
-          separate_paren_groups_aux t n' [] (acc ++ [List.rev new_current])
+        if Nat.eqb n' 0 then
+          separate_paren_groups_aux t n' [] (acc ++ [string_of_list (List.rev new_current)])
         else
           separate_paren_groups_aux t n' new_current acc
       end
@@ -109,12 +108,19 @@ Fixpoint separate_paren_groups_aux (l : list ascii) (count : nat) (current : lis
       separate_paren_groups_aux t count (h :: current) acc
   end.
 
-Definition separate_paren_groups_impl (input : list ascii) : list (list ascii) :=
+Definition separate_paren_groups_impl (input : string) : list string :=
   separate_paren_groups_aux (remove_spaces input) 0 [] [].
 
 (*
-  最终的程序规约: separate_paren_groups_spec(input, output)
-  输入和输出都使用 list ascii。
+  前提条件: separate_paren_groups_pre
+  1. 输入列表中的所有字符都必须是括号或空格。
+  2. 移除空格后的输入列表必须是平衡的。
 *)
-Definition separate_paren_groups_spec (input : list ascii) (output : list (list ascii)) : Prop :=
+Definition problem_1_pre (input : string) : Prop :=
+  (ForallChars is_paren_or_space input) /\
+  (IsBalanced (remove_spaces input)).
+(*
+  最终的程序规约: separate_paren_groups_spec(input, output)
+*)
+Definition problem_1_spec (input : string) (output : list string) : Prop :=
   output = separate_paren_groups_impl input.

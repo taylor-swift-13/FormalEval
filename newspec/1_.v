@@ -7,88 +7,78 @@ Ignore any spaces in the input string.
 
 (* 引入所需的基础库 *)
 Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
 Require Import Coq.Lists.List.
 Require Import Arith.
 Import ListNotations.
+Open Scope string_scope.
 
 (* 定义 '(' 和 ')' 的 ASCII 表示 *)
 Definition lparen : ascii := "(".
 Definition rparen : ascii := ")".
 Definition space : ascii := " ".
 
-Inductive IsBalanced_aux_rel : list ascii -> nat -> Prop :=
-  | ibar_nil : forall count, count = 0 -> IsBalanced_aux_rel [] count
-  | ibar_lparen : forall h t count,
-      h = lparen ->
-      IsBalanced_aux_rel t (S count) ->
-      IsBalanced_aux_rel (h :: t) count
-  | ibar_rparen : forall h t count n',
-      h = rparen ->
-      count = S n' ->
-      IsBalanced_aux_rel t n' ->
-      IsBalanced_aux_rel (h :: t) count
-  | ibar_other : forall h t count,
-      h <> lparen ->
-      h <> rparen ->
-      IsBalanced_aux_rel t count ->
-      IsBalanced_aux_rel (h :: t) count.
+(*
+  规约 1: IsBalanced(s)
+  使用 Inductive 定义，其中 count 代表当前未闭合的左括号数。
+*)
+Inductive IsBalanced_ind : string -> nat -> Prop :=
+| IB_nil : IsBalanced_ind "" 0
+| IB_lparen : forall t n, IsBalanced_ind t (S n) -> IsBalanced_ind (String lparen t) n
+| IB_rparen : forall t n, IsBalanced_ind t n -> IsBalanced_ind (String rparen t) (S n)
+| IB_other : forall c t n, c <> lparen -> c <> rparen -> IsBalanced_ind t n -> IsBalanced_ind (String c t) n.
 
-Definition IsBalanced (l : list ascii) : Prop :=
-  IsBalanced_aux_rel l 0.
+Definition IsBalanced (s : string) : Prop :=
+  IsBalanced_ind s 0.
 
-Definition IsMinimalBalanced (l : list ascii) : Prop :=
-  IsBalanced l /\
-  ~ (exists l1 l2,
-       l1 <> [] /\
-       l2 <> [] /\
-       l = l1 ++ l2 /\
-       IsBalanced l1 /\
-       IsBalanced l2).
+(*
+  规约 2: IsMinimalBalanced(s)
+  s 是平衡的，且不能被分解为两个更小的非空平衡列表。
+*)
+Definition IsMinimalBalanced (s : string) : Prop :=
+  IsBalanced s /\
+  ~ (exists s1 s2,
+       s1 <> "" /\
+       s2 <> "" /\
+       s = s1 ++ s2 /\
+       IsBalanced s1 /\
+       IsBalanced s2).
 
-Inductive remove_spaces_rel : list ascii -> list ascii -> Prop :=
-  | rsr_nil : remove_spaces_rel [] []
-  | rsr_space : forall h t res,
-      h = space ->
-      remove_spaces_rel t res ->
-      remove_spaces_rel (h :: t) res
-  | rsr_char : forall h t res,
-      h <> space ->
-      remove_spaces_rel t res ->
-      remove_spaces_rel (h :: t) (h :: res).
+(*
+  辅助函数: 移除列表中的空格
+*)
+Inductive RemoveSpaces : string -> string -> Prop :=
+| RS_nil : RemoveSpaces "" ""
+| RS_space : forall t t', RemoveSpaces t t' -> RemoveSpaces (String space t) t'
+| RS_char : forall c t t', c <> space -> RemoveSpaces t t' -> RemoveSpaces (String c t) (String c t').
 
-Inductive separate_paren_groups_aux_rel : list ascii -> nat -> list ascii -> list (list ascii) -> list (list ascii) -> Prop :=
-  | spgar_nil_empty : forall acc, separate_paren_groups_aux_rel [] 0 [] acc acc
-  | spgar_nil_nonempty : forall current acc, current <> [] -> separate_paren_groups_aux_rel [] 0 current acc (acc ++ [List.rev current])
-  | spgar_lparen : forall h t count current acc result,
-      h = lparen ->
-      separate_paren_groups_aux_rel t (S count) (h :: current) acc result ->
-      separate_paren_groups_aux_rel (h :: t) count current acc result
-  | spgar_rparen_zero : forall h t count current acc result,
-      h = rparen ->
-      count = 0 ->
-      separate_paren_groups_aux_rel t count current acc result ->
-      separate_paren_groups_aux_rel (h :: t) count current acc result
-  | spgar_rparen_minimal : forall h t n' current acc result,
-      h = rparen ->
-      n' = 0 ->
-      separate_paren_groups_aux_rel t 0 [] (acc ++ [List.rev (h :: current)]) result ->
-      separate_paren_groups_aux_rel (h :: t) (S n') current acc result
-  | spgar_rparen_nonminimal : forall h t n' current acc result,
-      h = rparen ->
-      n' <> 0 ->
-      separate_paren_groups_aux_rel t n' (h :: current) acc result ->
-      separate_paren_groups_aux_rel (h :: t) (S n') current acc result
-  | spgar_space : forall h t count current acc result,
-      h = space ->
-      separate_paren_groups_aux_rel t count current acc result ->
-      separate_paren_groups_aux_rel (h :: t) count current acc result
-  | spgar_other : forall h t count current acc result,
-      h <> lparen -> h <> rparen -> h <> space ->
-      separate_paren_groups_aux_rel t count (h :: current) acc result ->
-      separate_paren_groups_aux_rel (h :: t) count current acc result.
+(*
+  辅助断言: 检查一个字符是否为括号或空格
+  直接使用等式，其类型为 Prop
+*)
+Definition is_paren_or_space (c : ascii) : Prop :=
+  c = lparen \/ c = rparen \/ c = space.
 
+(*
+  辅助函数: 检查字符串中的所有字符是否满足属性 P
+*)
+Inductive ForallChars (P : ascii -> Prop) : string -> Prop :=
+| Forall_nil : ForallChars P ""
+| Forall_cons : forall c s, P c -> ForallChars P s -> ForallChars P (String c s).
 
-Definition separate_paren_groups_spec (input : list ascii) (output : list (list ascii)) : Prop :=
-  exists input_no_spaces,
-    remove_spaces_rel input input_no_spaces /\
-    separate_paren_groups_aux_rel input_no_spaces 0 [] [] output.
+(*
+  前提条件: problem_1_pre
+  1. 输入列表中的所有字符都必须是括号或空格。
+  2. 输入列表必须是平衡的。
+*)
+Definition problem_1_pre (input : string) : Prop :=
+  (ForallChars is_paren_or_space input) /\
+  (IsBalanced input).
+
+(*
+  最终的程序规约: problem_1_spec(input, output)
+  输入和输出都使用 string。
+*)
+Definition problem_1_spec (input : string) (output : list string) : Prop :=
+  RemoveSpaces input (String.concat "" output) /\
+  (Forall IsMinimalBalanced output).

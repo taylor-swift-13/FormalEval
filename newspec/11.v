@@ -12,26 +12,27 @@ length(output) == length(a) ∧
 
 Require Import List.
 Require Import Ascii.
+Require Import String.
 Require Import Bool.
 Import ListNotations.
-Open Scope char_scope.
+Open Scope string_scope.
 
 (* 定义 Spec 规约 *)
  
 (* Pre: inputs have equal length and contain only '0' or '1' characters *)
-Definition Pre (a b : list ascii) : Prop :=
-  length a = length b /\
+Definition problem_11_pre (a b : string) : Prop :=
+  String.length a = String.length b /\
   forall i,
-    i < length a ->
-      ((nth i a "0" = "0") \/ (nth i a "0" = "1")) /\
-      ((nth i b "0" = "0") \/ (nth i b "0" = "1")).
+    i < String.length a ->
+      ((String.get i a = Some "0"%char) \/ (String.get i a = Some "1"%char)) /\
+      ((String.get i b = Some "0"%char) \/ (String.get i b = Some "1"%char)).
 
 (* 定义 Spec 规约 *)
 
-Definition Spec (a b output : list ascii) : Prop :=
-  length a = length b /\
-  length output = length a /\
+Definition problem_11_spec (a b output : string) : Prop :=
+  String.length a = String.length b /\
+  String.length output = String.length a /\
   forall i,
-    i < length output ->
-    (nth i a "0" = nth i b "0" -> nth i output "0" = "0") /\
-    (nth i a "0" <> nth i b "0" -> nth i output "0" = "1").
+    i < String.length output ->
+    (String.get i a = String.get i b -> String.get i output = Some "0"%char) /\
+    (String.get i a <> String.get i b -> String.get i output = Some "1"%char).

@@ -16,36 +16,35 @@ Here is a legend:
 
 Require Import Ascii String List.
 Import ListNotations.
+Open Scope string_scope.
 
-Fixpoint SplitOnSpaces_aux (current_group : list ascii) (S : list ascii) : list (list ascii) :=
+Fixpoint SplitOnSpaces_aux (current_group : list ascii) (S : string) : list string :=
   match S with
-  | [] =>
+  | EmptyString =>
     match current_group with
     | [] => []
-    | _ => [List.rev current_group]
+    | _ => [string_of_list_ascii (List.rev current_group)]
     end
-  | h :: t =>
+  | String h t =>
     if ascii_dec h " "%char then
       match current_group with
       | [] => SplitOnSpaces_aux [] t (* 多个或前导空格 *)
-      | _ => (List.rev current_group) :: SplitOnSpaces_aux [] t
+      | _ => (string_of_list_ascii (List.rev current_group)) :: SplitOnSpaces_aux [] t
       end
     else
       SplitOnSpaces_aux (h :: current_group) t
   end.
 
-Definition SplitOnSpaces (S : list ascii) : list (list ascii) :=
+Definition SplitOnSpaces (S : string) : list string :=
   SplitOnSpaces_aux [] S.
 
-Fixpoint parse_note (note : list ascii) : option nat :=
-  match note with
-  | ["o"%char] => Some 4
-  | ["o"%char; "|"%char] => Some 2
-  | ["."%char; "|"%char] => Some 1
-  | _ => None
-  end.
+Definition parse_note (note : string) : option nat :=
+  if string_dec note "o" then Some 4
+  else if string_dec note "o|" then Some 2
+  else if string_dec note ".|" then Some 1
+  else None.
 
-Fixpoint parse_music_impl_aux (notes : list (list ascii)) : list nat :=
+Fixpoint parse_music_impl_aux (notes : list string) : list nat :=
   match notes with
   | [] => []
   | note :: rest =>
@@ -55,11 +54,11 @@ Fixpoint parse_music_impl_aux (notes : list (list ascii)) : list nat :=
     end
   end.
 
-Definition parse_music_impl (input : list ascii) : list nat :=
+Definition parse_music_impl (input : string) : list nat :=
   parse_music_impl_aux (SplitOnSpaces input).
 
 (* Pre: no additional constraints for `parse_music` by default *)
-Definition Pre (input : list ascii) : Prop := True.
+Definition problem_17_pre (input : string) : Prop := True.
 
-Definition parse_music_Spec (input : list ascii) (output : list nat) : Prop :=
+Definition problem_17_spec (input : string) (output : list nat) : Prop :=
   output = parse_music_impl input.

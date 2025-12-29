@@ -14,9 +14,9 @@
 Require Import Arith.
  
 (* Pre: require `input >= 2` so that a largest proper divisor exists *)
-Definition Pre (input : nat) : Prop := (input >= 2)%nat.
+Definition problem_24_pre (input : nat) : Prop := (input >= 2)%nat.
 
-Definition Spec (input output : nat) : Prop :=
+Definition problem_24_spec (input output : nat) : Prop :=
   (* 1. output 是 input 的一个因数 *)
   input mod output = 0 /\
 

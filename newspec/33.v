@@ -18,30 +18,23 @@ to the values of the corresponding indicies of l, but sorted.
 
 
 Require Import Coq.Lists.List.
+Require Import Coq.Sorting.Permutation.
 Require Import Coq.ZArith.ZArith.
 Require Import Arith.PeanoNat.
 Import ListNotations.
 (* Pre: no additional constraints for `sort_third` by default *)
-Definition Pre (input : list Z) : Prop := True.
+Definition problem_33_pre (input : list Z) : Prop := True.
 
 (* Spec 的定义 *)
-Definition Spec (input output : list Z) : Prop :=
-  (* 1. 输入和输出列表的长度必须相等 *)
-  length input = length output /\
+Definition problem_33_spec (input output : list Z) : Prop :=
+  (* 1. input 是 output 的排列 (Permutation) *)
+  Permutation input output /\
 
   (* 2. 如果索引 i 不能被 3 整除，则 output[i] 必须等于 input[i] *)
   (forall (i : nat), (i < length input)%nat -> (i mod 3 <> 0) ->
     nth i output 0%Z = nth i input 0%Z) /\
 
-  (* 3. 对于 output 中每个索引能被 3 整除的元素，它必须来自于 input 中某个索引能被 3 整除的元素 *)
-  (forall (i : nat), i < length output -> i mod 3 = 0 ->
-    exists (j : nat), j < length input /\ j mod 3 = 0 /\ nth j input 0%Z = nth i output 0%Z) /\
-
-  (* 4. 对于 input 中每个索引能被 3 整除的元素，它必须也存在于 output 中某个索引能被 3 整除的位置 *)
-  (forall (i : nat), i < length input -> i mod 3 = 0 ->
-    exists (j : nat), j < length output /\ j mod 3 = 0 /\ nth j output 0%Z = nth i input 0%Z) /\
-
-  (* 5. output 中所有索引能被 3 整除的元素，必须是按索引顺序排好序的 (非递减) *)
+  (* 3. output 中所有索引能被 3 整除的元素，必须是按索引顺序排好序的 (非递减) *)
   (forall (i j : nat), i < length output /\ j < length output /\
     i mod 3 = 0 /\ j mod 3 = 0 /\ i < j ->
     (nth i output 0 <= nth j output 0)%Z).

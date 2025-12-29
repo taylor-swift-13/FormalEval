@@ -14,7 +14,7 @@ This function outputs the number of such collisions. *)
 
 Require Import Arith.
 (* Pre: no special constraints for this numeric square function *)
-Definition Pre (input : nat) : Prop := True.
+Definition problem_41_pre (input : nat) : Prop := True.
 
-Definition Spec(input output : nat) : Prop :=
+Definition problem_41_spec(input output : nat) : Prop :=
   output = input * input.

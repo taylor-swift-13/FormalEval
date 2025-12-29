@@ -23,18 +23,21 @@ Please write a function to efficiently compute the n-th element of the fib4 numb
 
 Require Import Coq.Arith.Arith.
 
-(* 使用 Fixpoint 表示 fib4 序列 *)
-Fixpoint fib4 (n : nat) : nat :=
-  match n with
-  | 0 => 0
-  | 1 => 0
-  | 2 => 2
-  | 3 => 0
-  | S (S (S (S m))) => fib4 (S (S (S m))) + fib4 (S (S m)) + fib4 (S m) + fib4 m
-  end.
+(* 使用归纳关系表示 fib4 序列*)
+Inductive fib4_at : nat -> nat -> Prop :=
+| fib4_at_0 : fib4_at 0 0
+| fib4_at_1 : fib4_at 1 0
+| fib4_at_2 : fib4_at 2 2
+| fib4_at_3 : fib4_at 3 0
+| fib4_at_SSSS : forall i a b c d,
+    fib4_at i a ->
+    fib4_at (S i) b ->
+    fib4_at (S (S i)) c ->
+    fib4_at (S (S (S i))) d ->
+    fib4_at (S (S (S (S i)))) (a + b + c + d).
 
-
+(* Pre: no additional constraints for `fib4` *)
 Definition problem_46_pre (input : nat) : Prop := True.
 
 Definition problem_46_spec (input : nat) (output : nat) : Prop :=
-  output = fib4 input.
+  fib4_at input output.

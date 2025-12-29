@@ -9,10 +9,10 @@ Require Import List Reals.
 Import ListNotations.
 Open Scope R_scope.
 
-Definition has_close_elements_precondition(threshold : R): Prop :=
+Definition problem_0_pre(threshold : R): Prop :=
   threshold >= 0.
 
-Definition has_close_elements_spec (numbers : list R) (threshold : R) (output : bool): Prop :=
+Definition problem_0_spec (numbers : list R) (threshold : R) (output : bool): Prop :=
   (exists (i j : nat) (x y : R),
     i <> j /\
     Nat.lt i (length numbers) /\

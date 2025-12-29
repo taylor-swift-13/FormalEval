@@ -12,15 +12,16 @@ length(output) == length(input) ∧
         (∀j. 0 ≤ j ≤ i → input[j] ≤ output[i]) ∧
         (∃j. 0 ≤ j ≤ i ∧ input[j] = output[i]) *)
 
-Require Import List Arith.
+Require Import List ZArith.
 Import ListNotations.
+Open Scope Z_scope.
 
-Definition Pre := True.
+Definition problem_9_pre : Prop := True.
 
-Definition Spec (input output : list nat) :=
+Definition problem_9_spec (input output : list Z) :=
   length output = length input /\
   forall i,
-    i < length output ->
-    (forall j, j <= i -> nth j input 0 <= nth i output 0) /\
-    (exists j, j <= i /\ nth j input 0 = nth i output 0).
+    (i < length output)%nat ->
+    (forall j, (j <= i)%nat -> nth j input 0 <= nth i output 0) /\
+    (exists j, (j <= i)%nat /\ nth j input 0 = nth i output 0).
 

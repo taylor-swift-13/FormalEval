@@ -20,14 +20,10 @@ Import ListNotations.
 Open Scope R_scope. (* 使得我们可以直接使用 > 和 0 表示实数版本 *)
 
 
-Fixpoint is_subsequence {A : Type} (l1 l2 : list A) : Prop :=
-  match l1, l2 with
-  | [], _ => True
-  | _, [] => False
-  | x :: xs, y :: ys =>
-      (x = y /\ is_subsequence xs ys) \/ is_subsequence l1 ys
-  end.
-
+Inductive is_subsequence {A : Type} : list A -> list A -> Prop :=
+  | sub_nil : forall l, is_subsequence [] l
+  | sub_cons_match : forall x l1 l2, is_subsequence l1 l2 -> is_subsequence (x :: l1) (x :: l2)
+  | sub_cons_skip : forall x l1 l2, is_subsequence l1 l2 -> is_subsequence l1 (x :: l2).
 
 (*
   定义一个“检查器”来判断一个实数是否为正数。

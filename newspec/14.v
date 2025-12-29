@@ -13,20 +13,17 @@
     prefix(output[i], input)
 ) *)
 
-Require Import List Ascii.
+Require Import List Ascii String.
 Import ListNotations.
+Open Scope string_scope.
 
 (* Pre: no additional constraints for `all_prefixes` by default *)
-Definition Pre (input : list ascii) : Prop := True.
+Definition problem_14_pre (input : string) : Prop := True.
 
-(* prefix p s := p 是 s 的前缀 *)
-Definition prefix  (l1 l2 : list ascii) : Prop :=
-  exists rest : list ascii, l2 = l1 ++ rest.
-
-Definition Spec (input : list ascii)(output : list (list ascii)) : Prop :=
-  (length input = 0 /\ output = []) \/
-  (length input > 0 /\
-   length output = length input /\
-   forall i, i < length input ->
-     length (nth i output ["0"%char]) = i + 1 /\
-     prefix (nth i output ["0"%char]) input).
+Definition problem_14_spec (input : string)(output : list string) : Prop :=
+  (String.length input = 0 /\ output = []) \/
+  (String.length input > 0 /\
+   List.length output = String.length input /\
+   forall i, i < String.length input ->
+     String.length (nth i output "0") = i + 1 /\
+     prefix (nth i output "0") input = true).

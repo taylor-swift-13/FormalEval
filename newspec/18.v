@@ -41,9 +41,9 @@ Definition match_at (i : nat) (input substr : string) : Prop :=
 
 (* Spec: output是input中substring出现的次数 *)
 (* Pre: no additional constraints for `how_many_times` by default *)
-Definition Pre (input substring : string) : Prop := True.
+Definition problem_18_pre (input substring : string) : Prop := True.
 
-Definition Spec (input substring : string) (output : nat) : Prop :=
+Definition problem_18_spec (input substring : string) (output : nat) : Prop :=
   exists indices : list nat,
     NoDup indices /\
     (* indices中所有位置都匹配 *)

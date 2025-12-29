@@ -45,14 +45,11 @@ Definition is_int (v : py_value) : Prop :=
 (*
   子列表定义
 *)
-Fixpoint is_subsequence {A : Type} (l1 l2 : list A) : Prop :=
-  match l1, l2 with
-  | [], _ => True
-  | _, [] => False
-  | x :: xs, y :: ys =>
-      (x = y /\ is_subsequence xs ys) \/ is_subsequence l1 ys
-  end.
-
+Inductive is_subsequence {A : Type} : list A -> list A -> Prop :=
+  | sub_nil : forall l, is_subsequence [] l
+  | sub_cons_match : forall x l1 l2, is_subsequence l1 l2 -> is_subsequence (x :: l1) (x :: l2)
+  | sub_cons_skip : forall x l1 l2, is_subsequence l1 l2 -> is_subsequence l1 (x :: l2).
+  
 (*
   步骤 4: 定义最终的规约 Spec。
   - input: 输入的值列表。

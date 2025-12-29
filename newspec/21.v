@@ -27,7 +27,7 @@ Definition is_list_max (l : list R) (m : R) : Prop :=
 
 
 (* Pre: no additional constraints for `rescale_to_unit` by default *)
-Definition problem_21_pre (input : list R) : Prop := length input >= 2.
+Definition problem_21_pre (input : list R) : Prop := (length input >= 2)%nat.
 
 Definition problem_21_spec (input output : list R) : Prop :=
   exists min_val max_val,

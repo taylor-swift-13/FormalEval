@@ -32,9 +32,9 @@ Definition Lower (c : ascii) : ascii :=
   else c.
 
 (* Pre: no additional constraints for `flip_case` by default *)
-Definition Pre (input : string) : Prop := True.
+Definition problem_27_pre (input : string) : Prop := True.
 
-Definition Spec (input output : string) : Prop :=
+Definition problem_27_spec (input output : string) : Prop :=
   String.length input = String.length output /\
   (forall (i : nat) (c : ascii),
     i < String.length input ->

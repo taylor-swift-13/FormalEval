@@ -23,9 +23,9 @@ Import ListNotations.
 Open Scope Z_scope.
 
 (* Pre: no special constraints for `pairs_sum_to_zero` *)
-Definition Pre (input : list Z) : Prop := True.
+Definition problem_43_pre (input : list Z) : Prop := True.
 
-Definition Spec (input : list Z) (output : bool) : Prop :=
+Definition problem_43_spec (input : list Z) (output : bool) : Prop :=
   (*
     存在两个不同的索引 i, j，
     使得对应元素之和为 0。

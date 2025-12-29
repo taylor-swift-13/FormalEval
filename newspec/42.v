@@ -14,8 +14,8 @@ Require Import Coq.ZArith.ZArith.
 Import ListNotations.
 
 (* Pre: no special constraints for `incr_list` *)
-Definition Pre (input : list Z) : Prop := True.
+Definition problem_42_pre (input : list Z) : Prop := True.
 
-Definition Spec(input output : list Z) : Prop :=
+Definition problem_42_spec(input output : list Z) : Prop :=
   length input = length output /\
   forall i : nat, i < length output -> nth i output 0%Z = ((nth i input 0%Z) + 1)%Z.

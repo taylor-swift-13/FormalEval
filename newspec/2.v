@@ -10,10 +10,9 @@ Require Import Reals.
 Require Import Coquelicot.Coquelicot.
 Open Scope R_scope.
 
-Definition truncate_number_pre(x : R) : Prop :=
+Definition problem_2_pre(x : R) : Prop :=
   x > 0.
 
-Definition truncate_number_spec (x frac : R) : Prop :=
-  0 < x ->
+Definition problem_2_spec (x frac : R) : Prop :=
   frac = x - IZR (floor x) /\
   0 <= frac < 1.

@@ -7,6 +7,7 @@ add([4, 2, 6, 7]) ==> 2
 """ *)
 
 Require Import Coq.Lists.List Coq.ZArith.ZArith Coq.Bool.Bool.
+Import ListNotations.
 Open Scope Z_scope.
 
 Fixpoint sum_even_at_odd_indices (l : list Z) (n : nat) : Z :=

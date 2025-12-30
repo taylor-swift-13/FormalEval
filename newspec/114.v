@@ -9,16 +9,18 @@ Require Import Coq.ZArith.ZArith.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
-(* nums 非空 *)
-Definition Pre (nums : list Z) : Prop := nums <> [].
+
 
 Open Scope Z_scope.
 (* 定义一个函数来计算整数列表的和 *)
 Definition list_sum (l : list Z) : Z :=
   fold_left Z.add l 0.
 
+(* nums 非空 *)
+Definition problem_114_pre (nums : list Z) : Prop := nums <> [].
+
 (* 定义一个规约来描述最小子数组和的属性 *)
-Definition minSubArraySum_spec (nums : list Z) (min_sum : Z) : Prop :=
+Definition problem_114_spec (nums : list Z) (min_sum : Z) : Prop :=
   (* 1. 存在性 (Existence): 必须存在一个非空子数组，其和等于 min_sum *)
   (exists sub_array,
     sub_array <> [] /\

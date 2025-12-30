@@ -22,7 +22,7 @@ Open Scope Q_scope.
 Open Scope Z_scope.
 
 (* 任意三个有理数输入均可，无附加约束 *)
-Definition Pre (x y z : Q) : Prop := True.
+Definition problem_92_pre (x y z : Q) : Prop := True.
 
 (*
   any_int_spec is the program specification for the any_int function.
@@ -30,7 +30,7 @@ Definition Pre (x y z : Q) : Prop := True.
   - x, y, z : Q      Program inputs, using rational numbers to handle all cases.
   - b : bool         Program output, a boolean value.
 *)
-Definition any_int_spec (x y z : Q) (b : bool) : Prop :=
+Definition problem_92_spec (x y z : Q) (b : bool) : Prop :=
   b = true <->
     (*
       The entire condition is expressed with an existential quantifier.

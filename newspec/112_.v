@@ -9,7 +9,7 @@ For s = "abcdef", c = "b" the result should be ('acdef',False)
 For s = "abcdedcba", c = "ab", the result should be ('cdedc',True)
 *)
 
-Require Import Coq.Lists.List Coq.Strings.Ascii Coq.Bool.Bool.
+Require Import Coq.Lists.List Coq.Strings.Ascii Coq.Strings.String Coq.Bool.Bool.
 Import ListNotations.
 
 Inductive exists_in_list {A : Type} : A -> list A -> Prop :=
@@ -30,8 +30,18 @@ Inductive is_pal_rel : list ascii -> Prop :=
 | ipr_single : forall c, is_pal_rel [c]
 | ipr_pair : forall c s, is_pal_rel s -> is_pal_rel (c :: (s ++ [c])).
 
-Definition del_and_pal_spec (s c : list ascii) (output : list ascii * bool) : Prop :=
+(* s 与 c 仅包含小写字母 *)
+Definition problem_112_pre (s c : string) : Prop :=
+  let ls := list_ascii_of_string s in
+  let lc := list_ascii_of_string c in
+  Forall (fun ch => let n := nat_of_ascii ch in 97 <= n /\ n <= 122) ls /\
+  Forall (fun ch => let n := nat_of_ascii ch in 97 <= n /\ n <= 122) lc.
+
+Definition problem_112_spec (s c : string) (output : string * bool) : Prop :=
   let '(res, is_pal) := output in
-  delete_chars_rel s c res /\
-  (is_pal = true <-> is_pal_rel res).
+  let ls := list_ascii_of_string s in
+  let lc := list_ascii_of_string c in
+  let lres := list_ascii_of_string res in
+  delete_chars_rel ls lc lres /\
+  (is_pal = true <-> is_pal_rel lres).
 

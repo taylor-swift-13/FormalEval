@@ -9,13 +9,10 @@ For s = "abcdef", c = "b" the result should be ('acdef',False)
 For s = "abcdedcba", c = "ab", the result should be ('cdedc',True)
 *)
 
-Require Import Coq.Lists.List Coq.Strings.Ascii Coq.Bool.Bool.
+Require Import Coq.Lists.List Coq.Strings.Ascii Coq.Strings.String Coq.Bool.Bool.
 Import ListNotations.
 
-(* s 与 c 仅包含小写字母 *)
-Definition Pre (s c : list ascii) : Prop :=
-  Forall (fun ch => let n := nat_of_ascii ch in 97 <= n /\ n <= 122) s /\
-  Forall (fun ch => let n := nat_of_ascii ch in 97 <= n /\ n <= 122) c.
+
 
 Fixpoint list_eqb {A} (eq : A -> A -> bool) (l1 l2 : list A) : bool :=
   match l1,l2 with
@@ -38,6 +35,16 @@ Definition is_pal_impl (s : list ascii) : bool := list_eqb Ascii.eqb s (rev s).
 Definition del_and_pal_impl (s c : list ascii) : list ascii * bool :=
   let r := delete_chars_impl s c in (r, is_pal_impl r).
 
+Definition reverse_delete (s c : string) : string * bool :=
+  let (r, b) := del_and_pal_impl (list_ascii_of_string s) (list_ascii_of_string c) in
+  (string_of_list_ascii r, b).
 
-Definition del_and_pal_spec (s c : list ascii) (output : list ascii * bool) : Prop :=
-  output = del_and_pal_impl s c.
+(* s 与 c 仅包含小写字母 *)
+Definition problem_112_pre (s c : string) : Prop :=
+  let ls := list_ascii_of_string s in
+  let lc := list_ascii_of_string c in
+  Forall (fun ch => let n := nat_of_ascii ch in 97 <= n /\ n <= 122) ls /\
+  Forall (fun ch => let n := nat_of_ascii ch in 97 <= n /\ n <= 122) lc.
+
+Definition problem_112_spec (s c : string) (output : string * bool) : Prop :=
+  output = reverse_delete s c.

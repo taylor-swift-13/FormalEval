@@ -17,15 +17,24 @@ for Strongest_Extension('my_class', ['AA', 'Be', 'CC']) == 'my_class.AA'
 """ *)
 (* 引入所需的库 *)
 Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
 Require Import Coq.Lists.List.
 Require Import Coq.ZArith.ZArith.
 Require Import Bool.
 Import ListNotations.
 Open Scope bool_scope.
 
-(* 扩展列表必须非空 *)
-Definition Pre (class_name : list ascii) (extensions : list (list ascii)) : Prop :=
-  extensions <> [].
+Fixpoint list_ascii_of_string (s : string) : list ascii :=
+  match s with
+  | EmptyString => []
+  | String c s' => c :: list_ascii_of_string s'
+  end.
+
+Fixpoint string_of_list_ascii (l : list ascii) : string :=
+  match l with
+  | [] => EmptyString
+  | c :: l' => String c (string_of_list_ascii l')
+  end.
 
 (* 定义：检查一个字符是否为大写字母 *)
 Definition is_uppercase (c : ascii) : bool :=
@@ -40,15 +49,16 @@ Definition count_pred (p : ascii -> bool) (s : list ascii) : nat :=
   length (filter p s).
 
 (* 定义：计算一个扩展名的“力量值” *)
-Definition strength (s : list ascii) : Z :=
-  Z.of_nat (count_pred is_uppercase s) - Z.of_nat (count_pred is_lowercase s).
+Definition strength (s : string) : Z :=
+  let l := list_ascii_of_string s in
+  Z.of_nat (count_pred is_uppercase l) - Z.of_nat (count_pred is_lowercase l).
 
 (*
   谓词：is_strongest best exts
   该谓词为真，当且仅当 'best' 是列表 'exts' 中的最强扩展。
   这一定义蕴含了当力量值相同时，选择最先出现的扩展的规则。
 *)
-Definition is_strongest (best : list ascii) (exts : list (list ascii)) : Prop :=
+Definition is_strongest (best : string) (exts : list string) : Prop :=
   (* 我们可以将列表 'exts' 在 'best' 第一次出现的位置拆分为 'prefix' 和 'post' *)
   exists prefix post,
     exts = prefix ++ best :: post /\
@@ -60,11 +70,16 @@ Definition is_strongest (best : list ascii) (exts : list (list ascii)) : Prop :=
       (forall e, In e post -> (strength e <= strength best)%Z)
     ).
 
+(* 扩展列表必须非空 *)
+Definition problem_153_pre (class_name : string) (extensions : list string) : Prop :=
+  extensions <> [].
+
+
 (*
   程序规约：Spec class_name extensions res
   它定义了输入 class_name 和 extensions 与输出 res 之间的关系。
 *)
-Definition Spec (class_name : list ascii) (extensions : list (list ascii)) (res : list ascii) : Prop :=
+Definition problem_153_spec (class_name : string) (extensions : list string) (res : string) : Prop :=
   match extensions with
   | [] => False (* 对于空的扩展列表，行为是未定义的，因此规约为假 *)
   | _ :: _ => (* 对于非空的扩展列表 *)
@@ -72,5 +87,5 @@ Definition Spec (class_name : list ascii) (extensions : list (list ascii)) (res 
       exists strongest_ext,
         is_strongest strongest_ext extensions /\
         (* 并且输出 'res' 是 class_name, '.', 和 strongest_ext 的拼接 *)
-        res = class_name ++ ("." %char :: nil) ++ strongest_ext
+        res = class_name ++ "." %string ++ strongest_ext
   end.

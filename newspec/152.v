@@ -19,7 +19,7 @@ Require Import Coq.Lists.List.
 Import ListNotations.
 
 (* 输入两个列表长度必须相等 *)
-Definition Pre (game guess : list Z) : Prop := length game = length guess.
+Definition problem_152_pre (game guess : list Z) : Prop := length game = length guess.
 
 (*
   compare_spec 定义了 'compare' 函数的规约。
@@ -42,7 +42,7 @@ Definition Pre (game guess : list Z) : Prop := length game = length guess.
   但在我们的 `forall` 语句中，因为有 `(i < length game)%nat` 的前提条件，
   所以索引 `i` 永远不会越界。
 *)
-Definition compare_spec (game guess result : list Z) : Prop :=
+Definition problem_152_spec (game guess result : list Z) : Prop :=
   length game = length guess /\
   length result = length game /\
   forall i, (i < length game)%nat ->

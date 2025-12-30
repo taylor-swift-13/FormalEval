@@ -15,40 +15,33 @@ Require Import Coq.Strings.Ascii.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
-(* 字典类型已保证键值均为字符串，无附加约束；空字典由规约处理 *)
-Definition Pre (d : dictionary) : Prop := True.
+
 
 (* 定义字符串是否为小写的谓词 *)
 Definition is_lowercase (s : string) : Prop :=
-  (* Convert string to list of ascii and ensure every character is a lowercase letter *)
-  let fix all_lower (l : list ascii) : Prop :=
-      match l with
-      | [] => True
-      | c :: tl => (("a" <=? c)%char && (c <=? "z")%char = true) /\
-                   all_lower tl
-      end in
-  all_lower (list_ascii_of_string s).
+  Forall (fun c => (("a" <=? c)%char && (c <=? "z")%char) = true) (list_ascii_of_string s).
 
 (* 定义字符串是否为大写的谓词 *)
 Definition is_uppercase (s : string) : Prop :=
-  (* 这里需要一个具体的实现来检查字符串中的所有字符是否都是大写字母 *)
-  let fix all_upper (l : list ascii) : Prop :=
-      match l with
-      | [] => True
-      | c :: tl => ("A" <=? c)%char && (c <=? "Z")%char = true /\
-                   all_upper tl
-      end in
-  all_upper (list_ascii_of_string s).
+  Forall (fun c => (("A" <=? c)%char && (c <=? "Z")%char) = true) (list_ascii_of_string s).
 
-(* 定义字典的类型，这里使用从字符串到字符串的关联列表 *)
-Definition dictionary := list (string * string).
+(* 定义键的类型，可以是字符串或其他类型 *)
+Inductive KeyType :=
+  | KeyString (s : string)
+  | KeyOther.
+
+(* 定义字典的类型，键为 KeyType，值为字符串 *)
+Definition dictionary := list (KeyType * string).
+
+(* 字典类型已保证键值均为字符串，无附加约束；空字典由规约处理 *)
+Definition problem_95_pre (d : dictionary) : Prop := True.
 
 (* check_dict_case 函数的规约 *)
-Definition check_dict_case_spec (d : dictionary) (output : bool) : Prop :=
+Definition problem_95_spec (d : dictionary) (output : bool) : Prop :=
   match d with
   | [] => output = false
   | _ =>
-    ( (forall k v, In (k, v) d -> is_lowercase k) \/
-      (forall k v, In (k, v) d -> is_uppercase k) )
+    ( (forall k v, In (k, v) d -> match k with KeyString s => is_lowercase s | KeyOther => False end) \/
+      (forall k v, In (k, v) d -> match k with KeyString s => is_uppercase s | KeyOther => False end) )
     <-> output = true
   end.

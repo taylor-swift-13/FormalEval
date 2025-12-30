@@ -20,67 +20,66 @@ get_row([[], [1], [1, 2, 3]], 3) == [(2, 2)]
 """ *)
 Require Import Coq.Lists.List.
 Require Import Coq.Arith.Arith.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Bool.Bool.
 Import ListNotations.
+Open Scope Z_scope.
 
-Definition get_elem {A : Type} (lst : list (list A)) (coord : nat * nat) : option A :=
-  match nth_error lst (fst coord) with
-  | Some row => nth_error row (snd coord)
-  | None => None
-  end.
+(*
+ * 辅助定义：根据坐标 (r, c) 从嵌套列表中获取元素。
+ * 如果坐标无效，则返回 None。
+ *)
+Definition get_elem {A : Type} (lst : list (list A)) (coord : Z * Z) : option A :=
+  let (r, c) := coord in
+  if orb (r <? 0) (c <? 0) then None
+  else
+    match nth_error lst (Z.to_nat r) with
+    | Some row => nth_error row (Z.to_nat c)
+    | None => None
+    end.
 
-Inductive coord_order_rel : nat * nat -> nat * nat -> Prop :=
-  | cor_row_lt : forall c1 c2, fst c1 < fst c2 -> coord_order_rel c1 c2
-  | cor_col_gt : forall c1 c2, fst c1 = fst c2 -> snd c1 > snd c2 -> coord_order_rel c1 c2.
+(*
+ * 排序关系定义：
+ * - 首先按行号 (r) 升序。
+ * - 如果行号相同，则按列号 (c) 降序。
+ *)
+Inductive coord_order (c1 c2 : Z * Z) : Prop :=
+  | row_lt : fst c1 < fst c2 -> coord_order c1 c2
+  | col_gt : fst c1 = fst c2 -> snd c1 > snd c2 -> coord_order c1 c2.
 
-Inductive is_sorted_rel : list (nat * nat) -> Prop :=
-  | isr_nil : is_sorted_rel []
-  | isr_single : forall c, is_sorted_rel [c]
-  | isr_cons : forall c1 c2 tail,
-      coord_order_rel c1 c2 ->
-      is_sorted_rel (c2 :: tail) ->
-      is_sorted_rel (c1 :: c2 :: tail).
-
-Inductive collect_coords_row_rel : list nat -> nat -> nat -> nat -> list (nat * nat) -> Prop :=
-  | ccrr_nil : forall r c x, collect_coords_row_rel [] r c x []
-  | ccrr_match : forall h t r c x result,
-      Nat.eqb h x = true ->
-      collect_coords_row_rel t r (S c) x result ->
-      collect_coords_row_rel (h :: t) r c x ((r, c) :: result)
-  | ccrr_no_match : forall h t r c x result,
-      Nat.eqb h x = false ->
-      collect_coords_row_rel t r (S c) x result ->
-      collect_coords_row_rel (h :: t) r c x result.
-
-Inductive collect_all_coords_rel : list (list nat) -> nat -> nat -> list (nat * nat) -> Prop :=
-  | cacr_nil : forall r x, collect_all_coords_rel [] r x []
-  | cacr_cons : forall row rest r x row_coords rest_coords,
-      collect_coords_row_rel row r 0 x row_coords ->
-      collect_all_coords_rel rest (S r) x rest_coords ->
-      collect_all_coords_rel (row :: rest) r x (row_coords ++ rest_coords).
-
-Inductive insert_coord_rel : nat * nat -> list (nat * nat) -> list (nat * nat) -> Prop :=
-  | icr_nil : forall coord, insert_coord_rel coord [] [coord]
-  | icr_row_lt : forall coord h t,
-      (fst coord < fst h) ->
-      insert_coord_rel coord (h :: t) (coord :: h :: t)
-  | icr_row_eq_col_gt : forall coord h t,
-      (fst coord = fst h) ->
-      (snd h < snd coord) ->
-      insert_coord_rel coord (h :: t) (coord :: h :: t)
-  | icr_skip : forall coord h t result,
-      ((fst coord > fst h) \/ (fst coord = fst h /\ snd h >= snd coord)) ->
-      insert_coord_rel coord t result ->
-      insert_coord_rel coord (h :: t) (h :: result).
-
-Inductive sort_coords_rel : list (nat * nat) -> list (nat * nat) -> Prop :=
-  | scr_nil : sort_coords_rel [] []
-  | scr_cons : forall h t sorted_tail result,
-      sort_coords_rel t sorted_tail ->
-      insert_coord_rel h sorted_tail result ->
-      sort_coords_rel (h :: t) result.
+(*
+ * 检查一个坐标列表是否根据 coord_order 关系进行了排序。
+ *)
+Inductive is_sorted : list (Z * Z) -> Prop :=
+  | sorted_nil : is_sorted []
+  | sorted_one : forall c, is_sorted [c]
+  | sorted_cons : forall c1 c2 tail,
+      coord_order c1 c2 ->
+      is_sorted (c2 :: tail) ->
+      is_sorted (c1 :: c2 :: tail).
 
 
-Definition get_row_spec (lst : list (list nat)) (x : nat) (res : list (nat * nat)) : Prop :=
-  exists coords,
-    collect_all_coords_rel lst 0 x coords /\
-    sort_coords_rel coords res.
+Definition problem_87_pre (lst : list (list Z)) (x : Z) : Prop := True.
+(*
+ * get_row 函数的程序规约 (Spec)
+ *)
+Definition  problem_87_spec (lst : list (list Z)) (x : Z) (res : list (Z * Z)) : Prop :=
+  (* 1. 成员正确性 (Correctness):
+        输出列表 res 中的每一个坐标 (r, c) 在输入列表 lst 中都必须对应元素 x。*)
+  (forall coord : Z * Z, In coord res -> get_elem lst coord = Some x) /\
+
+  (* 2. 完整性 (Completeness):
+        输入列表 lst 中所有值为 x 的元素的坐标 (r, c) 都必须包含在输出列表 res 中。*)
+  (forall r c : Z,
+    match get_elem lst (r, c) with
+    | Some v => v = x -> In (r, c) res
+    | None => True
+    end) /\
+
+  (* 3. 排序规则 (Sorting):
+        输出列表 res 必须是根据 coord_order 规则排序的。*)
+  is_sorted res /\
+
+  (* 4. 无重复 (No Duplicates):
+        输出列表 res 中不包含重复的坐标。 *)
+  NoDup res.

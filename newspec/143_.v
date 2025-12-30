@@ -19,7 +19,7 @@ Constraints:
 * sentence contains only letters
 """ *)
 
-Require Import Coq.Lists.List Coq.Strings.Ascii Coq.Arith.Arith Coq.Bool.Bool.
+Require Import Coq.Lists.List Coq.Strings.Ascii Coq.Strings.String Coq.Arith.Arith Coq.Bool.Bool.
 Import ListNotations.
 
 Inductive has_divisor_from_rel : nat -> nat -> Prop :=
@@ -66,8 +66,15 @@ Inductive join_words_rel : list (list ascii) -> list ascii -> Prop :=
 | jwr_multi : forall w ws res, join_words_rel ws res ->
     join_words_rel (w :: ws) (w ++ (" "%char :: nil) ++ res).
 
-Definition words_in_sentence_spec (sentence : list ascii) (output : list ascii) : Prop :=
-  exists words filtered, split_words_rel sentence words /\
+(* 约束：1 <= 长度 <= 100；内容为英文字母或空格 *)
+Definition problem_143_pre (sentence : string) : Prop :=
+  let l := list_ascii_of_string sentence in
+  1 <= length l /\ length l <= 100 /\
+  Forall (fun c =>
+    let n := nat_of_ascii c in c = " "%char \/ (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122)) l.
+
+Definition problem_143_spec (sentence : string) (output : string) : Prop :=
+  exists words filtered, split_words_rel (list_ascii_of_string sentence) words /\
     filter_prime_length_rel words filtered /\
-    join_words_rel filtered output.
+    join_words_rel filtered (list_ascii_of_string output).
 

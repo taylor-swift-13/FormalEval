@@ -19,14 +19,9 @@ Constraints:
 * sentence contains only letters
 """ *)
 
-Require Import Coq.Lists.List Coq.Strings.Ascii Coq.Arith.Arith Coq.Bool.Bool.
+Require Import Coq.Lists.List Coq.Strings.Ascii Coq.Strings.String Coq.Arith.Arith Coq.Bool.Bool.
 Import ListNotations.
 
-(* 约束：1 <= 长度 <= 100；内容为英文字母或空格 *)
-Definition Pre (sentence : list ascii) : Prop :=
-  1 <= length sentence /\ length sentence <= 100 /\
-  Forall (fun c =>
-    let n := nat_of_ascii c in c = " "%char \/ (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122)) sentence.
 
 Fixpoint has_divisor_from (n d : nat) : bool :=
   match d with
@@ -73,18 +68,17 @@ Fixpoint join_words (ws : list (list ascii)) : list ascii :=
     w ++ (" "%char :: nil) ++ join_words rest
   end.
 
-Definition words_in_sentence_impl (sentence : list ascii) : list ascii :=
-  let words := split_words sentence in
+Definition words_in_sentence_impl (sentence : string) : string :=
+  let words := split_words (list_ascii_of_string sentence) in
   let sel := List.filter (fun w => is_prime_bool (length w)) words in
-  join_words sel.
+  string_of_list_ascii (join_words sel).
 
-Example words_in_sentence_impl_ex:
-  words_in_sentence_impl ("T"%char :: "h"%char :: "i"%char :: "s"%char :: " "%char ::
-                            "i"%char :: "s"%char :: " "%char ::
-                            "a"%char :: " "%char ::
-                            "t"%char :: "e"%char :: "s"%char :: "t"%char :: nil)
-  = ("i"%char :: "s"%char :: nil).
-Proof. reflexivity. Qed.
+(* 约束：1 <= 长度 <= 100；内容为英文字母或空格 *)
+Definition problem_143_pre (sentence : string) : Prop :=
+  let l := list_ascii_of_string sentence in
+  1 <= length l /\ length l <= 100 /\
+  Forall (fun c =>
+    let n := nat_of_ascii c in c = " "%char \/ (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122)) l.
 
-Definition words_in_sentence_spec (sentence : list ascii) (output : list ascii) : Prop :=
+Definition problem_143_spec (sentence : string) (output : string) : Prop :=
   output = words_in_sentence_impl sentence.

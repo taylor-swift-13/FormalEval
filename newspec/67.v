@@ -13,7 +13,10 @@ fruit_distribution("100 apples and 1 oranges",120) -> 120 - 100 - 1 = 19
 """ *)
 (* 引入Coq自带的库，用于处理整数（Z）和字符串（string） *)
 Require Import ZArith Strings.String.
-Open Scope Z_scope.
+Require Import Coq.Strings.Ascii.
+
+Definition char_to_digit (c : ascii) : nat :=
+  nat_of_ascii c - nat_of_ascii "0"%char.
 
 (* 辅助函数：将字符串转换为自然数 *)
 Fixpoint string_to_nat_aux (s : string) (acc : nat) : nat :=
@@ -37,9 +40,9 @@ Definition parse_fruit_string (s : string) (apples oranges : nat) : Prop :=
     s = (s_apples ++ " apples and " ++ s_oranges ++ " oranges")%string.
        
 
-Definition Pre (s : string) (n : Z) : Prop := True.
+Definition problem_67_pre (s : string) (n : nat) : Prop := True.
 
-Definition fruit_distribution_spec (s : string) (n : Z) (ret : Z) : Prop :=
+Definition problem_67_spec (s : string) (n : nat) (ret : nat) : Prop :=
   exists apples oranges,
     parse_fruit_string s apples oranges /\
     ret = n - (apples + oranges).

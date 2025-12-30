@@ -18,9 +18,7 @@ Require Import Arith.
 Import ListNotations.
 Open Scope string_scope. (* 打开作用域以使用 "%char" 表示法 *)
 
-(* 预条件：消息只包含英文字母大小写 *)
-Definition Pre (l_in : list ascii) : Prop :=
-  Forall (fun c => let n := nat_of_ascii c in (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122)) l_in.
+
 
 (* 辅助函数：检查一个字符是否是元音 *)
 Definition is_vowel (c : ascii) : bool :=
@@ -31,7 +29,6 @@ Definition is_vowel (c : ascii) : bool :=
   end.
 
 (* 辅助函数：转换字母的大小写 *)
-(* 此为规约目的的简化版本 *)
 Definition swap_case (c : ascii) : ascii :=
   let n := nat_of_ascii c in
   if andb (leb 65 n) (leb n 90) (* 是大写字母吗？ *)
@@ -48,15 +45,20 @@ Definition replace_vowel (c : ascii) : ascii :=
   | _ => c
   end.
 
-(* 单个字符编码的规约 *)
-Inductive encode_char_spec (c_in c_out : ascii) : Prop :=
-| mk_encode_char_spec :
-    let c_swapped := swap_case c_in in
-    (if is_vowel c_in
-     then c_out = replace_vowel c_swapped
-     else c_out = c_swapped) ->
-    encode_char_spec c_in c_out.
+
+Definition encode_char_spec (c_in c_out : ascii) : Prop :=
+  let c_swapped := swap_case c_in in
+  if is_vowel c_in
+  then c_out = replace_vowel c_swapped
+  else c_out = c_swapped.
+
+(* 预条件：消息只包含英文字母大小写或空格 *)
+Definition problem_93_pre (s_in : string) : Prop :=
+  let l_in := list_ascii_of_string s_in in
+  Forall (fun c => let n := nat_of_ascii c in (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122) \/ n = 32) l_in.
 
 (* 完整 encode 函数的规约 *)
-Definition encode_spec (l_in l_out : list ascii) : Prop :=
- Forall2 encode_char_spec l_in l_out.
+Definition problem_93_spec (s_in s_out : string) : Prop :=
+  let l_in := list_ascii_of_string s_in in
+  let l_out := list_ascii_of_string s_out in
+  Forall2 encode_char_spec l_in l_out.

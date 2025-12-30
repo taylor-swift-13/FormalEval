@@ -26,6 +26,8 @@ Inductive is_correctly_bracketed : list ascii -> Prop :=
                   is_correctly_bracketed l2 ->
                   is_correctly_bracketed (l1 ++ l2).
 
+Definition problem_61_pre (brackets : list ascii) : Prop :=
+  Forall (fun c => c = "("%char \/ c = ")"%char) brackets.
 
-Definition correct_bracketing_spec (brackets : list ascii) (b : bool) : Prop :=
+Definition problem_61_spec (brackets : list ascii) (b : bool) : Prop :=
   b = true <-> is_correctly_bracketed brackets.

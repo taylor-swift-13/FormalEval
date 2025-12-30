@@ -32,10 +32,10 @@ Fixpoint check_depth (l : list ascii) (d : nat) : option nat :=
 Definition correct_bracketing_impl (brackets : list ascii) : bool :=
   match check_depth brackets 0 with Some 0 => true | _ => false end.
 
-Definition Pre (brackets : list ascii) : Prop :=
+Definition problem_61_pre (brackets : list ascii) : Prop :=
   Forall (fun c => c = "("%char \/ c = ")"%char) brackets.
 
-Definition correct_bracketing_spec (brackets : list ascii) (output : bool) : Prop :=
+Definition problem_61_spec (brackets : list ascii) (output : bool) : Prop :=
   output = correct_bracketing_impl brackets.
 
 

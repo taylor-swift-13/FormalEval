@@ -27,7 +27,7 @@ Fixpoint sum_uppercase_ascii (l : list ascii) : nat :=
 
 Definition digitSum_impl (l : list ascii) : nat := sum_uppercase_ascii l.
 
-Definition Pre (l : list ascii) : Prop := True.
+Definition problem_66_pre (l : list ascii) : Prop := True.
 
-Definition digitSum_spec (l : list ascii) (output : nat) : Prop :=
+Definition problem_66_spec (l : list ascii) (output : nat) : Prop :=
   output = digitSum_impl l.

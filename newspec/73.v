@@ -11,31 +11,33 @@ smallest_change([1, 2, 3, 2, 1]) == 0*)
 Require Import List.
 Require Import Coq.Init.Nat.
 Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
 Import ListNotations.
+Open Scope Z_scope.
 
 (*
   count_diff l1 l2 acc := 计算 l1 和 l2 之间不同元素的数量
 *)
-Fixpoint count_diff (l1 l2: list nat) (acc: nat): nat :=
+Fixpoint count_diff (l1 l2: list Z) (acc: Z): Z :=
   match l1, l2 with
   | [], _ => acc
   | _, [] => acc
   | h1 :: t1, h2 :: t2 =>
-    if Nat.eqb h1 h2 then
+    if Z.eqb h1 h2 then
       count_diff t1 t2 acc
     else
-      count_diff t1 t2 (S acc)
+      count_diff t1 t2 (Z.succ acc)
   end.
 
-Definition smallest_change_impl (arr: list nat): nat :=
+Definition smallest_change_impl (arr: list Z): Z :=
   let len := length arr in
-  let half_len := len / 2 in
+  let half_len := (len / 2)%nat in
   let first_half := firstn half_len arr in
   (* 使用 skipn 来获取列表的后半部分 *)
   let second_half := skipn (len - half_len) arr in
   count_diff first_half (rev second_half) 0.
 
-Definition Pre (arr : list nat) : Prop := True.
+Definition problem_73_pre (arr : list Z) : Prop := True.
 
-Definition smallest_change_spec (arr: list nat) (n: nat): Prop :=
+Definition problem_73_spec (arr: list Z) (n: Z): Prop :=
   n = smallest_change_impl arr.

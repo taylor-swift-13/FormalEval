@@ -9,20 +9,11 @@ for x_or_y(15, 8, 5) == 5
 """ *)
 (* 导入Coq算术库，以使用取模运算(mod)和大小比较 *)
 Require Import Arith.
+Require Import ZArith.
+Require Import Coq.ZArith.Znumtheory.
 
 (* 任意自然数输入均可 *)
-Definition Pre (n x y : nat) : Prop := True.
-
-(*
-  1. 自定义 'MyPrime' (素数) 规约，使用取模运算
-  这个定义更加接近于一个可执行的素数判断逻辑。
-
-  一个自然数 n 是素数，当且仅当:
-  - n > 1
-  - 并且，对于所有大于等于2且小于n的自然数d，n mod d 的结果都不为0。
-*)
-Definition Prime (n : nat) : Prop :=
-  (1 < n) /\ (forall d : nat, 2 <= d -> d < n -> n mod d <> 0).
+Definition problem_150_pre (n x y : nat) : Prop := True.
 
 (*
   2. 程序 'x_or_y' 的规约
@@ -33,8 +24,8 @@ Definition Prime (n : nat) : Prop :=
     res : nat - 程序的实际输出。
 
   规约逻辑:
-  如果 MyPrime n 为真，那么结果 res 必须等于 x；否则，结果 res 必须等于 y。
+  如果 prime (Z.of_nat n) 为真，那么结果 res 必须等于 x；否则，结果 res 必须等于 y。
 *)
-Definition x_or_y_spec (n x y res : nat) : Prop :=
-  Prime n -> res = x \/
-  ~ Prime n -> res = y.
+Definition problem_150_spec (n x y res : nat) : Prop :=
+  (prime (Z.of_nat n) -> res = x) /\
+  (~ prime (Z.of_nat n) -> res = y).

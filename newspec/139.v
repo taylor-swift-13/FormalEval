@@ -15,8 +15,6 @@ Require Import Coq.Lists.List.
 Require Import Coq.Init.Nat.
 Import ListNotations.
 
-(* n > 0 *)
-Definition Pre (n : nat) : Prop := n > 0.
 
 Fixpoint fact (n : nat) : nat :=
   match n with
@@ -28,5 +26,8 @@ Fixpoint fact (n : nat) : nat :=
 Definition brazilian_factorial_impl (n : nat) : nat :=
   fold_right mult 1 (map fact (seq 1 n)).
 
-Definition brazilian_factorial_spec (n : nat) (output : nat) : Prop :=
+(* n > 0 *)
+Definition problem_139_pre (n : nat) : Prop := n > 0.
+
+Definition problem_139_spec (n : nat) (output : nat) : Prop :=
   output = brazilian_factorial_impl n.

@@ -7,15 +7,13 @@ is_multiply_prime(30) == True
 30 = 2 * 3 * 5
 """ *)
 Require Import Arith.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.ZArith.Znumtheory. (* 其中定义了 prime *)
+Open Scope Z_scope.
 
 
-(* 定义：一个数 n 是素数 *)
-Definition is_prime (n : nat) : Prop :=
-  n > 1 /\ forall d : nat, d mod n = 0 -> d = 1 \/ d = n.
+Definition problem_75_pre (a : Z) : Prop := a < 100.
 
-Definition Pre (a : nat) : Prop := (a < 100)%nat.
-
-Definition is_multiply_prime_spec (a : nat) (b : bool) : Prop :=
-  (a < 100) ->
-  (b = true <-> exists p1 p2 p3, is_prime p1 /\ is_prime p2 /\ is_prime p3 /\ a = p1 * p2 * p3).
+Definition problem_75_spec (a : Z) (b : bool) : Prop :=
+  (b = true <-> exists p1 p2 p3, prime p1 /\ prime p2 /\ prime p3 /\ a = p1 * p2 * p3).
 

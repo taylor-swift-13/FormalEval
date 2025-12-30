@@ -12,8 +12,6 @@ For lst = [-1,-5,2,-1,-5] the output should be -126
 Require Import Coq.Lists.List Coq.ZArith.ZArith Coq.NArith.NArith Coq.Bool.Bool.
 Import ListNotations.
 
-(* 任意整数列表（允许为空） *)
-Definition Pre (lst : list Z) : Prop := True.
 
 Fixpoint sum_transformed (l : list Z) (n : nat) : Z :=
   match l with
@@ -28,8 +26,8 @@ Fixpoint sum_transformed (l : list Z) (n : nat) : Z :=
 
 Definition sum_squares_impl (lst : list Z) : Z := sum_transformed lst 0%nat.
 
-Example sum_squares_impl_ex: sum_squares_impl (1%Z :: 2%Z :: 3%Z :: nil) = 6%Z.
-Proof. reflexivity. Qed.
+(* 任意整数列表（允许为空） *)
+Definition problem_142_pre (lst : list Z) : Prop := True.
 
-Definition sum_squares_spec (lst : list Z) (output : Z) : Prop :=
+Definition problem_142_spec (lst : list Z) (output : Z) : Prop :=
   output = sum_squares_impl lst.

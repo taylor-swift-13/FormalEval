@@ -13,32 +13,46 @@ Note:
 For example:
 get_odd_collatz(5) returns [1, 5] # The collatz sequence for 5 is [5, 16, 8, 4, 2, 1], so the odd numbers are only 1, and 5. *)
 
-Require Import Coq.ZArith.ZArith Coq.Lists.List Coq.Sorting.Sorted Coq.Sorting.Permutation.
+(* 引用 Coq 标准库 *)
+Require Import Coq.ZArith.ZArith.   (* 整数库 *)
+Require Import Coq.Lists.List.      (* 列表库 *)
+Require Import Coq.Sorting.Permutation. (* 列表置换关系 *)
+Require Import Coq.Sorting.Sorted.      (* 列表排序谓词 *)
+
 Import ListNotations.
 Open Scope Z_scope.
 
-
-Fixpoint collatz_next (n : Z) : Z := if Z.even n then n / 2 else 3 * n + 1.
-
-Fixpoint collatz_list_compute (fuel : nat) (n : Z) : list Z :=
+(*
+  辅助函数：带燃料的 Collatz 序列生成
+*)
+Fixpoint collatz_aux (n : Z) (fuel : nat) : list Z :=
   match fuel with
-  | O => [n]
-  | S f' => if Z.eqb n 1 then [1] else n :: collatz_list_compute f' (collatz_next n)
+  | O => []
+  | S fuel' =>
+    if Z.eqb n 1 then [1]
+    else
+      let next := if Z.even n then n / 2 else 3 * n + 1 in
+      n :: collatz_aux next fuel'
   end.
 
-Definition odd_filter (l : list Z) : list Z := filter (fun x => Z.odd x) l.
-
-Fixpoint insert_asc (x : Z) (l : list Z) : list Z := match l with []=>[x] | h::t => if Z.leb x h then x::l else h::insert_asc x t end.
-Fixpoint sort_asc (l : list Z) : list Z := match l with []=>[] | h::t => insert_asc h (sort_asc t) end.
+(*
+  [collatz_list n l] 定义：存在某个燃料使得生成的序列为 l，且序列以 1 结尾。
+*)
+Definition collatz_list (n : Z) (l : list Z) : Prop :=
+  exists fuel, collatz_aux n fuel = l /\ last l 0 = 1.
 
 (* n 为正整数 *)
-Definition Pre (n : Z) : Prop := n > 0.
-
-Definition get_odd_collatz_impl (n : Z) : list Z :=
-  let seq := collatz_list_compute (Z.to_nat (Z.abs n) + 10000)%nat (Z.max 1 n) in
-  sort_asc (odd_filter seq).
-
-Definition get_odd_collatz_spec (n : Z) (output : list Z) : Prop :=
-  output = get_odd_collatz_impl n.
-
-
+Definition problem_123_pre (n : Z) : Prop := n > 0.
+(*
+  [get_odd_collatz_spec n result] 定义了程序的规约。
+  它描述了输入 [n] 和输出 [result] 之间必须满足的关系。
+*)
+Definition  problem_123_spec (n : Z) (result : list Z) : Prop :=
+  (* 存在一个列表 c_seq ... *)
+  exists (c_seq : list Z),
+    (* ... c_seq 是 n 的 Collatz 序列 ... *)
+    collatz_list n c_seq /\
+    (* ... 并且，输出 result 是 c_seq 中所有奇数元素构成的列表的一个排列 ... *)
+    Permutation result (filter (fun x => Z.odd x) c_seq) /\ (* <- 已修正 *)
+    (* ... 并且，输出 result 必须是升序排列的。 *)
+    Sorted Z.le result.

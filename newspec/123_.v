@@ -13,37 +13,50 @@ Note:
 For example:
 get_odd_collatz(5) returns [1, 5] # The collatz sequence for 5 is [5, 16, 8, 4, 2, 1], so the odd numbers are only 1, and 5. *)
 
-Require Import Coq.ZArith.ZArith Coq.Lists.List Coq.Sorting.Sorted Coq.Sorting.Permutation.
+(* 引用 Coq 标准库 *)
+Require Import Coq.ZArith.ZArith.   (* 整数库 *)
+Require Import Coq.Lists.List.      (* 列表库 *)
+Require Import Coq.Sorting.Permutation. (* 列表置换关系 *)
+Require Import Coq.Sorting.Sorted.      (* 列表排序谓词 *)
+
 Import ListNotations.
 Open Scope Z_scope.
 
-Inductive collatz_next_rel : Z -> Z -> Prop :=
-| cnr_even : forall n, Z.even n = true -> collatz_next_rel n (n / 2)
-| cnr_odd : forall n, Z.even n = false -> collatz_next_rel n (3 * n + 1).
+(*
+  [collatz_list n l] 定义了一个归纳谓词，
+  用来描述列表 [l] 是从正整数 [n] 开始的 Collatz 序列。
+  该定义隐含了序列会终止于 1 的假设。
+*)
+Inductive collatz_list (n : Z) : list Z -> Prop :=
+  (* 基础情况：如果 n 等于 1，那么它的 Collatz 序列是 [1] *)
+  | cl_one : n = 1 -> collatz_list n [1]
+  (* 归纳步骤（偶数）：如果 n 是大于 1 的偶数，
+     且 l' 是 n/2 的 Collatz 序列，那么 (n :: l') 是 n 的 Collatz 序列。*)
+  | cl_even : forall l',
+      n > 1 ->
+      Z.even n = true -> (* <- 已修正 *)
+      collatz_list (n / 2) l' ->
+      collatz_list n (n :: l')
+  (* 归纳步骤（奇数）：如果 n 是大于 1 的奇数，
+     且 l' 是 3*n+1 的 Collatz 序列，那么 (n :: l') 是 n 的 Collatz 序列。*)
+  | cl_odd : forall l',
+      n > 1 ->
+      Z.odd n = true -> (* <- 已修正 *)
+      collatz_list (3 * n + 1) l' ->
+      collatz_list n (n :: l').
 
-Inductive collatz_seq_rel : Z -> nat -> list Z -> Prop :=
-| csr_one : collatz_seq_rel 1%Z 0%nat (1%Z :: nil)
-| csr_step : forall n next fuel seq, n <> 1%Z ->
-   collatz_next_rel n next ->
-   collatz_seq_rel next fuel seq ->
-   collatz_seq_rel n (S fuel) (n :: seq).
-
-Inductive filter_odd_rel : list Z -> list Z -> Prop :=
-| for_nil : filter_odd_rel nil nil
-| for_odd : forall h t res, Z.odd h = true -> filter_odd_rel t res ->
-    filter_odd_rel (h :: t) (h :: res)
-| for_even : forall h t res, Z.odd h = false -> filter_odd_rel t res ->
-    filter_odd_rel (h :: t) res.
-
-Inductive sorted_asc_rel : list Z -> list Z -> Prop :=
-| sar_nil : sorted_asc_rel nil nil
-| sar_single : forall x, sorted_asc_rel (x :: nil) (x :: nil)
-| sar_cons : forall x xs sorted_tail,
-   (sorted_tail = nil \/ exists h t, sorted_tail = h :: t /\ Z.leb x h = true) ->
-   sorted_asc_rel xs sorted_tail ->
-   sorted_asc_rel (x :: xs) (x :: sorted_tail).
-
-Definition get_odd_collatz_spec (n : Z) (output : list Z) : Prop :=
-  exists seq odd_seq fuel, collatz_seq_rel (Z.max 1 n) fuel seq /\
-   filter_odd_rel seq odd_seq /\
-   sorted_asc_rel odd_seq output.
+(* n 为正整数 *)
+Definition problem_123_pre (n : Z) : Prop := n > 0.
+(*
+  [problem_123_spec n result] 定义了程序的规约。
+  它描述了输入 [n] 和输出 [result] 之间必须满足的关系。
+*)
+Definition  problem_123_spec (n : Z) (result : list Z) : Prop :=
+  (* 存在一个列表 c_seq ... *)
+  exists (c_seq : list Z),
+    (* ... c_seq 是 n 的 Collatz 序列 ... *)
+    collatz_list n c_seq /\
+    (* ... 并且，输出 result 是 c_seq 中所有奇数元素构成的列表的一个排列 ... *)
+    Permutation result (filter (fun x => Z.odd x) c_seq) /\ (* <- 已修正 *)
+    (* ... 并且，输出 result 必须是升序排列的。 *)
+    Sorted Z.le result.

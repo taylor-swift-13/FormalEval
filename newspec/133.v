@@ -13,17 +13,16 @@ Require Import Coq.Reals.Reals.
 Require Import Coq.ZArith.ZArith.
 Import ListNotations.
 
-(* 任意实数列表均可 *)
-Definition Pre (lst : list R) : Prop := True.
-
 Open Scope R_scope.
 (* z 是 x 的 ceiling 的一个等价刻画： IZR z - 1 < x <= IZR z *)
 Definition is_ceil (x : R) (z : Z) : Prop :=
   (IZR z - 1 < x) /\ (x <= IZR z).
 
+(* 任意实数列表均可 *)
+Definition problem_133_pre (lst : list R) : Prop := True.
+
 (* 规约：对于输入实数列表 lst，输出 s 为对应每个元素向上取整后的整数的平方和 *)
-Definition sum_squares_spec (lst : list R) (s : Z) : Prop :=
+Definition  problem_133_spec (lst : list R) (s : Z) : Prop :=
   exists zs : list Z,
-    length zs = length lst /\
     Forall2 is_ceil lst zs /\
     s = fold_right Z.add 0%Z (map (fun z => Z.mul z z) zs).

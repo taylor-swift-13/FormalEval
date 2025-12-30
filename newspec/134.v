@@ -17,8 +17,6 @@ Require Import Coq.Arith.PeanoNat.
 Require Import Coq.Init.Nat.
 Import ListNotations.
 
-(* 任意字符列表均可 *)
-Definition Pre (s : list ascii) : Prop := True.
 
 (* 空格字符 *)
 Definition space : ascii := Ascii.ascii_of_nat 32.
@@ -35,6 +33,9 @@ Definition ends_with_single_letter_pred (s : list ascii) : Prop :=
     is_alpha c /\
     (pre = [] \/ exists pre', pre = pre' ++ [space]).
 
+(* 任意字符列表均可 *)
+Definition problem_134_pre (s : list ascii) : Prop := True.
+
 (* 最终 Spec：输入 s，输出 b。当且仅当 ends_with_single_letter_pred s 成立时返回 true。 *)
-Definition check_if_last_char_is_a_letter_spec (s : list ascii) (b : bool) : Prop :=
+Definition problem_134_spec (s : list ascii) (b : bool) : Prop :=
   b = true <-> ends_with_single_letter_pred s.

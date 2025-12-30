@@ -32,7 +32,7 @@ Open Scope Z_scope.
 Open Scope list_scope.
 
 (* 约束：1 <= length arr <= 1000；元素绝对值 <= 1000；0 <= k <= length arr *)
-Definition Pre (arr : list Z) (k : nat) : Prop :=
+Definition problem_120_pre (arr : list Z) (k : nat) : Prop :=
        length arr >= 1 /\ length arr <= 1000 /\
        Forall (fun z => (-1000 <= z /\ z <= 1000)) arr /\
        k <= length arr.
@@ -45,7 +45,7 @@ Definition Pre (arr : list Z) (k : nat) : Prop :=
  *
  * 这个规约断言 res 是 arr 中 k 个最大元素的有序列表。
  *)
-Definition top_k_spec (arr : list Z) (k : nat) (res : list Z) : Prop :=
+Definition problem_120_spec (arr : list Z) (k : nat) (res : list Z) : Prop :=
   (* 1. 输出列表的长度必须为 k *)
   length res = k /\
 

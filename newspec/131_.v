@@ -28,7 +28,10 @@ Inductive product_rel : list nat -> nat -> Prop :=
 | pr_cons : forall d ds p p_tail, product_rel ds p_tail -> p = d * p_tail ->
     product_rel (d :: ds) p.
 
-Definition digits_spec (n : nat) (output : nat) : Prop :=
+(* n 为正整数 *)
+Definition problem_131_pre (n : nat) : Prop := n > 0.
+
+Definition problem_131_spec (n : nat) (output : nat) : Prop :=
   exists ds odd_ds, get_digits_rel n ds /\
     filter_odd_digits_rel ds odd_ds /\
     (odd_ds = nil -> output = 0%nat) /\

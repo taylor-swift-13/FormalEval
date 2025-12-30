@@ -10,8 +10,6 @@ digits(235) == 15
 Require Import Coq.Lists.List Coq.Arith.Arith.
 Import ListNotations.
 
-(* n 为正整数 *)
-Definition Pre (n : nat) : Prop := n > 0.
 
 Fixpoint get_digits_helper (n fuel : nat) : list nat :=
   match fuel with
@@ -39,5 +37,8 @@ Definition digits_impl (n : nat) : nat :=
   | _ => product ds
   end.
 
-Definition digits_spec (n : nat) (output : nat) : Prop :=
+(* n 为正整数 *)
+Definition problem_131_pre (n : nat) : Prop := n > 0.
+
+Definition problem_131_spec (n : nat) (output : nat) : Prop :=
   output = digits_impl n.

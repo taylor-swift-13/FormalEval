@@ -11,12 +11,11 @@ For lst = [0,81,12,3,1,21] the output should be 3
 For lst = [0,8,1,2,1,7] the output should be 7
 """ *)
 Require Import Coq.Arith.Arith.
+Require Import Coq.ZArith.ZArith.
 Require Import Coq.Lists.List.
+Require Import Coq.ZArith.Znumtheory.
 Import ListNotations.
-
-Definition IsPrime (n : nat) : Prop :=
-  n > 1 /\ (forall d : nat, 1 < d /\ d < n -> n mod d <> 0).
-
+Open Scope nat_scope.
 Inductive sum_digits_fueled_rel : nat -> nat -> nat -> Prop :=
   | sdfr_zero_fuel : forall n, sum_digits_fueled_rel n 0 0
   | sdfr_zero_n : forall fuel, sum_digits_fueled_rel 0 fuel 0
@@ -29,10 +28,14 @@ Inductive sum_digits_fueled_rel : nat -> nat -> nat -> Prop :=
 Inductive sum_digits_rel : nat -> nat -> Prop :=
   | sdr_base : forall n sum, sum_digits_fueled_rel n n sum -> sum_digits_rel n sum.
 
+(* 输入列表可含任意自然数（允许为空） *)
+Definition problem_94_pre (lst : list nat) : Prop := True.
 
-Definition Spec (lst : list nat) (output : nat) : Prop :=
-  exists p,
+Definition problem_94_spec (lst : list nat) (output : nat) : Prop :=
+  (exists p,
     In p lst /\
-    IsPrime p /\
-    (forall p', In p' lst -> IsPrime p' -> p' <= p) /\
-    sum_digits_rel p output.
+    prime (Z.of_nat p) /\
+    (forall p', In p' lst -> prime (Z.of_nat p') -> p' <= p) /\
+    sum_digits_rel p output)
+  \/
+  ((forall x, In x lst -> ~ prime (Z.of_nat x)) /\ output = 0).

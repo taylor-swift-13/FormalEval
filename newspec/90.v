@@ -14,10 +14,10 @@ Require Import Coq.ZArith.ZArith.
 Import ListNotations.
 Open Scope Z_scope.
 
-Definition Pre (l : list Z) : Prop := True.
+Definition problem_90_pre (l : list Z) : Prop := True.
 
 (*
-  next_smallest_spec l res
+  problem_90_spec l res
 
   一个描述 next_smallest 函数行为的规约。
 
@@ -33,7 +33,7 @@ Definition Pre (l : list Z) : Prop := True.
   2. 当函数返回 None (没有找到第二小的值):
      - 这意味着列表中不存在两个或以上不同的元素。
 *)
-Definition next_smallest_spec (l : list Z) (res : option Z) : Prop :=
+Definition  problem_90_spec (l : list Z) (res : option Z) : Prop :=
   match res with
   | Some z => (* `Some` 情况：z 是第二小的值 *)
     exists s1,

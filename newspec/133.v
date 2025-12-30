@@ -22,7 +22,7 @@ Definition is_ceil (x : R) (z : Z) : Prop :=
 Definition problem_133_pre (lst : list R) : Prop := True.
 
 (* 规约：对于输入实数列表 lst，输出 s 为对应每个元素向上取整后的整数的平方和 *)
-Definition  problem_133_spec (lst : list R) (s : Z) : Prop :=
+Definition problem_133_spec (lst : list R) (s : Z) : Prop :=
   exists zs : list Z,
     Forall2 is_ceil lst zs /\
     s = fold_right Z.add 0%Z (map (fun z => Z.mul z z) zs).

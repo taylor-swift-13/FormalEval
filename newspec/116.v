@@ -4,7 +4,6 @@ For similar number of ones, sort based on decimal value.
 
 It must be implemented like this:
 >>> sort_array([1, 5, 2, 3, 4]) == [1, 2, 3, 4, 5]
->>> sort_array([-2, -3, -4, -5, -6]) == [-6, -5, -4, -3, -2]
 >>> sort_array([1, 0, 2, 3, 4]) [0, 1, 2, 3, 4] *)
 
 Require Import Coq.Lists.List.
@@ -13,8 +12,6 @@ Require Import Permutation.
 Require Import Sorting.Sorted.
 Import ListNotations.
 
-(* 输入为非负整数列表（nat 已保证） *)
-Definition Pre (input : list nat) : Prop := True.
 
 (*
   定义一个带有 "燃料" 参数的辅助函数。
@@ -79,5 +76,8 @@ Fixpoint sort_array_impl (input : list nat) : list nat :=
   | h :: t => insert_sorted h (sort_array_impl t)
   end.
 
-Definition sort_array_spec (input output : list nat) : Prop :=
+(* 输入为非负整数列表（nat 已保证） *)
+Definition problem_116_pre (input : list nat) : Prop := True.
+
+Definition problem_116_spec (input output : list nat) : Prop :=
   output = sort_array_impl input.

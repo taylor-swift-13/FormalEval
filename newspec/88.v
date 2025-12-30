@@ -16,20 +16,13 @@ Examples:
 Require Import List.
 Require Import Arith.
 Require Import Permutation.
+Require Import Coq.Sorting.Sorted.
 Import ListNotations.
 
-(* 定义一个谓词，用于检查列表是否按升序排序 *)
-Definition is_sorted_ascending (l : list nat) : Prop :=
-  forall i j, i < j -> j < length l -> nth i l 0 <= nth j l 0.
-
-(* 定义一个谓词，用于检查列表是否按降序排序 *)
-Definition is_sorted_descending (l : list nat) : Prop :=
-  forall i j, i < j -> j < length l -> nth i l 0 >= nth j l 0.
-
-Definition Pre (input : list nat) : Prop := True.
+Definition problem_88_pre (input : list nat) : Prop := True.
 
 (* sort_array 函数的程序规约 *)
-Definition sort_array_spec (input output : list nat) : Prop :=
+Definition problem_88_spec (input output : list nat) : Prop :=
   (* 输出必须是输入的排列 *)
   Permutation input output /\
   match input with
@@ -39,7 +32,7 @@ Definition sort_array_spec (input output : list nat) : Prop :=
     (* 安全地获取最后一个元素 *)
     let last_elem := last input h in
     if (h + last_elem) mod 2 =? 1 then
-      is_sorted_ascending output
+      Sorted le output
     else
-      is_sorted_descending output
+      Sorted ge output
   end.

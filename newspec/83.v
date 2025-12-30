@@ -7,12 +7,12 @@ Require Import Arith.
 Require Import PeanoNat.  (* Import the library for natural number properties, including Nat.pow *)
 Import Nat.              (* This allows you to write 'pow' instead of 'Nat.pow' *)
 
-Definition Pre (n : nat) : Prop := (n > 0)%nat.
+Definition problem_83_pre (n : nat) : Prop := (n > 0)%nat.
 (*
   The efficient spec using the standard library's power function.
   This is the recommended approach.
 *)
-Definition starts_one_ends_spec_stdlib (n : nat) (count : nat) : Prop :=
+Definition problem_83_spec (n : nat) (count : nat) : Prop :=
   n > 0 ->
   ( (n = 1 /\ count = 1)
     \/

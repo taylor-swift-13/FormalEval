@@ -57,12 +57,12 @@ Definition grade_relation (gpa : R) (grade : string) : Prop :=
   (0.0 < gpa /\ gpa <= 0.7 /\ grade = "D-") \/
   (gpa = 0.0 /\ grade = "E").
 
-Definition Pre (gpas : list R) : Prop :=
+Definition problem_81_pre (gpas : list R) : Prop :=
   Forall (fun g => 0 <= g /\ g <= 4) gpas.
 
 (*
  * @name numerical_letter_grade_spec
- * @description 这是 `numerical_letter_grade` 函数的完整规约。
+ * @description 这是 `numerical_letter_grade` 函数的完整规约.
  *              它规定了输入列表 (gpas) 和输出列表 (grades) 之间的关系。
  *
  *              `Forall2` 是一个高阶谓词，它断言两个列表的长度相同，
@@ -71,5 +71,5 @@ Definition Pre (gpas : list R) : Prop :=
  * @param gpas : list R          代表输入的 GPA 列表。
  * @param grades : list string   代表输出的字母等级列表。
  *)
-Definition numerical_letter_grade_spec (gpas : list R) (grades : list string) : Prop :=
+Definition problem_81_spec (gpas : list R) (grades : list string) : Prop :=
   Forall2 grade_relation gpas grades.

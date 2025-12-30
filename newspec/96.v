@@ -11,26 +11,25 @@ count_up_to(18) => [2,3,5,7,11,13,17]
 """ *)
 Require Import Coq.Lists.List.
 Require Import Coq.Arith.Arith.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.ZArith.Znumtheory.
 Require Import Coq.Sorting.Sorted. (* 引入 Sorted 定义 *)
 Import ListNotations.
+Open Scope nat_scope.
 
 (* n 是自然数即非负，无附加约束 *)
-Definition Pre (n : nat) : Prop := True.
-
-(* is_prime 的定义保持不变 *)
-Definition is_prime (p : nat) : Prop :=
-  p > 1 /\ forall n : nat, 1 < n < p -> ~ (n mod p = 0).
+Definition problem_96_pre (n : nat) : Prop := True.
 
 
-Definition count_up_to_spec (n : nat) (result : list nat) : Prop :=
+Definition problem_96_spec (n : nat) (result : list nat) : Prop :=
   (* 属性1: 结果列表中的所有元素都是素数 *)
-  (forall p, In p result -> is_prime p) /\
+  (forall p, In p result -> prime (Z.of_nat p)) /\
 
   (* 属性2: 结果列表中的所有元素都小于 n *)
   (forall p, In p result -> p < n) /\
 
   (* 属性3: 所有小于 n 的素数都在结果列表中 (完备性) *)
-  (forall p, is_prime p -> p < n -> In p result) /\
+  (forall p, prime (Z.of_nat p) -> p < n -> In p result) /\
 
   (* 属性4: 列表是严格升序的 *)
   Sorted lt result /\

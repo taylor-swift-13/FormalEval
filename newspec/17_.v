@@ -15,26 +15,26 @@ Require Import Ascii String List.
 Import ListNotations.
 Open Scope string_scope.
 
-Inductive SplitOnSpaces_aux_rel : list ascii -> string -> list string -> Prop :=
-  | sosar_nil_empty : forall current_group, current_group = [] -> SplitOnSpaces_aux_rel current_group "" []
-  | sosar_nil_nonempty : forall current_group, current_group <> [] -> SplitOnSpaces_aux_rel current_group "" [string_of_list_ascii (List.rev current_group)]
+Inductive SplitOnSpaces_aux_rel : string -> string -> list string -> Prop :=
+  | sosar_nil_empty : forall current_group, current_group = "" -> SplitOnSpaces_aux_rel current_group "" []
+  | sosar_nil_nonempty : forall current_group, current_group <> "" -> SplitOnSpaces_aux_rel current_group "" [current_group]
   | sosar_space_empty : forall current_group h t result,
       h = " "%char ->
-      current_group = [] ->
-      SplitOnSpaces_aux_rel [] t result ->
+      current_group = "" ->
+      SplitOnSpaces_aux_rel "" t result ->
       SplitOnSpaces_aux_rel current_group (String h t) result
   | sosar_space_nonempty : forall current_group h t result,
       h = " "%char ->
-      current_group <> [] ->
-      SplitOnSpaces_aux_rel [] t result ->
-      SplitOnSpaces_aux_rel current_group (String h t) ((string_of_list_ascii (List.rev current_group)) :: result)
+      current_group <> "" ->
+      SplitOnSpaces_aux_rel "" t result ->
+      SplitOnSpaces_aux_rel current_group (String h t) (current_group :: result)
   | sosar_char : forall current_group h t result,
       h <> " "%char ->
-      SplitOnSpaces_aux_rel (h :: current_group) t result ->
+      SplitOnSpaces_aux_rel (current_group ++ String h "") t result ->
       SplitOnSpaces_aux_rel current_group (String h t) result.
 
 Inductive SplitOnSpaces_rel : string -> list string -> Prop :=
-  | sos_base : forall S result, SplitOnSpaces_aux_rel [] S result -> SplitOnSpaces_rel S result.
+  | sos_base : forall S result, SplitOnSpaces_aux_rel "" S result -> SplitOnSpaces_rel S result.
 
 Inductive parse_note_rel : string -> nat -> Prop :=
   | pnr_whole : parse_note_rel "o" 4

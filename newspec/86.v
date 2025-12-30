@@ -16,93 +16,44 @@ Require Import Coq.Strings.Ascii.
 Require Import Coq.Lists.List.
 Require Import Coq.Arith.Arith.
 Require Import Coq.Sorting.Permutation.
+Require Import Coq.Strings.String.
 
 Import ListNotations.
-
-(*
- * 辅助定义 1：is_space
- * 一个断言，当且仅当字符 c 是空格时为真。
- *)
-Definition is_space (c : ascii) : Prop := c = " "%char.
-
-(*
- * 辅助定义 2：is_sorted
- * 一个断言，当且仅当一个字符列表中的所有字符都根据其 ASCII 值按升序排列时为真。
- *)
-Fixpoint is_sorted (s : list ascii) : Prop :=
-  match s with
-  | [] => True
-  | c1 :: tl =>
-      match tl with
-      | [] => True
-      | c2 :: _ => (nat_of_ascii c1 <= nat_of_ascii c2) /\ is_sorted tl
-      end
-  end.
+Open Scope string_scope.
 
 Definition is_space_bool (c : ascii) : bool :=
   if ascii_dec c " "%char then true else false.
 
-Fixpoint insert_char (c : ascii) (l : list ascii) : list ascii :=
-  match l with
-  | [] => [c]
-  | h :: t =>
+Fixpoint insert_char (c : ascii) (s : string) : string :=
+  match s with
+  | EmptyString => String c EmptyString
+  | String h t =>
       if Nat.leb (nat_of_ascii c) (nat_of_ascii h) then
-        c :: l
+        String c s
       else
-        h :: insert_char c t
+        String h (insert_char c t)
   end.
 
-Fixpoint sort_chars (l : list ascii) : list ascii :=
-  match l with
-  | [] => []
-  | h :: t => insert_char h (sort_chars t)
+Fixpoint sort_chars (s : string) : string :=
+  match s with
+  | EmptyString => EmptyString
+  | String h t => insert_char h (sort_chars t)
   end.
 
-Fixpoint process_word (l : list ascii) : list ascii :=
-  sort_chars l.
-
-Fixpoint split_words (l : list ascii) (current_word : list ascii) : list (list ascii) :=
-  match l with
-  | [] =>
-      match current_word with
-      | [] => []
-      | _ => [current_word]
-      end
-  | h :: t =>
-      if is_space_bool h then
-        match current_word with
-        | [] => split_words t []
-        | _ => current_word :: split_words t []
-        end
+Fixpoint anti_shuffle_aux (s : string) (acc : string) : string :=
+  match s with
+  | EmptyString => sort_chars acc
+  | String c rest =>
+      if is_space_bool c then
+        (sort_chars acc) ++ (String c EmptyString) ++ (anti_shuffle_aux rest EmptyString)
       else
-        split_words t (current_word ++ [h])
+        anti_shuffle_aux rest (String c acc)
   end.
 
-Fixpoint merge_words (words : list (list ascii)) (spaces : list ascii) : list ascii :=
-  match words, spaces with
-  | [], _ => []
-  | [w], [] => process_word w
-  | w :: rest_words, s :: rest_spaces =>
-      process_word w ++ [s] ++ merge_words rest_words rest_spaces
-  | _, _ => []
-  end.
+Definition problem_86_pre (s : string) : Prop := True.
 
-Fixpoint extract_spaces (l : list ascii) : list ascii :=
-  match l with
-  | [] => []
-  | h :: t =>
-      if is_space_bool h then
-        h :: extract_spaces t
-      else
-        extract_spaces t
-  end.
+Definition anti_shuffle_impl (s : string) : string :=
+  anti_shuffle_aux s EmptyString.
 
-Definition Pre (s : list ascii) : Prop := True.
-
-Definition anti_shuffle_impl (s : list ascii) : list ascii :=
-  let words := split_words s [] in
-  let spaces := extract_spaces s in
-  merge_words words spaces.
-
-Definition anti_shuffle_spec (s s_out : list ascii) : Prop :=
+Definition problem_86_spec (s s_out : string) : Prop :=
   s_out = anti_shuffle_impl s.

@@ -16,58 +16,80 @@ Require Import Coq.Strings.Ascii.
 Require Import Coq.Lists.List.
 Require Import Coq.Arith.Arith.
 Require Import Coq.Sorting.Permutation.
+Require Import Coq.Strings.String.
 
 Import ListNotations.
+Open Scope string_scope.
 
+(*
+ * 辅助定义 1：is_space
+ * 一个断言，当且仅当字符 c 是空格时为真。
+ *)
 Definition is_space (c : ascii) : Prop := c = " "%char.
 
-Inductive is_sorted_rel : list ascii -> Prop :=
-  | isr_nil : is_sorted_rel []
-  | isr_single : forall c, is_sorted_rel [c]
-  | isr_cons : forall c1 c2 tl,
-      (nat_of_ascii c1 <= nat_of_ascii c2) ->
-      is_sorted_rel (c2 :: tl) ->
-      is_sorted_rel (c1 :: c2 :: tl).
+(*
+ * 辅助定义 2：is_sorted
+ * 一个断言，当且仅当一个字符列表中的所有字符都根据其 ASCII 值按升序排列时为真。
+ *)
+Inductive is_sorted : string -> Prop :=
+  | sorted_nil : is_sorted ""
+  | sorted_one : forall c, is_sorted (String c "")
+  | sorted_cons : forall c1 c2 s',
+      nat_of_ascii c1 <= nat_of_ascii c2 ->
+      is_sorted (String c2 s') ->
+      is_sorted (String c1 (String c2 s')).
 
-Definition is_space_bool (c : ascii) : bool :=
-  if ascii_dec c " "%char then true else false.
+(*
+ * 辅助定义 3：SplitOnSpaces_rel
+ * 将字符串按空格分割成单词列表。
+ *)
+Inductive SplitOnSpaces_aux_rel : string -> string -> list string -> Prop :=
+  | sosar_nil_empty : forall current_group, current_group = "" -> SplitOnSpaces_aux_rel current_group "" []
+  | sosar_nil_nonempty : forall current_group, current_group <> "" -> SplitOnSpaces_aux_rel current_group "" [current_group]
+  | sosar_space_empty : forall current_group h t result,
+      is_space h ->
+      current_group = "" ->
+      SplitOnSpaces_aux_rel "" t result ->
+      SplitOnSpaces_aux_rel current_group (String h t) result
+  | sosar_space_nonempty : forall current_group h t result,
+      is_space h ->
+      current_group <> "" ->
+      SplitOnSpaces_aux_rel "" t result ->
+      SplitOnSpaces_aux_rel current_group (String h t) (current_group :: result)
+  | sosar_char : forall current_group h t result,
+      ~ is_space h ->
+      SplitOnSpaces_aux_rel (current_group ++ String h "") t result ->
+      SplitOnSpaces_aux_rel current_group (String h t) result.
 
-Inductive insert_char_rel : ascii -> list ascii -> list ascii -> Prop :=
-  | icr_nil : forall c, insert_char_rel c [] [c]
-  | icr_insert : forall c h t,
-      (nat_of_ascii c <= nat_of_ascii h) ->
-      insert_char_rel c (h :: t) (c :: h :: t)
-  | icr_skip : forall c h t result,
-      (nat_of_ascii c > nat_of_ascii h) ->
-      insert_char_rel c t result ->
-      insert_char_rel c (h :: t) (h :: result).
+Inductive SplitOnSpaces_rel : string -> list string -> Prop :=
+  | sos_base : forall s result, SplitOnSpaces_aux_rel "" s result -> SplitOnSpaces_rel s result.
 
-Inductive sort_chars_rel : list ascii -> list ascii -> Prop :=
-  | scr_nil : sort_chars_rel [] []
-  | scr_cons : forall h t sorted_tail result,
-      sort_chars_rel t sorted_tail ->
-      insert_char_rel h sorted_tail result ->
-      sort_chars_rel (h :: t) result.
+Fixpoint list_ascii_of_string (s : string) : list ascii :=
+  match s with
+  | EmptyString => []
+  | String c s' => c :: list_ascii_of_string s'
+  end.
 
-Inductive process_word_rel : list ascii -> list ascii -> Prop :=
-  | pwr_base : forall l sorted, sort_chars_rel l sorted -> process_word_rel l sorted.
+(*
+ * 程序规约：anti_shuffle_spec
+ *
+ * 这个规约定义了输入列表 's' 和输出列表 's_out' 必须满足的关系。
+ * 它由三个核心属性构成。
+ *)
+Definition anti_shuffle_spec (s s_out : string) : Prop :=
+  (* 属性 1: 输出列表的长度必须与输入列表的长度完全相等。 *)
+  String.length s = String.length s_out /\
 
-(* 精确保留空白：以流式关系在遇到空格时冲刷当前词（排序后输出），空格原样输出。 *)
-Inductive anti_shuffle_aux_rel : list ascii -> list ascii (* current word rev *) -> list ascii (* out *) -> Prop :=
-  | asar_nil_empty : anti_shuffle_aux_rel [] [] []
-  | asar_nil_nonempty : forall cur_rev sorted,
-      sort_chars_rel cur_rev sorted ->
-      anti_shuffle_aux_rel [] cur_rev sorted
-  | asar_space : forall h t cur_rev sorted out_tail out,
-      is_space_bool h = true ->
-      sort_chars_rel cur_rev sorted ->
-      anti_shuffle_aux_rel t [] out_tail ->
-      out = sorted ++ [h] ++ out_tail ->
-      anti_shuffle_aux_rel (h :: t) cur_rev out
-  | asar_char : forall h t cur_rev out,
-      is_space_bool h = false ->
-      anti_shuffle_aux_rel t (h :: cur_rev) out ->
-      anti_shuffle_aux_rel (h :: t) cur_rev out.
+  (* 属性 2: 空格和非空格字符的位置必须保持不变。
+     也就是说，在任意一个位置 i，如果输入字符是空格，那么输出字符也必须是空格，反之亦然。 *)
+  (forall i, i < String.length s ->
+    forall c1 c2,
+      String.get i s = Some c1 ->
+      String.get i s_out = Some c2 ->
+      (is_space c1 <-> is_space c2)) /\
 
-Definition anti_shuffle_spec (s s_out : list ascii) : Prop :=
-  anti_shuffle_aux_rel s [] s_out.
+  (* 属性 3: 使用 SplitOnSpaces 提取单词，并要求对应单词满足置换和排序关系。 *)
+  (exists words_in words_out,
+    SplitOnSpaces_rel s words_in /\
+    SplitOnSpaces_rel s_out words_out /\
+    Forall2 (fun w_in w_out => Permutation (list_ascii_of_string w_in) (list_ascii_of_string w_out) /\ is_sorted w_out) words_in words_out).

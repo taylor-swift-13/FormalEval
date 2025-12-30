@@ -36,25 +36,22 @@ Import ListNotations.
 Require Import Coq.Arith.Arith.
 Require Import Coq.micromega.Lia.
 
-(* 定义一个辅助函数来检查一个数是否为偶数 *)
-Definition is_even (n : nat) : Prop := exists k, n = 2 * k.
-
-Definition Pre (arr : list nat) : Prop := True.
+Definition problem_68_pre (arr : list nat) : Prop := True.
 
 (* pluck 函数的程序规约 *)
-Definition pluck_spec (arr : list nat) (output : option (nat * nat)) : Prop :=
+Definition problem_68_spec (arr : list nat) (output : option (nat * nat)) : Prop :=
   match output with
   | None => (* 情况1: 输出为空 *)
     (* 当且仅当列表中没有偶数时，输出为 None *)
-    forall val, In val arr -> ~is_even val
+    forall val, In val arr -> Nat.even val = false
   | Some (v, i) => (* 情况2: 输出为 Some (v, i) *)
     (* 1. v 必须是 arr 中索引为 i 的元素 *)
-    nth i arr v = v /\
+    i < length arr /\ nth i arr 1 = v /\
     (* 2. v 必须是偶数 *)
-    is_even v /\
+    Nat.even v = true/\
     (* 3. v 必须是 arr 中所有偶数里最小的值 *)
-    (forall val, In val arr -> is_even val -> v <= val) /\
+    (forall val, In val arr -> Nat.even val = true -> v <= val) /\
     (* 4. i 必须是 v 在 arr 中首次出现的最小索引 *)
-    (forall j, j < i -> nth j arr v <> v)
+    (forall j, j < i -> nth j arr 1 <> v)
   end.
 

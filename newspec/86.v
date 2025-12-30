@@ -50,10 +50,12 @@ Fixpoint anti_shuffle_aux (s : string) (acc : string) : string :=
         anti_shuffle_aux rest (String c acc)
   end.
 
-Definition problem_86_pre (s : string) : Prop := True.
+
 
 Definition anti_shuffle_impl (s : string) : string :=
   anti_shuffle_aux s EmptyString.
+
+Definition problem_86_pre (s : string) : Prop := True.
 
 Definition problem_86_spec (s s_out : string) : Prop :=
   s_out = anti_shuffle_impl s.

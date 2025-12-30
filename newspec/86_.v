@@ -64,11 +64,8 @@ Inductive SplitOnSpaces_aux_rel : string -> string -> list string -> Prop :=
 Inductive SplitOnSpaces_rel : string -> list string -> Prop :=
   | sos_base : forall s result, SplitOnSpaces_aux_rel "" s result -> SplitOnSpaces_rel s result.
 
-Fixpoint list_ascii_of_string (s : string) : list ascii :=
-  match s with
-  | EmptyString => []
-  | String c s' => c :: list_ascii_of_string s'
-  end.
+
+Definition problem_86_pre (s : string) : Prop := True.
 
 (*
  * 程序规约：anti_shuffle_spec
@@ -76,7 +73,7 @@ Fixpoint list_ascii_of_string (s : string) : list ascii :=
  * 这个规约定义了输入列表 's' 和输出列表 's_out' 必须满足的关系。
  * 它由三个核心属性构成。
  *)
-Definition anti_shuffle_spec (s s_out : string) : Prop :=
+Definition  problem_86_spec (s s_out : string) : Prop :=
   (* 属性 1: 输出列表的长度必须与输入列表的长度完全相等。 *)
   String.length s = String.length s_out /\
 

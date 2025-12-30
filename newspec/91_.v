@@ -67,12 +67,15 @@ Definition prefix_rel (p s : string) : Prop :=
 Inductive count_bored_sentences_rel : list string -> nat -> Prop :=
 | cbsr_nil : count_bored_sentences_rel nil 0%nat
 | cbsr_bored : forall h h_trimmed t n, trim_leading_whitespace_rel h h_trimmed ->
-   prefix_rel "I " h_trimmed -> count_bored_sentences_rel t n ->
+   prefix_rel "I" h_trimmed -> count_bored_sentences_rel t n ->
    count_bored_sentences_rel (h :: t) (S n)
 | cbsr_not_bored : forall h h_trimmed t n, trim_leading_whitespace_rel h h_trimmed ->
-   ~ prefix_rel "I " h_trimmed -> count_bored_sentences_rel t n ->
+   ~ prefix_rel "I" h_trimmed -> count_bored_sentences_rel t n ->
    count_bored_sentences_rel (h :: t) n.
 
-Definition is_bored_spec (S : string) (output : nat) : Prop :=
+(* 输入字符串可为任意内容，无额外约束 *)
+Definition problem_91_pre (S : string) : Prop := True.
+
+Definition problem_91_spec (S : string) (output : nat) : Prop :=
   exists sents, split_sentences_rel S sents /\ count_bored_sentences_rel sents output.
 

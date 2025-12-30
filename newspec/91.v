@@ -15,9 +15,6 @@ Require Import Coq.Strings.String Coq.Strings.Ascii Coq.Lists.List Coq.Arith.Ari
 Import ListNotations.
 Open Scope string_scope.
 
-(* 输入字符串可为任意内容，无额外约束 *)
-Definition Pre (S : string) : Prop := True.
-
 Definition is_sentence_delimiter (c : ascii) : bool :=
   match c with
   | "."%char | "?"%char | "!"%char => true
@@ -66,7 +63,7 @@ Definition prefix (p s : string) : bool :=
   in pre p s.
 
 Definition is_boredom_sentence_new (s : string) : bool :=
-  prefix "I " s.
+  prefix "I" s.
 
 Definition is_bored_impl (S : string) : nat :=
   let initial := split is_sentence_delimiter S in
@@ -74,6 +71,8 @@ Definition is_bored_impl (S : string) : nat :=
   let boredoms := filter is_boredom_sentence_new cleaned in
   length boredoms.
 
+(* 输入字符串可为任意内容，无额外约束 *)
+Definition problem_91_pre (S : string) : Prop := True.
 
-Definition is_bored_spec (S : string) (output : nat) : Prop :=
+Definition problem_91_spec (S : string) (output : nat) : Prop :=
   output = is_bored_impl S.

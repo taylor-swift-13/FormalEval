@@ -5,7 +5,7 @@ For example:
 words_string("Hi, my name is John") == ["Hi", "my", "name", "is", "John"]
 words_string("One, two, three, four, five, six") == ["One", "two", "three", "four", "five", "six"] *)
 
-Require Import Coq.Strings.Ascii Coq.Lists.List.
+Require Import Coq.Strings.Ascii Coq.Strings.String Coq.Lists.List.
 Import ListNotations.
 
 Inductive is_delimiter : ascii -> Prop :=
@@ -30,6 +30,15 @@ Inductive words_string_rel : list ascii -> list (list ascii) -> Prop :=
 | wsr_build : forall s output, words_string_aux_rel s nil output ->
    words_string_rel s output.
 
-Definition words_string_list_spec (s : list ascii) (output : list (list ascii)) : Prop :=
-  words_string_rel s output.
+(* 输入为仅包含字母、逗号或空格的字符列表 *)
+Definition problem_101_pre (s : string) : Prop :=
+  let l := list_ascii_of_string s in
+  Forall (fun c =>
+    let n := nat_of_ascii c in
+      (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122) \/ c = ","%char \/ c = " "%char) l.
+
+Definition problem_101_spec (s : string) (output : list string) : Prop :=
+  exists output_list_ascii,
+    words_string_rel (list_ascii_of_string s) output_list_ascii /\
+    output = map string_of_list_ascii output_list_ascii.
 

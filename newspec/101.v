@@ -6,14 +6,11 @@ words_string("Hi, my name is John") == ["Hi", "my", "name", "is", "John"]
 words_string("One, two, three, four, five, six") == ["One", "two", "three", "four", "five", "six"] *)
 
 Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
-(* 输入为仅包含字母、逗号或空格的字符列表 *)
-Definition Pre (s : list ascii) : Prop :=
-  Forall (fun c =>
-    let n := nat_of_ascii c in
-      (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122) \/ c = ","%char \/ c = " "%char) s.
+
 
 Definition is_delimiter (c : ascii) : bool :=
   match c with
@@ -33,7 +30,17 @@ Fixpoint words_string_aux (current_word : list ascii) (input : list ascii) : lis
 Definition words_string_list_impl (s : list ascii) : list (list ascii) :=
   words_string_aux [] s.
 
-Definition words_string_list_spec (s : list ascii) (output : list (list ascii)) : Prop :=
-  output = words_string_list_impl s.
+Definition words_string (s : string) : list string :=
+  map string_of_list_ascii (words_string_list_impl (list_ascii_of_string s)).
+
+(* 输入为仅包含字母、逗号或空格的字符列表 *)
+Definition problem_101_pre (s : string) : Prop :=
+  let l := list_ascii_of_string s in
+  Forall (fun c =>
+    let n := nat_of_ascii c in
+      (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122) \/ c = ","%char \/ c = " "%char) l.
+
+Definition problem_101_spec (s : string) (output : list string) : Prop :=
+  output = words_string s.
 
 

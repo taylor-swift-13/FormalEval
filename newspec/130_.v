@@ -20,19 +20,17 @@ Require Import List.
 Import ListNotations.
 
 
-(* 使用Fixpoint来实现Tribonacci序列的计算 *)
-Fixpoint tri (n : nat) : nat :=
-  match n with
-  | 0 => 1
-  | 1 => 3
-  | S (S k) =>
-      if Nat.even n then
-        1 + n / 2
-      else
-        let t_prev := 1 + (n - 1) / 2 in
-        let t_next := 1 + (n + 1) / 2 in
-        t_prev + tri k + t_next
-  end.
+(* 定义一个归纳关系来描述Tribonacci序列中每个元素的值 *)
+Inductive trib_val : nat -> nat -> Prop :=
+  | trib_1 : trib_val 1 3
+  | trib_even : forall n, n mod 2 = 0 -> trib_val n (1 + n / 2)
+  | trib_odd : forall n v1 v2 v3,
+      n > 1 ->
+      n mod 2 = 1 ->
+      trib_val (n - 1) v1 ->
+      trib_val (n - 2) v2 ->
+      trib_val (n + 1) v3 ->
+      trib_val n (v1 + v2 + v3).
 
 (* n 为非负整数（nat 已满足），无额外约束 *)
 Definition problem_130_pre (n : nat) : Prop := True.
@@ -40,4 +38,5 @@ Definition problem_130_pre (n : nat) : Prop := True.
 (* 定义tri函数的程序规约 *)
 Definition problem_130_spec (n : nat) (l : list nat) : Prop :=
   length l = n + 1 /\
-  forall i, i <= n -> nth i l 0 = tri i.
+  forall i, i <= n ->
+    exists v, nth i l 0 = v /\ trib_val i v.

@@ -15,8 +15,7 @@ Require Import PArith. (* 用于 positive 类型 *)
 Open Scope Z_scope.
 Open Scope string_scope.
 
-(* n 与 m 为正整数 *)
-Definition Pre (n m : Z) : Prop := n > 0 /\ m > 0.
+
 
 (* 定义一个表示输出的类型：可以是二进制字符串或-1 *)
 Inductive result : Type :=
@@ -49,11 +48,10 @@ Definition rounded_avg_impl (n m : Z) : result :=
   if Z.gtb n m then
     NegativeOne
   else
-    let sum := (m - n + 1) * (n + m) / 2 in
-    let count := m - n + 1 in
-    (* 使用 (a + b/2) / b 的技巧进行四舍五入的整数除法 *)
-    let rounded_avg := (sum + count / 2) / count in
-    Binary (to_binary rounded_avg).
+    Binary (to_binary ((n + m) / 2)).
 
-Definition rounded_avg_spec (n m : Z) (output : result) : Prop :=
+(* n 与 m 为正整数 *)
+Definition problem_103_pre (n m : Z) : Prop := n > 0 /\ m > 0.
+
+Definition problem_103_spec (n m : Z) (output : result) : Prop :=
   output = rounded_avg_impl n m.

@@ -31,13 +31,13 @@ Inductive to_binary_rel : Z -> string -> Prop :=
   | tbr_neg : forall p, to_binary_rel (Zneg p) "Error: Negative numbers not supported".
 
 
+(* n 与 m 为正整数 *)
+Definition problem_103_pre (n m : Z) : Prop := n > 0 /\ m > 0.
 
-Definition rounded_avg_spec (n m : Z) (output : result) : Prop :=
+Definition problem_103_spec (n m : Z) (output : result) : Prop :=
   (n > m /\ output = NegativeOne) \/
   (exists sum count rounded_avg bin_str,
      n <= m /\
-     sum = (m - n + 1) * (n + m) / 2 /\
-     count = m - n + 1 /\
-     rounded_avg = (sum + count / 2) / count /\
+     rounded_avg = (n + m) / 2 /\
      to_binary_rel rounded_avg bin_str /\
      output = Binary bin_str).

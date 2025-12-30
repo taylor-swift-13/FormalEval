@@ -10,6 +10,7 @@ Examples:
 >>> int_to_mini_roman(426) == 'cdxxvi'
 """ *)
 Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
 Require Import Coq.Lists.List.
 Require Import Coq.Arith.Arith. (* <-- 添加这一行来导入算术库 *)
 Import ListNotations.
@@ -18,9 +19,6 @@ Import ListNotations.
   一个辅助规约，用于定义单个数字（0-9）到其小写罗马数字字符（作为 list ascii）的映射。
   - roman_char:  i, v, x
 *)
-(* 输入限制：1 <= number <= 1000 *)
-Definition Pre (number : nat) : Prop := 1 <= number /\ number <= 1000.
-
 Definition roman_digit_spec (one ten five : ascii) (digit : nat) (res : list ascii) : Prop :=
   (digit = 0 /\ res = []) \/
   (digit = 1 /\ res = [one]) \/
@@ -33,10 +31,13 @@ Definition roman_digit_spec (one ten five : ascii) (digit : nat) (res : list asc
   (digit = 8 /\ res = [five; one; one; one]) \/
   (digit = 9 /\ res = [one; ten]).
 
+(* 输入限制：1 <= number <= 1000 *)
+Definition problem_156_pre (number : nat) : Prop := 1 <= number /\ number <= 1000.
+
 (*
   int_to_mini_roman 程序的程序规约
 *)
-Definition int_to_mini_roman_spec (number : nat) (result : list ascii) : Prop :=
+Definition problem_156_spec (number : nat) (result : string) : Prop :=
   1 <= number <= 1000 /\
   (exists m c x i rm rc rx ri,
     number = 1000 * m + 100 * c + 10 * x + i /\
@@ -48,4 +49,4 @@ Definition int_to_mini_roman_spec (number : nat) (result : list ascii) : Prop :=
     roman_digit_spec "c"%char "m"%char "d"%char c rc /\
     roman_digit_spec "x"%char "c"%char "l"%char x rx /\
     roman_digit_spec "i"%char "x"%char "v"%char i ri /\
-    result = rm ++ rc ++ rx ++ ri).
+    result = string_of_list_ascii (rm ++ rc ++ rx ++ ri)).

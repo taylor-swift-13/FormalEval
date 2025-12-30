@@ -41,9 +41,12 @@ Inductive count_even_odd_list : list nat -> nat -> nat -> Prop :=
     count_even_odd_list t e o ->
     count_even_odd_list (d :: t) e (S o).
 
+(* 任意整数输入 *)
+Definition problem_155_pre (num : Z) : Prop := True.
+
 (* 最终规约：even_odd_count_spec n (e,o) 当且仅当
    存在数字序列 ds，是 n 的十进制展开；且 ds 的偶/奇数字计数分别是 e/o。*)
-Definition even_odd_count_spec (num : Z) (output : nat * nat) : Prop :=
+Definition problem_155_spec (num : Z) (output : nat * nat) : Prop :=
   let '(e, o) := output in
   exists ds : list nat, digits_of_Z num ds /\ count_even_odd_list ds e o.
 

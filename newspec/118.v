@@ -17,14 +17,7 @@ Require Import Coq.Strings.String Coq.Strings.Ascii.
 Require Import Arith.
 Require Import Coq.Logic.FunctionalExtensionality.
 
-(* 输入字符串只包含英文字母 *)
-Definition Pre (word : string) : Prop :=
-  let fix all_letters (w : string) : Prop :=
-    match w with
-    | EmptyString => True
-    | String ch rest =>
-        let n := nat_of_ascii ch in (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122) /\ all_letters rest
-    end in all_letters word.
+
 
 (*
  * 辅助定义
@@ -41,27 +34,22 @@ Definition is_vowel (c : ascii) : Prop :=
 (* 定义：检查一个字符是否为英文字母 *)
 Definition is_alpha (c : ascii) : Prop :=
   let n := nat_of_ascii c in
-  (65 <= n <= 90) \/ (97 <= n <= 122).
+  (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122).
 
 (* 定义：检查一个字符是否为辅音 *)
 Definition is_consonant (c : ascii) : Prop :=
   is_alpha c /\ ~ is_vowel c.
 
+(* 输入字符串只包含英文字母 *)
+Definition problem_118_pre (word : string) : Prop :=
+  let fix all_letters (w : string) : Prop :=
+    match w with
+    | EmptyString => True
+    | String ch rest =>
+        let n := nat_of_ascii ch in ((65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122)) /\ all_letters rest
+    end in all_letters word.
 
-(*
- * 程序规约 (Program Specification)
- *)
-
-(*
- * @brief get_closest_vowel_spec word result
- *
- * `word`: 输入的字符串。
- * `result`: 期望的输出结果，类型为 string。
- *
- * 这个规约断言 `result` 是 `word` 中从右边数起第一个位于两个辅音之间的元音
- * (包装成单字符字符串)，或者在找不到时为空字符串。
- *)
-Definition get_closest_vowel_spec (word: string) (result: string) : Prop :=
+Definition problem_118_spec (word: string) (result: string) : Prop :=
   (* 情况一：找到了符合条件的元音 *)
   (exists i c_curr,
     1 <= i < String.length word - 1 /\

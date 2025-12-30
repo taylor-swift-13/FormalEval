@@ -15,12 +15,12 @@ Import ListNotations.
 Open Scope Z_scope.
 
 (* 输入可为空或任意整数列表 *)
-Definition Pre (arr : list Z) : Prop := True.
+Definition problem_128_pre (arr : list Z) : Prop := True.
 (*
   程序规约 (Specification) 定义了输入 `arr` (一个整数列表)
   与输出 `output` (一个可选的整数) 之间的关系。
 *)
-Definition prod_signs_spec (arr : list Z) (output : option Z) : Prop :=
+Definition problem_128_spec (arr : list Z) (output : option Z) : Prop :=
   (* 对输入列表进行模式匹配 *)
   match arr with
   (* 情况1: 如果列表为空 *)

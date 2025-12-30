@@ -9,11 +9,10 @@ split_words("abcdef") == 3 *)
 (* 引入必要的 Coq 库 *)
 Require Import Coq.Lists.List.
 Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
 Require Import Coq.Arith.PeanoNat.
 Import ListNotations.
 
-(* 输入可为任意字符列表 *)
-Definition Pre (input : list ascii) : Prop := True.
 
 (*
   辅助函数定义
@@ -68,14 +67,19 @@ Definition count_odd_lowercase (l : list ascii) : nat :=
   in
   List.length (filter is_target_char l).
 
+(* 输入可为任意字符列表 *)
+Definition problem_125_pre (input : string) : Prop := True.
 (*
   程序规约 (Program Specification)
 *)
 
-Definition split_words_spec (input : list ascii) (output : sum (list (list ascii)) nat) : Prop :=
-  if contains input " "%char then
-    output = inl (split " "%char input)
-  else if contains input ","%char then
-    output = inl (split ","%char input)
+Definition  problem_125_spec (input : string) (output : sum (list string) nat) : Prop :=
+  let l := list_ascii_of_string input in
+  if contains l " "%char then
+    let res := split " "%char l in
+    output = inl (map string_of_list_ascii res)
+  else if contains l ","%char then
+    let res := split ","%char l in
+    output = inl (map string_of_list_ascii res)
   else
-    output = inr (count_odd_lowercase input).
+    output = inr (count_odd_lowercase l).

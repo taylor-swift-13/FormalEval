@@ -17,12 +17,11 @@ valid_date('06-04-2020') => True
 
 valid_date('06/04/2020') => False *)
 Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
 Require Import Coq.Arith.Arith.
 Require Import Coq.Lists.List.
 Import ListNotations.
 
-(* 作为校验函数，输入可为任意字符列表 *)
-Definition Pre (s : list ascii) : Prop := True.
 
 (* 辅助函数：将一个数字字符转换为 nat *)
 Definition nat_of_digit (c : ascii) : option nat :=
@@ -63,12 +62,15 @@ Definition days_in_month (m : nat) : nat :=
   | _ => 0 (* 无效月份 *)
   end.
 
+(* 作为校验函数，输入可为任意字符列表 *)
+Definition problem_124_pre (s : list ascii) : Prop := True.
+
 (*
   程序规约 (Specification)
   这个 Prop 定义了输入的字符列表 s 若满足所有有效日期规则，则为 True。
 *)
-Definition valid_date_spec (s : list ascii) : Prop :=
-  match s with
+Definition  problem_124_spec (s : string) : Prop :=
+  match list_ascii_of_string s with
   (* 模式匹配 "mm-dd-yyyy" 格式。这隐式地检查了列表长度为10 *)
   | [m1; m2; sep1; d1; d2; sep2; y1; y2; y3; y4] =>
       (* 1. 检查分隔符是否为 '-' *)

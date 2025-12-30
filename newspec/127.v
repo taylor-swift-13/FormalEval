@@ -20,25 +20,23 @@ intersection((-3, -1), (-5, 5)) ==> "YES" *)
 (* 引入所需的基础 Coq 库 *)
 Require Import Coq.Lists.List.
 Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
 Require Import Coq.ZArith.ZArith.
+Require Import Coq.ZArith.Znumtheory.
 (* 提供 Nat 的比较和取模运算 *)
 
 (* 允许使用列表和作用域的标准表示法 *)
 Import ListNotations.
 Open Scope Z_scope.
 Open Scope nat_scope.
+Open Scope string_scope.
 
 (* 区间为闭区间，且满足 start <= end *)
-Definition Pre (i1 i2 : Z * Z) : Prop :=
+Definition problem_127_pre (i1 i2 : Z * Z) : Prop :=
   let '(s1,e1) := i1 in
   let '(s2,e2) := i2 in s1 <= e1 /\ s2 <= e2.
 
-
-Definition Is_prime (n : nat) : Prop :=
-  n > 1 /\ (forall d, 1 < d < n -> n mod d <> 0).
-
-
-Definition intersection_spec (i1 i2 : Z * Z) (output : list ascii) : Prop :=
+Definition problem_127_spec (i1 i2 : Z * Z) (output : string) : Prop :=
   let (s1, e1) := i1 in
   let (s2, e2) := i2 in
 
@@ -54,8 +52,8 @@ Definition intersection_spec (i1 i2 : Z * Z) (output : list ascii) : Prop :=
        - 如果交集长度是素数，那么输出必须是 "YES"。
        - 如果交集长度不是素数，那么输出必须是 "NO"。
        我们用逻辑 "或" (\/) 来连接这两种可能。*)
-    (Is_prime len_nat /\ output = ("Y"%char :: "E"%char :: "S"%char :: nil)) \/
-    (~Is_prime len_nat /\ output = ("N"%char :: "O"%char :: nil))
+    (prime (Z.of_nat len_nat) /\ output = "YES") \/
+    (~prime (Z.of_nat len_nat) /\ output = "NO")
   else
     (* 情况2: 区间不相交，输出必须是 "NO" *)
-    output = ("N"%char :: "O"%char :: nil).
+    output = "NO".

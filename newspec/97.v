@@ -13,7 +13,7 @@ Require Import ZArith.
 Open Scope Z_scope.
 
 (* 任意两个整数输入均合法 *)
-Definition Pre (a b : Z) : Prop := True.
+Definition problem_97_pre (a b : Z) : Prop := True.
 
 (*
   multiply_spec_abs 定义了程序 multiply 的一个更精确的规约。
@@ -24,5 +24,5 @@ Definition Pre (a b : Z) : Prop := True.
   规约指出，返回值 r 必须等于 a 的绝对值的个位数与 b 的绝对值的个位数的乘积。
   使用 Z.abs 可以确保对于负数（例如 -15），我们取其个位数（5）而不是负的余数。
 *)
-Definition multiply_spec_abs (a b r : Z) : Prop :=
+Definition problem_97_spec (a b r : Z) : Prop :=
   r = (Z.abs a mod 10) * (Z.abs b mod 10).

@@ -14,8 +14,6 @@ Import ListNotations.
 
 Open Scope Z_scope.
 
-(* 输入数组不包含重复元素 *)
-Definition Pre (lst : list Z) : Prop := NoDup lst.
 
 (* 辅助：在位置 k (nat) 存在相邻不满足非降的情况，即 1 <= k < length lst 且 lst[k] < lst[k-1] *)
 Definition drop_at (lst : list Z) (k : nat) : Prop :=
@@ -25,10 +23,13 @@ Definition drop_at (lst : list Z) (k : nat) : Prop :=
   | _, _ => False
   end.
 
+(* 输入数组不包含重复元素 *)
+Definition problem_135_pre (lst : list Z) : Prop := NoDup lst.
+
 (* 最终 Spec：
    - 若 r = -1，则不存在任何 k 使得 drop_at lst k 成立；
    - 否则存在一个自然数 k，使 r = Z.of_nat k 且 drop_at lst k，并且 k 是满足 drop_at 的最大索引。 *)
-Definition can_arrange_spec (lst : list Z) (r : Z) : Prop :=
+Definition problem_135_spec (lst : list Z) (r : Z) : Prop :=
   (r = -1 /\ (forall k, ~ drop_at lst k))
   \/
   (exists k : nat,

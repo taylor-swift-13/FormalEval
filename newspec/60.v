@@ -12,7 +12,7 @@
 1
 """ *)
 (* Pre: no special constraints for `sum_to_n` *)
-Definition problem_60_pre (n : nat) : Prop := True.
+Definition problem_60_pre (n : nat) : Prop := n > 0.
 
 Definition problem_60_spec (n output: nat) : Prop :=
   2 * output = n*(n+1).

@@ -16,63 +16,40 @@ Require Import Coq.Lists.List.
 Require Import Coq.Arith.Arith.
 Import ListNotations.
 
-(* 开启 String 作用域，以便Coq能正确解析字符串字面量 *)
 Open Scope string_scope.
 
-(*
- brief IsBinaryRepr n l 定了自然数 n 与其二进制表示（布尔列表 l）之间的关系。
- * true 代表 '1', false 代表 '0'。
- * 这是一个大端（big-endian）表示。
- *
- * 例如：IsBinaryRepr 15 [true; true; true; true]
- *       IsBinaryRepr 32 [true; false; false; false; false; false]
- *)
-Inductive IsBinaryRepr : nat -> list bool -> Prop :=
-  | BZ: IsBinaryRepr 0 [false]
-  | B1: IsBinaryRepr 1 [true]
-  | BEven (n : nat) (l : list bool) :
-      n > 0 -> IsBinaryRepr n l -> IsBinaryRepr (2 * n) (l ++ [false])
-  | BOdd (n : nat) (l : list bool) :
-      n > 0 -> IsBinaryRepr n l -> IsBinaryRepr (2 * n + 1) (l ++ [true]).
 
 (*
  * @brief 将布尔值列表转换为由 '0' 和 '1' 组成的字符串。
  *
  * 例如: binary_list_to_string [true; true; false; true] 会返回 "1101"
  *)
-Fixpoint binary_list_to_string (l : list bool) : string :=
-  match l with
-  | [] => ""
-  | b :: tl => (if b then "1" else "0") ++ binary_list_to_string tl
-  end.
-
-Fixpoint nat_to_binary_list_aux (n fuel : nat) : list bool :=
+Fixpoint nat_to_binary_string_aux (n fuel : nat) : string :=
   match fuel with
-  | O => []
+  | O => ""
   | S fuel' =>
       match n with
-      | O => [false]
-      | 1 => [true]
+      | O => "0"
+      | 1 => "1"
       | _ =>
           if Nat.even n then
-            nat_to_binary_list_aux (n / 2) fuel' ++ [false]
+            nat_to_binary_string_aux (n / 2) fuel' ++ "0"
           else
-            nat_to_binary_list_aux ((n - 1) / 2) fuel' ++ [true]
+            nat_to_binary_string_aux ((n - 1) / 2) fuel' ++ "1"
       end
   end.
 
-Definition nat_to_binary_list (n : nat) : list bool :=
+Definition nat_to_binary_string (n : nat) : string :=
   match n with
-  | O => [false]
-  | _ => nat_to_binary_list_aux n n
+  | O => "0"
+  | _ => nat_to_binary_string_aux n n
   end.
 
 Definition decimal_to_binary_impl (decimal : nat) : string :=
-  let bl := nat_to_binary_list decimal in
-  "db" ++ binary_list_to_string bl ++ "db".
+  "db" ++ nat_to_binary_string decimal ++ "db".
   
-Definition Pre (decimal : nat) : Prop := True.
+Definition problem_79_pre (decimal : nat) : Prop := True.
 
-Definition decimal_to_binary_spec (decimal : nat) (output : string) : Prop :=
+Definition problem_79_spec (decimal : nat) (output : string) : Prop :=
   output = decimal_to_binary_impl decimal.
 

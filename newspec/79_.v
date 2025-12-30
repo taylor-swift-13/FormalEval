@@ -18,18 +18,6 @@ Import ListNotations.
 
 Open Scope string_scope.
 
-Inductive IsBinaryRepr_rel : nat -> list bool -> Prop :=
-  | ibr_zero : IsBinaryRepr_rel 0 [false]
-  | ibr_one : IsBinaryRepr_rel 1 [true]
-  | ibr_even : forall n l,
-      n > 0 ->
-      IsBinaryRepr_rel n l ->
-      IsBinaryRepr_rel (2 * n) (l ++ [false])
-  | ibr_odd : forall n l,
-      n > 0 ->
-      IsBinaryRepr_rel n l ->
-      IsBinaryRepr_rel (2 * n + 1) (l ++ [true]).
-
 Inductive nat_to_binary_list_aux_rel : nat -> nat -> list bool -> Prop :=
   | ntblar_zero_fuel : forall n, nat_to_binary_list_aux_rel n 0 []
   | ntblar_zero_n : forall fuel, nat_to_binary_list_aux_rel 0 fuel [false]
@@ -68,8 +56,9 @@ Inductive binary_list_to_string_rel : list bool -> string -> Prop :=
       binary_list_to_string_rel (b :: tl) ("0" ++ s').
 
 
+Definition problem_79_pre (decimal : nat) : Prop := True.
 
-Definition decimal_to_binary_spec (decimal : nat) (output : string) : Prop :=
+Definition problem_79_spec (decimal : nat) (output : string) : Prop :=
   exists bl bl_str,
     nat_to_binary_list_rel decimal bl /\
     binary_list_to_string_rel bl bl_str /\

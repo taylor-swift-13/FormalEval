@@ -14,13 +14,13 @@ Import ListNotations.
 
 Open Scope Z_scope.
 
-Definition Pre (xs : list Z) : Prop := True.
+Definition problem_62_pre (xs : list Z) : Prop := True.
 (*
-  [derivative_spec xs ys] 定义了输入列表 xs 和输出列表 ys 之间的关系。
+  [problem_62_spec xs ys] 定义了输入列表 xs 和输出列表 ys 之间的关系。
   xs: 代表多项式 P(x) 系数的列表，其中 (nth i xs 0) 是 x^i 的系数。
   ys: 代表 P(x) 的导数 P'(x) 系数的列表。
 *)
-Definition derivative_spec (xs ys : list Z) : Prop :=
+Definition problem_62_spec (xs ys : list Z) : Prop :=
   (* 1. 输出列表的长度应该是输入列表的长度减一（对于长度大于0的输入）。
      Coq 中自然数的减法 `Nat.sub` 在 0-1 时结果为 0，这恰好符合我们对空列表或单元素列表求导的结果。*)
   length ys = Nat.sub (length xs) 1 /\

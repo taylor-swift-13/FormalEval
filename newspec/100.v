@@ -15,9 +15,8 @@ Require Import Coq.Arith.Arith.
 Import ListNotations.
 
 (* n 必须是正整数 *)
-Definition Pre (n : nat) : Prop := n > 0.
+Definition problem_100_pre (n : nat) : Prop := n > 0.
 
-
-Definition make_a_pile_spec (n : nat) (out : list nat) : Prop :=
+Definition problem_100_spec (n : nat) (out : list nat) : Prop :=
   length out = n /\
     (forall i, i < n -> nth i out 0 = n + 2 * i).

@@ -45,8 +45,8 @@ Fixpoint vowels_count_func (s : string) : nat :=
 Definition vowels_count_impl (s : string) : nat :=
   vowels_count_func s.
 
-Definition Pre (s : string) : Prop := True.
+Definition problem_64_pre (s : string) : Prop := True.
 
-Definition vowels_count_spec (s : string) (output : nat) : Prop :=
+Definition problem_64_spec (s : string) (output : nat) : Prop :=
   output = vowels_count_impl s.
 

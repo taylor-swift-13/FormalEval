@@ -36,6 +36,8 @@ Inductive vowels_count_rel : string -> nat -> Prop :=
 | vcr_y_end : forall c s n, is_y c -> s = "" -> n = 0%nat -> vowels_count_rel (String c s) (S n)
 | vcr_other : forall c s n, ~ is_vowel_char c -> ~ (is_y c /\ s = "") -> vowels_count_rel s n -> vowels_count_rel (String c s) n.
 
-Definition vowels_count_spec (s : string) (output : nat) : Prop :=
+Definition problem_64_pre (s : string) : Prop := True.
+
+Definition problem_64_spec (s : string) (output : nat) : Prop :=
   vowels_count_rel s output.
 

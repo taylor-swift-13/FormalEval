@@ -14,8 +14,8 @@ iscube(180) ==> False
 Require Import ZArith.
 Open Scope Z_scope.
 
-Definition Pre (a : Z) : Prop := True.
+Definition problem_77_pre (a : Z) : Prop := True.
 
-Definition iscube_spec (a : Z) (b : bool) : Prop :=
+Definition problem_77_spec (a : Z) (b : bool) : Prop :=
   (b = true <-> (exists x : Z, a = x * x * x)).
 

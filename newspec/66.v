@@ -11,23 +11,24 @@ digitSum("helloE") => 69
 digitSum("woArBld") => 131
 digitSum("aAaaaXa") => 153 *)
 
-Require Import Coq.Strings.Ascii Coq.Lists.List.
+Require Import Coq.Strings.Ascii Coq.Lists.List Coq.Strings.String.
 Require Import Coq.Arith.Arith.
 Import ListNotations.
+Open Scope string_scope.
 
 Definition is_uppercase (c : ascii) : bool :=
   let n := nat_of_ascii c in (Nat.leb 65 n) && (Nat.leb n 90).
 
-Fixpoint sum_uppercase_ascii (l : list ascii) : nat :=
-  match l with
-  | [] => 0
-  | c :: t => if is_uppercase c then nat_of_ascii c + sum_uppercase_ascii t
-              else sum_uppercase_ascii t
+Fixpoint sum_uppercase_ascii (s : string) : nat :=
+  match s with
+  | "" => 0
+  | String c s' => if is_uppercase c then nat_of_ascii c + sum_uppercase_ascii s'
+              else sum_uppercase_ascii s'
   end.
 
-Definition digitSum_impl (l : list ascii) : nat := sum_uppercase_ascii l.
+Definition digitSum_impl (s : string) : nat := sum_uppercase_ascii s.
 
-Definition problem_66_pre (l : list ascii) : Prop := True.
+Definition problem_66_pre (s : string) : Prop := True.
 
-Definition problem_66_spec (l : list ascii) (output : nat) : Prop :=
-  output = digitSum_impl l.
+Definition problem_66_spec (s : string) (output : nat) : Prop :=
+  output = digitSum_impl s.

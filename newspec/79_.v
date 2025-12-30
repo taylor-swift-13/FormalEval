@@ -18,48 +18,36 @@ Import ListNotations.
 
 Open Scope string_scope.
 
-Inductive nat_to_binary_list_aux_rel : nat -> nat -> list bool -> Prop :=
-  | ntblar_zero_fuel : forall n, nat_to_binary_list_aux_rel n 0 []
-  | ntblar_zero_n : forall fuel, nat_to_binary_list_aux_rel 0 fuel [false]
-  | ntblar_one : forall fuel, nat_to_binary_list_aux_rel 1 fuel [true]
-  | ntblar_even : forall fuel fuel' n n_half bl',
+Inductive nat_to_binary_string_aux_rel : nat -> nat -> string -> Prop :=
+  | ntbsar_zero_fuel : forall n, nat_to_binary_string_aux_rel n 0 ""
+  | ntbsar_zero_n : forall fuel, nat_to_binary_string_aux_rel 0 (S fuel) "0"
+  | ntbsar_one : forall fuel, nat_to_binary_string_aux_rel 1 (S fuel) "1"
+  | ntbsar_even : forall fuel fuel' n n_half s',
       fuel = S fuel' ->
       n <> 0 -> n <> 1 ->
       Nat.even n = true ->
       n_half = n / 2 ->
-      nat_to_binary_list_aux_rel n_half fuel' bl' ->
-      nat_to_binary_list_aux_rel n fuel (bl' ++ [false])
-  | ntblar_odd : forall fuel fuel' n n_half bl',
+      nat_to_binary_string_aux_rel n_half fuel' s' ->
+      nat_to_binary_string_aux_rel n fuel (s' ++ "0")
+  | ntbsar_odd : forall fuel fuel' n n_half s',
       fuel = S fuel' ->
       n <> 0 -> n <> 1 ->
       Nat.even n = false ->
       n_half = (n - 1) / 2 ->
-      nat_to_binary_list_aux_rel n_half fuel' bl' ->
-      nat_to_binary_list_aux_rel n fuel (bl' ++ [true]).
+      nat_to_binary_string_aux_rel n_half fuel' s' ->
+      nat_to_binary_string_aux_rel n fuel (s' ++ "1").
 
-Inductive nat_to_binary_list_rel : nat -> list bool -> Prop :=
-  | ntblr_zero : nat_to_binary_list_rel 0 [false]
-  | ntblr_pos : forall n bl,
+Inductive nat_to_binary_string_rel : nat -> string -> Prop :=
+  | ntbsr_zero : nat_to_binary_string_rel 0 "0"
+  | ntbsr_pos : forall n s,
       n <> 0 ->
-      nat_to_binary_list_aux_rel n n bl ->
-      nat_to_binary_list_rel n bl.
-
-Inductive binary_list_to_string_rel : list bool -> string -> Prop :=
-  | bltsr_nil : binary_list_to_string_rel [] ""
-  | bltsr_true : forall b tl s',
-      b = true ->
-      binary_list_to_string_rel tl s' ->
-      binary_list_to_string_rel (b :: tl) ("1" ++ s')
-  | bltsr_false : forall b tl s',
-      b = false ->
-      binary_list_to_string_rel tl s' ->
-      binary_list_to_string_rel (b :: tl) ("0" ++ s').
+      nat_to_binary_string_aux_rel n n s ->
+      nat_to_binary_string_rel n s.
 
 
 Definition problem_79_pre (decimal : nat) : Prop := True.
 
 Definition problem_79_spec (decimal : nat) (output : string) : Prop :=
-  exists bl bl_str,
-    nat_to_binary_list_rel decimal bl /\
-    binary_list_to_string_rel bl bl_str /\
-    output = "db" ++ bl_str ++ "db".
+  exists s,
+    nat_to_binary_string_rel decimal s /\
+    output = "db" ++ s ++ "db".

@@ -20,6 +20,7 @@ For num = "2020" the output should be 2.
 
 Require Import Coq.Strings.String Coq.Strings.Ascii Coq.Lists.List.
 Import ListNotations.
+Open Scope string_scope.
 
 Definition is_prime_hex_digit (c : ascii) : bool :=
   match c with
@@ -28,19 +29,19 @@ Definition is_prime_hex_digit (c : ascii) : bool :=
   | _ => false
   end.
 
-Fixpoint count_prime_hex (l : list ascii) : nat :=
-  match l with
-  | [] => 0
-  | h :: t =>
+Fixpoint count_prime_hex (s : string) : nat :=
+  match s with
+  | "" => 0
+  | String h t =>
     (if is_prime_hex_digit h then 1 else 0) +
     count_prime_hex t
   end.
 
-Definition hex_key_impl (s : list ascii) : nat :=
+Definition hex_key_impl (s : string) : nat :=
   count_prime_hex s.
 
 
-Definition Pre (s : list ascii) : Prop := True.
+Definition problem_78_pre (s : string) : Prop := True.
 
-Definition hex_key_spec (s : list ascii) (output : nat) : Prop :=
+Definition problem_78_spec (s : string) (output : nat) : Prop :=
   output = hex_key_impl s.

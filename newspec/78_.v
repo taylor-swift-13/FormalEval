@@ -19,6 +19,7 @@ For num = "2020" the output should be 2.
 
 Require Import Coq.Strings.String Coq.Strings.Ascii Coq.Lists.List.
 Import ListNotations.
+Open Scope string_scope.
 
 Inductive is_prime_hex_digit : ascii -> Prop :=
 | iphd_2 : is_prime_hex_digit "2"%char
@@ -28,13 +29,15 @@ Inductive is_prime_hex_digit : ascii -> Prop :=
 | iphd_B : is_prime_hex_digit "B"%char
 | iphd_D : is_prime_hex_digit "D"%char.
 
-Inductive count_prime_hex_rel : list ascii -> nat -> Prop :=
-| cphr_nil : count_prime_hex_rel nil 0%nat
+Inductive count_prime_hex_rel : string -> nat -> Prop :=
+| cphr_nil : count_prime_hex_rel "" 0%nat
 | cphr_prime : forall h t n, is_prime_hex_digit h -> count_prime_hex_rel t n ->
-    count_prime_hex_rel (h :: t) (S n)
+    count_prime_hex_rel (String h t) (S n)
 | cphr_not_prime : forall h t n, ~ is_prime_hex_digit h -> count_prime_hex_rel t n ->
-    count_prime_hex_rel (h :: t) n.
+    count_prime_hex_rel (String h t) n.
 
-Definition hex_key_spec (s : list ascii) (output : nat) : Prop :=
+Definition problem_78_pre (s : string) : Prop := True.
+
+Definition problem_78_spec (s : string) (output : nat) : Prop :=
   count_prime_hex_rel s output.
 

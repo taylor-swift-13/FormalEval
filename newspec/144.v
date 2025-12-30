@@ -11,6 +11,7 @@ simplify("1/6", "2/1") = False
 simplify("7/10", "10/2") = False *)
 (* 导入所需的Coq库 *)
 Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
 Require Import Coq.Lists.List.
 Require Import Coq.Arith.Arith.
 Import ListNotations.
@@ -32,41 +33,51 @@ Fixpoint list_ascii_to_nat_aux (l : list ascii) (acc : nat) : nat :=
 Definition list_ascii_to_nat (l : list ascii) : nat :=
   list_ascii_to_nat_aux l 0.
 
-Fixpoint find_slash (l : list ascii) : option (list ascii * list ascii) :=
-  match l with
-  | [] => None
-  | "/"%char :: rest => Some ([], rest)
-  | h :: t =>
-      match find_slash t with
-      | None => None
-      | Some (num_s, den_s) => Some (h :: num_s, den_s)
-      end
-  end.
+(*
+ * 规约：Parse_Fraction
+ * 描述：将一个由ASCII字符组成的列表解析为一个由分子和分母组成的自然数对。
+ *
+ * 参数：
+ *   s: 代表分数字符串的 list ascii。
+ *   num: 解析出的分子（自然数）。
+ *   den: 解析出的分母（自然数）。
+ *)
+Definition Parse_Fraction (s : list ascii) (num den : nat) : Prop :=
+  exists num_s den_s : list ascii,
+    s = num_s ++ ["/"%char] ++ den_s /\
+    num = list_ascii_to_nat num_s /\
+    den = list_ascii_to_nat den_s.
 
-Definition parse_fraction_impl (s : list ascii) : option (nat * nat) :=
-  match find_slash s with
-  | None => None
-  | Some (num_s, den_s) =>
-      Some (list_ascii_to_nat (rev num_s), list_ascii_to_nat den_s)
-  end.
-
-Definition simplify_impl (x n : list ascii) : bool :=
-  match parse_fraction_impl x, parse_fraction_impl n with
-  | Some (num_x, den_x), Some (num_n, den_n) =>
-      let product_num := num_x * num_n in
-      let product_den := den_x * den_n in
-      if (product_num mod product_den) =? 0
-      then true
-      else false
-  | _, _ => false
-  end.
-
-(* 约束：x 与 n 均为有效分数串，且分子/分母为正整数 *)
-Definition Pre (x n : list ascii) : Prop :=
+(*
+ * 规约：simplify_spec
+ * 描述：这是`simplify`函数的顶层规约。它规定了输入与期望的布尔输出之间的关系。
+ *       此版本完全使用 list ascii。
+ *
+ * 参数：
+ *   x: 代表第一个分数的 list ascii。
+ *   n: 代表第二个分数的 list ascii。
+ *   output: 函数的期望布尔输出。
+ *)
+ (* 约束：x 与 n 均为有效分数串，且分子/分母为正整数 *)
+Definition problem_144_pre (x n : string) : Prop :=
   exists nx dx ny dy,
-    parse_fraction_impl x = Some (nx, dx) /\
-    parse_fraction_impl n = Some (ny, dy) /\
+    Parse_Fraction (list_ascii_of_string x) nx dx /\
+    Parse_Fraction (list_ascii_of_string n) ny dy /\
     nx > 0 /\ dx > 0 /\ ny > 0 /\ dy > 0.
 
-Definition simplify_spec (x n : list ascii) (output : bool) : Prop :=
-  output = simplify_impl x n.
+Definition problem_144_spec (x n : string) (output : bool) : Prop :=
+  exists num_x den_x num_n den_n : nat,
+    (* 1. 解析输入的 list ascii *)
+    Parse_Fraction (list_ascii_of_string x) num_x den_x /\
+    Parse_Fraction (list_ascii_of_string n) num_n den_n /\
+
+    (* 2. 根据题目描述，分子和分母都是正整数（在nat中即 > 0） *)
+    num_x > 0 /\ den_x > 0 /\
+    num_n > 0 /\ den_n > 0 /\
+
+    (* 3. 定义核心逻辑：乘积是否为整数 *)
+    let product_num := num_x * num_n in
+    let product_den := den_x * den_n in
+    output = if (product_num mod product_den) =? 0
+             then true
+             else false.

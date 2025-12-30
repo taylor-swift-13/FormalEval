@@ -15,9 +15,6 @@ Require Import Coq.Arith.Arith.
 Open Scope string_scope.
 Import ListNotations.
 
-(* 输入字符串可为任意内容 *)
-Definition Pre (s : string) : Prop := True.
-
 Definition is_uppercase_vowel_bool (c : ascii) : bool :=
   match c with
   | "A"%char | "E"%char | "I"%char | "O"%char | "U"%char => true
@@ -31,6 +28,8 @@ Definition count_upper_impl (s : string) : nat :=
     | None => false
     end) (seq 0 (String.length s))).
 
+(* 输入字符串可为任意内容 *)
+Definition problem_98_pre (s : string) : Prop := True.
 
-Definition count_upper_spec (s : string) (output : nat) : Prop :=
+Definition problem_98_spec (s : string) (output : nat) : Prop :=
   output = count_upper_impl s.

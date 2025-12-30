@@ -27,7 +27,10 @@ Inductive count_upper_vowels_at_even_pos_rel : string -> nat -> nat -> Prop :=
 | cuve_skip : forall c s i n, (Nat.even i = false \/ ~ is_uppercase_vowel c) ->
     count_upper_vowels_at_even_pos_rel s (S i) n ->
     count_upper_vowels_at_even_pos_rel (String c s) i n.
+    
+(* 输入字符串可为任意内容 *)
+Definition problem_98_pre (s : string) : Prop := True.
 
-Definition count_upper_spec (s : string) (output : nat) : Prop :=
+Definition problem_98_spec (s : string) (output : nat) : Prop :=
   count_upper_vowels_at_even_pos_rel s 0%nat output.
 

@@ -14,6 +14,7 @@ Require Import Coq.Strings.Ascii.
 Require Import Coq.Lists.List.
 Require Import Coq.Bool.Bool.
 Require Import Coq.Arith.Arith. (* 需要引入这个库来进行自然数运算 *)
+Require Import Coq.Strings.String.
 Import ListNotations.
 
 (*
@@ -65,13 +66,14 @@ Fixpoint contains_letter_dec (s : list ascii) : bool :=
   | h :: t => is_letter_dec h || contains_letter_dec t
   end.
 
-Definition solve_impl (s : list ascii) : list ascii :=
-  if contains_letter_dec s
-  then map change_case s
-  else rev s.
+Definition solve_impl (s : string) : string :=
+  let l := list_ascii_of_string s in
+  if contains_letter_dec l
+  then string_of_list_ascii (map change_case l)
+  else string_of_list_ascii (rev l).
 
 (* 任意字符串输入 *)
-Definition Pre (s : list ascii) : Prop := True.
+Definition problem_161_pre (s : string) : Prop := True.
 
-Definition solve_spec (s s' : list ascii) : Prop :=
+Definition problem_161_spec (s s' : string) : Prop :=
   s' = solve_impl s.

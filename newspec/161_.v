@@ -14,6 +14,7 @@ Require Import Coq.Strings.Ascii.
 Require Import Coq.Lists.List.
 Require Import Coq.Bool.Bool.
 Require Import Coq.Arith.Arith.
+Require Import Coq.Strings.String.
 Import ListNotations.
 
 Definition is_lower_alpha (a : ascii) : bool :=
@@ -68,6 +69,8 @@ Inductive rev_rel : list ascii -> list ascii -> Prop :=
       rev_rel (h :: t) result.
 
 
-Definition solve_spec (s s' : list ascii) : Prop :=
-  (exists result, contains_letter_dec_rel s true /\ map_change_case_rel s result /\ s' = result) \/
-  (exists result, contains_letter_dec_rel s false /\ rev_rel s result /\ s' = result).
+Definition solve_spec (s s' : string) : Prop :=
+  let l := list_ascii_of_string s in
+  let l' := list_ascii_of_string s' in
+  (exists result, contains_letter_dec_rel l true /\ map_change_case_rel l result /\ l' = result) \/
+  (exists result, contains_letter_dec_rel l false /\ rev_rel l result /\ l' = result).

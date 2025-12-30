@@ -37,13 +37,13 @@ Definition is_valid_triple (n i j k : nat) : Prop :=
   (a_val i + a_val j + a_val k) mod 3 = 0.
 
 (* 独立的输入前置条件 *)
-Definition Pre (n : nat) : Prop := n > 0.
+Definition problem_147_pre (n : nat) : Prop := n > 0.
 
 (*
  * get_max_triples 函数的程序规约。
  * 它通过一阶逻辑描述了输入 n 和输出 output 之间的关系。
  *)
-Definition get_max_triples_spec (n : nat) (output : nat) : Prop :=
+Definition problem_147_spec (n : nat) (output : nat) : Prop :=
   (*
    * 存在一个三元组列表 l，它精确地包含了所有有效的、不重复的三元组，
    * 并且 output 是这个列表的长度。

@@ -44,7 +44,10 @@ Inductive count_special_list : list Z -> nat -> Prop :=
     count_special_list t k ->
     count_special_list (h :: t) k.
 
+(* 任意整数列表输入均可 *)
+Definition problem_146_pre (nums : list Z) : Prop := True.
+
 (* 规约：输出等于满足条件的元素计数（以 Z 形式给出） *)
-Definition specialFilter_spec (nums : list Z) (output : Z) : Prop :=
+Definition problem_146_spec (nums : list Z) (output : Z) : Prop :=
   exists k : nat, count_special_list nums k /\ output = Z.of_nat k.
 

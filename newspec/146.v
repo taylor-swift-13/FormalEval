@@ -11,10 +11,9 @@ Require Import Coq.Lists.List Coq.ZArith.ZArith Coq.Strings.Ascii.
 Import ListNotations.
 Open Scope Z_scope.
 
-(* 任意整数列表输入均可 *)
-Definition Pre (nums : list Z) : Prop := True.
 
 Definition last_digit (n : Z) : Z := Z.abs (n mod 10).
+
 Fixpoint msd_fuel (fuel : nat) (n : Z) : Z :=
   match fuel with
   | O => n mod 10
@@ -26,5 +25,8 @@ Definition special_number_b (n : Z) : bool :=
 
 Definition specialFilter_impl (nums : list Z) : Z := Z.of_nat (length (filter special_number_b nums)).
 
-Definition specialFilter_spec (nums : list Z) (output : Z) : Prop :=
+(* 任意整数列表输入均可 *)
+Definition problem_146_pre (nums : list Z) : Prop := True.
+
+Definition problem_146_spec (nums : list Z) (output : Z) : Prop :=
   output = specialFilter_impl nums.

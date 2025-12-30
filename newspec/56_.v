@@ -30,7 +30,8 @@ Inductive is_correctly_bracketed : string -> Prop :=
 
 
 (* Pre: no special constraints for `correct_bracketing` *)
-Definition problem_56_pre (brackets : string) : Prop := True.
+Definition problem_56_pre (brackets : string) : Prop :=
+    Forall (fun c => c = "<"%char \/ c = ">"%char) (list_ascii_of_string brackets).
 
 Definition problem_56_spec (brackets : string) (b : bool) : Prop :=
   b = true <-> is_correctly_bracketed brackets.

@@ -15,8 +15,6 @@ Require Import Coq.ZArith.ZArith.
 Import ListNotations.
 Open Scope Z_scope.
 
-(* 任意整数列表均可 *)
-Definition Pre (lst : list Z) : Prop := True.
 
 (* a 是 lst 中最大的负整数（Some z）或不存在负整数（None） *)
 Definition is_largest_negative (lst : list Z) (a : option Z) : Prop :=
@@ -32,7 +30,10 @@ Definition is_smallest_positive (lst : list Z) (b : option Z) : Prop :=
   | None   => forall x, In x lst -> ~(x > 0)
   end.
 
+(* 任意整数列表均可 *)
+Definition problem_136_pre (lst : list Z) : Prop := True.
+
 (* 最终 Spec：结果 res = (a, b) 当且仅当 a 是最大的负整数（或 None），b 是最小的正整数（或 None） *)
-Definition largest_smallest_integers_spec (lst : list Z) (res : option Z * option Z) : Prop :=
+Definition problem_136_spec (lst : list Z) (res : option Z * option Z) : Prop :=
   let (a, b) := res in
   is_largest_negative lst a /\ is_smallest_positive lst b.

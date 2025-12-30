@@ -13,13 +13,13 @@ Require Import Coq.ZArith.ZArith.
 Open Scope Z_scope.
 
 (* x 与 y 均为正整数 *)
-Definition Pre (x y : Z) : Prop := x > 0 /\ y > 0.
+Definition problem_102_pre (x y : Z) : Prop := x > 0 /\ y > 0.
 
 (* 
    定义 choose_num 函数的规约 (Specification)
    它描述了输入 x, y 和输出 res 之间必须满足的关系。
 *)
-Definition choose_num_spec (x y res : Z) : Prop :=
+Definition problem_102_spec (x y res : Z) : Prop :=
 
   (* 情况一：当区间 [x, y] 中存在偶数时 *)
   ( (exists z : Z, x <= z /\ z <= y /\ Z.even z = true) ->

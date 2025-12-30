@@ -27,34 +27,43 @@ Inductive count_odd_digits_rel : string -> nat -> Prop :=
 | codr_not_odd : forall c s n, ~ is_odd_digit c -> count_odd_digits_rel s n ->
     count_odd_digits_rel (String c s) n.
 
-Inductive replace_char_rel : ascii -> ascii -> string -> string -> Prop :=
-| rcr_empty : forall t r, replace_char_rel t r "" ""
-| rcr_match : forall t r s s', replace_char_rel t r s s' ->
-   replace_char_rel t r (String t s) (String r s')
-| rcr_no_match : forall t r c s s', c <> t -> replace_char_rel t r s s' ->
-   replace_char_rel t r (String c s) (String c s').
+Inductive replace_char_with_string_rel : ascii -> string -> string -> string -> Prop :=
+| rcr_empty : forall t r, replace_char_with_string_rel t r "" ""
+| rcr_match : forall t r s s', replace_char_with_string_rel t r s s' ->
+   replace_char_with_string_rel t r (String t s) (r ++ s')
+| rcr_no_match : forall t r c s s', c <> t -> replace_char_with_string_rel t r s s' ->
+   replace_char_with_string_rel t r (String c s) (String c s').
 
-Inductive nat_to_digit_char_rel : nat -> ascii -> Prop :=
-| ndcr_0 : nat_to_digit_char_rel 0%nat "0"%char
-| ndcr_1 : nat_to_digit_char_rel 1%nat "1"%char
-| ndcr_2 : nat_to_digit_char_rel 2%nat "2"%char
-| ndcr_3 : nat_to_digit_char_rel 3%nat "3"%char
-| ndcr_4 : nat_to_digit_char_rel 4%nat "4"%char
-| ndcr_5 : nat_to_digit_char_rel 5%nat "5"%char
-| ndcr_6 : nat_to_digit_char_rel 6%nat "6"%char
-| ndcr_7 : nat_to_digit_char_rel 7%nat "7"%char
-| ndcr_8 : nat_to_digit_char_rel 8%nat "8"%char
-| ndcr_9 : nat_to_digit_char_rel 9%nat "9"%char.
+(* 辅助关系：将 nat 转换为 string (逆序) *)
+Inductive nat_to_string_aux_rel : nat -> string -> Prop :=
+| ntsar_zero : nat_to_string_aux_rel 0 ""
+| ntsar_step : forall m s, m <> 0 ->
+    nat_to_string_aux_rel (m / 10) s ->
+    nat_to_string_aux_rel m (String (ascii_of_nat (48 + (m mod 10))) s).
+
+(* 辅助关系：反转字符串 *)
+Inductive rev_string_rel : string -> string -> Prop :=
+| rsr_empty : rev_string_rel "" ""
+| rsr_cons : forall c s s', rev_string_rel s s' ->
+    rev_string_rel (String c s) (s' ++ String c "").
+
+(* 辅助关系：将 nat 转换为 string *)
+Inductive nat_to_string_rel : nat -> string -> Prop :=
+| ntsr_zero : nat_to_string_rel 0 "0"
+| ntsr_pos : forall n s s_rev, n <> 0 ->
+    nat_to_string_aux_rel n s ->
+    rev_string_rel s s_rev ->
+    nat_to_string_rel n s_rev.
 
 (* 固定模板：将其中的字符 'i' 替换为计数字符 *)
 Definition odd_count_template : string :=
-    "the number of odd elements i n the str i ng i of the i nput.".
+    "the number of odd elements in the string i of the input.".
 
 Inductive process_string_rel : string -> string -> Prop :=
-| psr_build : forall s cnt ch res,
+| psr_build : forall s cnt cnt_str res,
     count_odd_digits_rel s cnt ->
-    nat_to_digit_char_rel cnt ch ->
-    replace_char_rel "i"%char ch odd_count_template res ->
+    nat_to_string_rel cnt cnt_str ->
+    replace_char_with_string_rel "i"%char cnt_str odd_count_template res ->
     process_string_rel s res.
 
 Inductive odd_count_rel : list string -> list string -> Prop :=
@@ -63,6 +72,16 @@ Inductive odd_count_rel : list string -> list string -> Prop :=
     odd_count_rel t t' ->
     odd_count_rel (h :: t) (h' :: t').
 
-Definition odd_count_spec (input : list string) (output : list string) : Prop :=
+(* 每个字符串只包含数字字符 *)
+Definition problem_113_pre (input : list string) : Prop :=
+  Forall (fun s =>
+    let fix all_digits (t : string) : Prop :=
+      match t with
+      | EmptyString => True
+      | String ch rest =>
+          let n := nat_of_ascii ch in (48 <= n /\ n <= 57) /\ all_digits rest
+      end in all_digits s) input.
+
+Definition problem_113_spec (input : list string) (output : list string) : Prop :=
   odd_count_rel input output.
 

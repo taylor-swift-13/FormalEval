@@ -26,25 +26,13 @@ Operator list has at least one operator, and operand list has at least two opera
 (* 引入所需的Coq库 *)
 Require Import Coq.Lists.List.
 Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
 Require Import Coq.ZArith.ZArith.
 Require Import Coq.Arith.Arith.
 Require Import Coq.Bool.Bool.
 Import ListNotations.
 Open Scope Z_scope.
 
-(* Python的 '//' (floor division) 对于非负数与Coq的Z.div行为一致。*)
-Definition Zdiv_floor := Z.div.
-
-(* 约束：
-   - 操作符长度 = 操作数长度 - 1，且操作符至少1个、操作数至少2个
-   - 操作数非负
-   - 操作符仅限于 + - * / ^
-*)
-Definition Pre (operators : list ascii) (operands : list Z) : Prop :=
-  S (length operators) = length operands /\
-  (1 <= length operators)%nat /\ (2 <= length operands)%nat /\
-  Forall (fun z => 0 <= z) operands /\
-  Forall (fun c => c = "+"%char \/ c = "-"%char \/ c = "*"%char \/ c = "/"%char \/ c = "^"%char) operators.
 
 (* 此函数将字符形式的运算符解释为对应的二元整数运算。*)
 Definition interp_op (op : ascii) : (Z -> Z -> Z) :=
@@ -52,7 +40,7 @@ Definition interp_op (op : ascii) : (Z -> Z -> Z) :=
   | "+"%char => Z.add
   | "-"%char => Z.sub
   | "*"%char => Z.mul
-  | "/"%char => Zdiv_floor
+  | "/"%char => Z.div
   | "^"%char => Z.pow
   | _ => fun _ _ => 0
   end.
@@ -76,8 +64,6 @@ Definition rfind_index {A} (p : A -> bool) (l : list A) : option nat :=
 
 (*
   核心的求值函数 - 辅助函数版本
-  为了通过Coq的终止性检查，我们引入了一个显式的 "fuel" 参数 (一个 nat)，
-  它在每次递归调用时都会减少。这让Coq能够轻易地证明函数会终止。
 *)
 Fixpoint eval_helper (ops : list ascii) (nums : list Z) (fuel : nat) : Z :=
   match fuel with
@@ -121,8 +107,20 @@ Fixpoint eval_helper (ops : list ascii) (nums : list Z) (fuel : nat) : Z :=
 Definition eval (ops : list ascii) (nums : list Z) : Z :=
   eval_helper ops nums (length nums).
 
-Definition do_algebra_impl (operators : list ascii) (operands : list Z) : Z :=
-  eval operators operands.
+Definition do_algebra_impl (operators : string) (operands : list Z) : Z :=
+  eval (list_ascii_of_string operators) operands.
 
-Definition do_algebra_spec (operators : list ascii) (operands : list Z) (result : Z) : Prop :=
+(* 约束：
+   - 操作符长度 = 操作数长度 - 1，且操作符至少1个、操作数至少2个
+   - 操作数非负
+   - 操作符仅限于 + - * / ^
+*)
+Definition problem_160_pre (operators : string) (operands : list Z) : Prop :=
+  let ops := list_ascii_of_string operators in
+  S (length ops) = length operands /\
+  (1 <= length ops)%nat /\ (2 <= length operands)%nat /\
+  Forall (fun z => 0 <= z) operands /\
+  Forall (fun c => c = "+"%char \/ c = "-"%char \/ c = "*"%char \/ c = "/"%char \/ c = "^"%char) ops.
+
+Definition problem_160_spec (operators : string) (operands : list Z) (result : Z) : Prop :=
   result = do_algebra_impl operators operands.

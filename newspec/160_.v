@@ -29,102 +29,73 @@ Require Import Coq.Strings.Ascii.
 Require Import Coq.ZArith.ZArith.
 Require Import Coq.Arith.Arith.
 Require Import Coq.Bool.Bool.
+Require Import Coq.Strings.String.
 Import ListNotations.
 Open Scope Z_scope.
 
-Definition Zdiv_floor := Z.div.
+(* 辅助函数：查找满足条件的第一个元素的索引 *)
+Inductive find_index_rel {A} (p : A -> bool) : list A -> option nat -> Prop :=
+  | fir_nil : find_index_rel p [] None
+  | fir_found : forall x xs, p x = true -> find_index_rel p (x :: xs) (Some 0)
+  | fir_skip : forall x xs k, p x = false -> find_index_rel p xs (Some k) -> find_index_rel p (x :: xs) (Some (S k))
+  | fir_none : forall x xs, p x = false -> find_index_rel p xs None -> find_index_rel p (x :: xs) None.
+
+(* 辅助函数：查找满足条件的最后一个元素的索引 *)
+Inductive rfind_index_rel {A} (p : A -> bool) (l : list A) (res : option nat) : Prop :=
+  | rfir_do : forall rev_l rev_res,
+      rev l = rev_l ->
+      find_index_rel p rev_l rev_res ->
+      (match rev_res with
+       | Some i => res = Some (length l - 1 - i)%nat
+       | None => res = None
+       end) ->
+      rfind_index_rel p l res.
+
+Definition is_add_sub (c : ascii) := orb (c =? "+"%char)%char (c =? "-"%char)%char.
+Definition is_mul_div (c : ascii) := orb (c =? "*"%char)%char (c =? "/"%char)%char.
+Definition is_pow (c : ascii) := (c =? "^"%char)%char.
+
+(* 确定分割表达式的操作符索引：优先级 +,- < *,/ < ^ *)
+Inductive find_split_index_rel (ops : list ascii) (res : option nat) : Prop :=
+  | fsir_add_sub : forall i,
+      rfind_index_rel is_add_sub ops (Some i) ->
+      res = Some i ->
+      find_split_index_rel ops res
+  | fsir_mul_div : forall i,
+      rfind_index_rel is_add_sub ops None ->
+      rfind_index_rel is_mul_div ops (Some i) ->
+      res = Some i ->
+      find_split_index_rel ops res
+  | fsir_pow : forall res_pow,
+      rfind_index_rel is_add_sub ops None ->
+      rfind_index_rel is_mul_div ops None ->
+      find_index_rel is_pow ops res_pow ->
+      res = res_pow ->
+      find_split_index_rel ops res.
 
 Inductive interp_op_rel : ascii -> Z -> Z -> Z -> Prop :=
   | ior_add : forall z1 z2, interp_op_rel "+"%char z1 z2 (z1 + z2)
   | ior_sub : forall z1 z2, interp_op_rel "-"%char z1 z2 (z1 - z2)
   | ior_mul : forall z1 z2, interp_op_rel "*"%char z1 z2 (z1 * z2)
   | ior_div : forall z1 z2, z2 <> 0 -> interp_op_rel "/"%char z1 z2 (Z.div z1 z2)
-  | ior_pow : forall z1 z2, interp_op_rel "^"%char z1 z2 (Z.pow z1 z2)
-  | ior_other : forall op z1 z2, op <> "+"%char -> op <> "-"%char -> op <> "*"%char -> op <> "/"%char -> op <> "^"%char -> interp_op_rel op z1 z2 0.
-
-Inductive find_index_aux_rel {A} : (A -> bool) -> list A -> nat -> option nat -> Prop :=
-  | fiar_nil : forall p n, find_index_aux_rel p [] n None
-  | fiar_found : forall p x xs n, p x = true -> find_index_aux_rel p (x :: xs) n (Some n)
-  | fiar_skip : forall p x xs n result,
-      p x = false ->
-      find_index_aux_rel p xs (S n) result ->
-      find_index_aux_rel p (x :: xs) n result.
-
-Inductive find_index_rel {A} : (A -> bool) -> list A -> option nat -> Prop :=
-  | fir_base : forall p l result, find_index_aux_rel p l 0 result -> find_index_rel p l result.
-
-Inductive rfind_index_rel {A} : (A -> bool) -> list A -> option nat -> Prop :=
-  | rfir_base : forall p l rev_l idx rev_idx,
-      rev l = rev_l ->
-      find_index_rel p rev_l rev_idx ->
-      match rev_idx with
-      | Some i => idx = Some ((length l - 1) - i)%nat
-      | None => idx = None
-      end ->
-      rfind_index_rel p l idx.
-
-Inductive eval_helper_rel : list ascii -> list Z -> nat -> Z -> Prop :=
-  | ehr_zero_fuel : forall ops nums, eval_helper_rel ops nums 0 0
-  | ehr_empty : forall ops fuel, eval_helper_rel ops [] fuel 0
-  | ehr_single : forall ops n fuel, eval_helper_rel ops [n] fuel n
-  | ehr_add_sub : forall ops nums fuel fuel' i op left_ops right_ops left_nums right_nums left_res right_res res,
-      fuel = S fuel' ->
-      rfind_index_rel (fun c => orb (c =? "+"%char)%char (c =? "-"%char)%char) ops (Some i) ->
-      (i < length ops)%nat ->
-      op = nth i ops " "%char ->
-      left_ops = firstn i ops ->
-      right_ops = skipn (i + 1) ops ->
-      left_nums = firstn (i + 1) nums ->
-      right_nums = skipn (i + 1) nums ->
-      eval_helper_rel left_ops left_nums fuel' left_res ->
-      eval_helper_rel right_ops right_nums fuel' right_res ->
-      interp_op_rel op left_res right_res res ->
-      eval_helper_rel ops nums fuel res
-  | ehr_mul_div : forall ops nums fuel fuel' i op left_ops right_ops left_nums right_nums left_res right_res res,
-      fuel = S fuel' ->
-      rfind_index_rel (fun c => orb (c =? "+"%char)%char (c =? "-"%char)%char) ops None ->
-      rfind_index_rel (fun c => orb (c =? "*"%char)%char (c =? "/"%char)%char) ops (Some i) ->
-      (i < length ops)%nat ->
-      op = nth i ops " "%char ->
-      left_ops = firstn i ops ->
-      right_ops = skipn (i + 1) ops ->
-      left_nums = firstn (i + 1) nums ->
-      right_nums = skipn (i + 1) nums ->
-      eval_helper_rel left_ops left_nums fuel' left_res ->
-      eval_helper_rel right_ops right_nums fuel' right_res ->
-      interp_op_rel op left_res right_res res ->
-      eval_helper_rel ops nums fuel res
-  | ehr_pow : forall ops nums fuel fuel' i op left_ops right_ops left_nums right_nums left_res right_res res,
-      fuel = S fuel' ->
-      rfind_index_rel (fun c => orb (c =? "+"%char)%char (c =? "-"%char)%char) ops None ->
-      rfind_index_rel (fun c => orb (c =? "*"%char)%char (c =? "/"%char)%char) ops None ->
-      find_index_rel (fun c => (c =? "^"%char)%char) ops (Some i) ->
-      (i < length ops)%nat ->
-      op = nth i ops " "%char ->
-      left_ops = firstn i ops ->
-      right_ops = skipn (i + 1) ops ->
-      left_nums = firstn (i + 1) nums ->
-      right_nums = skipn (i + 1) nums ->
-      eval_helper_rel left_ops left_nums fuel' left_res ->
-      eval_helper_rel right_ops right_nums fuel' right_res ->
-      interp_op_rel op left_res right_res res ->
-      eval_helper_rel ops nums fuel res
-  | ehr_none : forall ops nums fuel fuel',
-      fuel = S fuel' ->
-      rfind_index_rel (fun c => orb (c =? "+"%char)%char (c =? "-"%char)%char) ops None ->
-      rfind_index_rel (fun c => orb (c =? "*"%char)%char (c =? "/"%char)%char) ops None ->
-      find_index_rel (fun c => (c =? "^"%char)%char) ops None ->
-      eval_helper_rel ops nums fuel 0.
+  | ior_pow : forall z1 z2, interp_op_rel "^"%char z1 z2 (Z.pow z1 z2).
 
 Inductive eval_rel : list ascii -> list Z -> Z -> Prop :=
-  | er_base : forall ops nums fuel result,
-      fuel = length nums ->
-      eval_helper_rel ops nums fuel result ->
-      eval_rel ops nums result.
+  | er_single : forall n, eval_rel [] [n] n
+  | er_split : forall ops nums i op v1 v2 v,
+      find_split_index_rel ops (Some i) ->
+      op = nth i ops " "%char ->
+      eval_rel (firstn i ops) (firstn (i + 1) nums) v1 ->
+      eval_rel (skipn (i + 1) ops) (skipn (i + 1) nums) v2 ->
+      interp_op_rel op v1 v2 v ->
+      eval_rel ops nums v.
 
+Definition problem_160_pre (operators : string) (operands : list Z) : Prop :=
+  let ops := list_ascii_of_string operators in
+  S (length ops) = length operands /\
+  (1 <= length ops)%nat /\ (2 <= length operands)%nat /\
+  Forall (fun z => 0 <= z) operands /\
+  Forall (fun c => c = "+"%char \/ c = "-"%char \/ c = "*"%char \/ c = "/"%char \/ c = "^"%char) ops.
 
-
-Definition do_algebra_spec (operators : list ascii) (operands : list Z) (result : Z) : Prop :=
-  exists fuel,
-    fuel = length operands /\
-    eval_helper_rel operators operands fuel result.
+Definition problem_160_spec (operators : string) (operands : list Z) (result : Z) : Prop :=
+  eval_rel (list_ascii_of_string operators) operands result.

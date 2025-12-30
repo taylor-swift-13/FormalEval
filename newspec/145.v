@@ -18,8 +18,6 @@ Require Import Arith.
 Import ListNotations.
 Open Scope Z_scope.
 
-(* 任意整数列表输入均可 *)
-Definition Pre (l_in : list Z) : Prop := True.
 
 Fixpoint sum_digits_pos_fuel (fuel : nat) (n : Z) : Z :=
   match fuel with
@@ -65,6 +63,8 @@ Definition order_by_points_impl (l_in : list Z) : list Z :=
   let sorted := stable_sort indexed in
   map fst sorted.
 
+(* 任意整数列表输入均可 *)
+Definition problem_145_pre (l_in : list Z) : Prop := True.
 
-Definition order_by_points_spec (l_in : list Z) (output : list Z) : Prop :=
+Definition problem_145_spec (l_in : list Z) (output : list Z) : Prop :=
   output = order_by_points_impl l_in.

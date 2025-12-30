@@ -45,7 +45,10 @@ Inductive sorted_stable_rel : list (Z * nat) -> list (Z * nat) -> Prop :=
     sorted_stable_rel ps sorted_tail ->
     sorted_stable_rel (p :: ps) (p :: sorted_tail).
 
-Definition order_by_points_spec (l_in : list Z) (l_out : list Z) : Prop :=
+(* 任意整数列表输入均可 *)
+Definition problem_145_pre (l_in : list Z) : Prop := True.
+
+Definition problem_145_spec (l_in : list Z) (l_out : list Z) : Prop :=
   exists indexed sorted_indexed, indexed_list_rel l_in indexed /\
     Permutation indexed sorted_indexed /\
     Sorted le_stable_rel sorted_indexed /\

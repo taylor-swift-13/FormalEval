@@ -11,16 +11,16 @@ Return n-th Fibonacci number.
 Require Import Coq.Init.Nat.
 
 (*
-  fib 是一个递归函数，定义了斐波那契数列。
+  is_fib 是一个逻辑关系，它用一阶逻辑的规则定义了斐波那契数列。
+  它断言 "res 是第 n 个斐波那契数"。
 *)
-Fixpoint fib (n : nat) : nat :=
-  match n with
-  | 0 => 0
-  | S n' => match n' with
-    | 0 => 1
-    | S n'' => fib n'' + fib n'
-    end
-  end.
+Inductive is_fib : nat -> nat -> Prop :=
+  | fib_zero : is_fib 0 0
+  | fib_one  : is_fib 1 1
+  | fib_step : forall n res_n res_n1,
+               is_fib n res_n ->
+               is_fib (S n) res_n1 ->
+               is_fib (S (S n)) (res_n1 + res_n).
 
 (*
   fib_spec 是对 fib 函数的程序规约。
@@ -34,4 +34,4 @@ Fixpoint fib (n : nat) : nat :=
 Definition problem_55_pre (n : nat) : Prop := True.
 
 Definition problem_55_spec (n : nat) (res : nat) : Prop :=
-  res = fib n.
+  is_fib n res.

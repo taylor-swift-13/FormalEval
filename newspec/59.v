@@ -12,12 +12,9 @@ Require Import Coq.ZArith.Znumtheory. (* 正确的库，其中定义了 prime *)
  * largest_prime_factor 函数的最终正确程序规约
  *)
 (* Pre: n must be > 1 and not prime for this spec to be meaningful *)
-Definition Pre (n : Z) : Prop := (Z.gt n 1 /\ ~ (prime n)).
+Definition problem_59_pre (n : Z) : Prop := (Z.gt n 1 /\ ~ (prime n)).
 
-Definition largest_prime_factor_spec (n p: Z) : Prop :=
-  (* 前置条件: n > 1 并且 n 不是素数 *)
-  (Z.gt n 1 /\ ~ (prime n)) ->
-
+Definition problem_59_spec (n p: Z) : Prop :=
   (* 后置条件: p 必须是 n 的最大素数因子 *)
   (
     (* 1. p 是 n 的一个素数因子 *)

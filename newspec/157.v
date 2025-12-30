@@ -12,7 +12,7 @@ Require Import ZArith.
 Open Scope Z_scope.
 
 (* 任意整数边长输入 *)
-Definition Pre (a b c : Z) : Prop := True.
+Definition problem_157_pre (a b c : Z) : Prop :=   (a > 0 /\ b > 0 /\ c > 0).
 
 (*
   right_angle_triangle_spec a b c res
@@ -24,8 +24,7 @@ Definition Pre (a b c : Z) : Prop := True.
   那么当且仅当这三条边满足勾股定理的任意一种排列时，
   程序的返回结果 res 为 true。
 *)
-Definition right_angle_triangle_spec (a b c : Z) (res : bool) : Prop :=
-  (a > 0 /\ b > 0 /\ c > 0) ->
+Definition problem_157_spec (a b c : Z) (res : bool) : Prop :=
   res = true <-> (a * a + b * b = c * c \/
                   a * a + c * c = b * b \/
                   b * b + c * c = a * a).

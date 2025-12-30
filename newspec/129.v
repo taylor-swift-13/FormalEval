@@ -25,11 +25,6 @@ Output: [1] *)
 Require Import Coq.Lists.List Coq.Arith.Arith.
 Import ListNotations.
 
-(* k 至少为 1；网格非空且每行非空 *)
-Definition Pre (grid : Grid) (k : nat) : Prop :=
-  k >= 1 /\ grid <> [] /\ Forall (fun row => row <> []) grid.
-
-
 Definition Grid := list (list nat).
 Definition Pos := (nat * nat)%type.
 
@@ -101,6 +96,10 @@ Definition find_minimum_path_impl (grid:Grid) (k:nat) : list nat :=
   let cand := extend_paths grid k (k * (length grid + 1)) starts in
   best_by_lex grid cand.
 
-Definition find_minimum_path_spec (grid : Grid) (k : nat) (output : list nat) : Prop :=
+(* k 至少为 1；网格非空且每行非空 *)
+Definition problem_129_pre (grid : Grid) (k : nat) : Prop :=
+  k >= 1 /\ grid <> [] /\ Forall (fun row => row <> []) grid.
+
+Definition problem_129_spec (grid : Grid) (k : nat) (output : list nat) : Prop :=
   output = find_minimum_path_impl grid k.
 

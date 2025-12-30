@@ -70,6 +70,10 @@ Inductive min_path_values_rel : Grid -> nat -> list nat -> Prop :=
         path_values_rel grid path' values' -> lex_le_rel values values') ->
     min_path_values_rel grid k values.
 
+(* k 至少为 1；网格非空且每行非空 *)
+Definition problem_129_pre (grid : Grid) (k : nat) : Prop :=
+  k >= 1 /\ grid <> [] /\ Forall (fun row => row <> []) grid.
+  
 Definition find_minimum_path_spec (grid : Grid) (k : nat) (output : list nat) : Prop :=
   min_path_values_rel grid k output.
 

@@ -19,6 +19,8 @@ Inductive sum_even_at_odd_indices_rel : list Z -> nat -> Z -> Prop :=
     sum_even_at_odd_indices_rel t (S i) s_tail ->
     sum_even_at_odd_indices_rel (h :: t) i s_tail.
 
-Definition add_spec (lst : list Z) (output : Z) : Prop :=
+Definition problem_85_pre (lst : list Z) : Prop := lst <> []%list.
+
+Definition problem_85_spec (lst : list Z) (output : Z) : Prop :=
   sum_even_at_odd_indices_rel lst 0%nat output.
 

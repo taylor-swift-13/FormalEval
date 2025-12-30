@@ -20,7 +20,7 @@ Fixpoint sum_even_at_odd_indices (l : list Z) (n : nat) : Z :=
 
 Definition add_impl (lst : list Z) : Z := sum_even_at_odd_indices lst 0.
 
-Definition Pre (lst : list Z) : Prop := lst <> []%list.
+Definition problem_85_pre (lst : list Z) : Prop := lst <> []%list.
 
-Definition add_spec (lst : list Z) (output : Z) : Prop :=
+Definition problem_85_spec (lst : list Z) (output : Z) : Prop :=
   output = add_impl lst.

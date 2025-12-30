@@ -14,13 +14,12 @@ file_name_check("1example.dll") # => 'No' (the name should start with a latin al
 """ *)
 (* 引入必要的库 *)
 Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
 Require Import Coq.Lists.List.
 Require Import Coq.Arith.PeanoNat.
 Import ListNotations.
 Import Nat.
 
-(* 输入文件名为任意字符列表，无额外约束 *)
-Definition Pre (file_name : list ascii) : Prop := True.
 
 (*
   辅助定义（返回 bool）: 检查一个字符是否为数字。
@@ -35,11 +34,15 @@ Definition is_digit_bool (c : ascii) : bool :=
 *)
 Definition is_alpha (c : ascii) : Prop :=
   let n := nat_of_ascii c in
-  (nat_of_ascii "a"%char <= n <= nat_of_ascii "z"%char) \/
-  (nat_of_ascii "A"%char <= n <= nat_of_ascii "Z"%char).
+  (nat_of_ascii "a"%char <= n /\ n <= nat_of_ascii "z"%char) \/
+  (nat_of_ascii "A"%char <= n /\ n <= nat_of_ascii "Z"%char).
+
+(* 输入文件名为任意字符列表，无额外约束 *)
+Definition problem_141_pre (file_name : string) : Prop := True.
 
 (* file_name_check 函数的程序规约 *)
-Definition file_name_check_spec (file_name : list ascii) (result : list ascii) : Prop :=
+Definition problem_141_spec (file_name_str : string) (result : string) : Prop :=
+  let file_name := list_ascii_of_string file_name_str in
   (* 定义一个命题 `is_valid` 来描述一个文件名是否有效 *)
   let is_valid :=
     (* 条件1: 文件名中数字的数量不能超过三个 *)
@@ -60,5 +63,5 @@ Definition file_name_check_spec (file_name : list ascii) (result : list ascii) :
        suffix = ("d"::"l"::"l"::[])%char))
   in
   (* 规约的核心：如果文件名有效，则结果为 "Yes"，否则为 "No" *)
-  (is_valid /\ result = ("Y"::"e"::"s"::[])%char) \/
-  (~is_valid /\ result = ("N"::"o"::[])%char).
+  (is_valid /\ result = "Yes") \/
+  (~is_valid /\ result = "No").

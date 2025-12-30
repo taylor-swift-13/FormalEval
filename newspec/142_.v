@@ -29,7 +29,10 @@ Inductive sum_transformed_rel : list Z -> nat -> Z -> Prop :=
    sum_transformed_rel t (S i) s_tail ->
    sum_transformed_rel (h :: t) i (term + s_tail).
 
+(* 任意整数列表（允许为空） *)
+Definition problem_142_pre (lst : list Z) : Prop := True.
+
 (* 规格：结果等于从索引 0 开始的 sum_transformed_rel 之和 *)
-Definition sum_squares_spec (lst : list Z) (res : Z) : Prop :=
+Definition problem_142_spec (lst : list Z) (res : Z) : Prop :=
   sum_transformed_rel lst 0%nat res.
 

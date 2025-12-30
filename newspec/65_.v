@@ -45,9 +45,9 @@ Inductive from_digits_to_string_rel : list nat -> string -> Prop :=
       result = digit_to_string h ++ rest ->
       from_digits_to_string_rel (h :: t) result.
 
+Definition problem_65_pre (x : nat) (shift : nat) : Prop := True.
 
-
-Definition circular_shift_spec (x : nat) (shift : nat) (result : string) : Prop :=
+Definition problem_65_spec (x : nat) (shift : nat) (result : string) : Prop :=
   (x = 0 /\ result = "0") \/
   (exists digits len,
      x <> 0 /\

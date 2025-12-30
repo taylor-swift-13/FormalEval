@@ -65,8 +65,8 @@ Definition circular_shift_impl (x : nat) (shift : nat) : string :=
         let new_tail := firstn split_point digits in
         from_digits_to_string (new_head ++ new_tail).
 
-Definition Pre (x : nat) (shift : nat) : Prop := True.
+Definition problem_65_pre (x : nat) (shift : nat) : Prop := True.
 
-Definition circular_shift_spec (x : nat) (shift : nat) (result : string) : Prop :=
+Definition problem_65_spec (x : nat) (shift : nat) (result : string) : Prop :=
   result = circular_shift_impl x shift.
 

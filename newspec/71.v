@@ -41,9 +41,9 @@ Definition heron_area (a b c : R) : R :=
 *)
 Definition is_rounded_to_2_decimals (rounded_val original_val : R) : Prop :=
   (exists z : Z, rounded_val = IZR z / 100) /\
-  Rabs (rounded_val - original_val) <= /200. (* 1/200 = 0.005 *)
+  rounded_val - /200 <= original_val /\ original_val < rounded_val + /200.
 
-Definition Pre (a b c : R) : Prop := True.
+Definition problem_71_pre (a b c : R) : Prop := True.
 (*
   triangle_area_spec: 这是最终的程序规约。
   它将输入 a, b, c 与输出 ret 关联起来。
@@ -55,7 +55,7 @@ Definition Pre (a b c : R) : Prop := True.
   2. 如果 (a, b, c) 不能构成一个有效三角形：
      则输出 `ret` 必须是 -1。
 *)
-Definition triangle_area_spec (a b c : R) (ret : R) : Prop :=
+Definition  problem_71_spec (a b c : R) (ret : R) : Prop :=
   (is_valid_triangle a b c /\ is_rounded_to_2_decimals ret (heron_area a b c))
   \/
   (~ (is_valid_triangle a b c) /\ ret = -1).

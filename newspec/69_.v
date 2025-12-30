@@ -39,8 +39,9 @@ Inductive find_max_satisfying_rel : list Z -> list Z -> Z -> Z -> Prop :=
       find_max_satisfying_rel lst (h :: t) current_max result.
 
 
+Definition problem_69_pre (lst : list Z) : Prop := lst <> []%list /\ (forall x, In x lst -> (x > 0)%Z).
 
-Definition search_spec (lst : list Z) (y : Z) : Prop :=
+Definition problem_69_spec (lst : list Z) (y : Z) : Prop :=
   (lst = [] /\ y = (-1)%Z) \/
   (exists candidates max_val,
      lst <> [] /\

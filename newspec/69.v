@@ -41,8 +41,8 @@ Definition search_impl (lst : list Z) : Z :=
         max_val
   end.
 
-Definition Pre (lst : list Z) : Prop := lst <> []%list /\n+  (forall x, In x lst -> (x > 0)%Z).
+Definition problem_69_pre (lst : list Z) : Prop := lst <> []%list /\ (forall x, In x lst -> (x > 0)%Z).
 
-Definition search_spec (lst : list Z) (y : Z) : Prop :=
+Definition problem_69_spec (lst : list Z) (y : Z) : Prop :=
   y = search_impl lst.
 

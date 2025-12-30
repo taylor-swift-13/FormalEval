@@ -10,17 +10,15 @@ select_words("simple white space", 2) ==> []
 select_words("Hello world", 4) ==> ["world"]
 select_words("Uncle sam", 3) ==> ["Uncle"] *)
 
-Require Import Coq.Strings.Ascii Coq.Lists.List Coq.Arith.Arith Coq.Bool.Bool.
+Require Import Coq.Strings.Ascii Coq.Strings.String Coq.Lists.List Coq.Arith.Arith Coq.Bool.Bool.
 Import ListNotations.
 
-(* 字符串只含字母与空格 *)
-Definition Pre (s : list ascii) : Prop :=
-  Forall (fun c => c = " "%char \/ let n := nat_of_ascii c in (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122)) s.
+
 
 Definition is_vowel (c : ascii) : bool :=
   match c with
-  | "a"%char | "e"%char | "i"%char | "o"%char | "u"%char
-  | "A"%char | "E"%char | "I"%char | "O"%char | "U"%char => true
+  | "a"%char => true | "e"%char => true | "i"%char => true | "o"%char => true | "u"%char => true
+  | "A"%char => true | "E"%char => true | "I"%char => true | "O"%char => true | "U"%char => true
   | _ => false
   end.
 
@@ -28,7 +26,11 @@ Fixpoint count_consonants (w : list ascii) : nat :=
   match w with
   | [] => 0
   | h :: t =>
-    (if negb (is_vowel h) then 1 else 0) +
+    let n := nat_of_ascii h in
+    let is_upper := (Nat.leb 65 n) && (Nat.leb n 90) in
+    let is_lower := (Nat.leb 97 n) && (Nat.leb n 122) in
+    let is_letter := is_upper || is_lower in
+    (if is_letter && negb (is_vowel h) then 1 else 0) +
     count_consonants t
   end.
 
@@ -55,5 +57,15 @@ Definition split_words (s : list ascii) : list (list ascii) :=
 Definition select_words_impl (s : list ascii) (n : nat) : list (list ascii) :=
   filter (fun w => Nat.eqb (count_consonants w) n) (split_words s).
 
-Definition select_words_spec (s : list ascii) (n : nat) (output : list (list ascii)) : Prop :=
-  output = select_words_impl s n.
+Definition select_words (s : string) (n : nat) : list string :=
+  let l := list_ascii_of_string s in
+  let res := select_words_impl l n in
+  map string_of_list_ascii res.
+
+(* 字符串只含字母与空格 *)
+Definition problem_117_pre (s : string) : Prop :=
+  let l := list_ascii_of_string s in
+  Forall (fun c => c = " "%char \/ let n := nat_of_ascii c in (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122)) l.
+
+Definition problem_117_spec (s : string) (n : nat) (output : list string) : Prop :=
+  output = select_words s n.

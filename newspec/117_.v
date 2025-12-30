@@ -10,7 +10,7 @@ select_words("simple white space", 2) ==> []
 select_words("Hello world", 4) ==> ["world"]
 select_words("Uncle sam", 3) ==> ["Uncle"] *)
 
-Require Import Coq.Strings.Ascii Coq.Lists.List Coq.Arith.Arith Coq.Bool.Bool.
+Require Import Coq.Strings.Ascii Coq.Strings.String Coq.Lists.List Coq.Arith.Arith Coq.Bool.Bool.
 Import ListNotations.
 
 Inductive is_vowel : ascii -> Prop :=
@@ -25,11 +25,17 @@ Inductive is_vowel : ascii -> Prop :=
 | iv_O : is_vowel "O"%char
 | iv_U : is_vowel "U"%char.
 
+Inductive is_letter : ascii -> Prop :=
+| il_upper : forall c, let n := nat_of_ascii c in (65 <= n /\ n <= 90) -> is_letter c
+| il_lower : forall c, let n := nat_of_ascii c in (97 <= n /\ n <= 122) -> is_letter c.
+
 Inductive count_consonants_rel : list ascii -> nat -> Prop :=
 | ccr_nil : count_consonants_rel nil 0%nat
-| ccr_consonant : forall h t n, ~ is_vowel h -> count_consonants_rel t n ->
+| ccr_consonant : forall h t n, is_letter h -> ~ is_vowel h -> count_consonants_rel t n ->
     count_consonants_rel (h :: t) (S n)
-| ccr_vowel : forall h t n, is_vowel h -> count_consonants_rel t n ->
+| ccr_vowel : forall h t n, is_letter h -> is_vowel h -> count_consonants_rel t n ->
+    count_consonants_rel (h :: t) n
+| ccr_not_letter : forall h t n, ~ is_letter h -> count_consonants_rel t n ->
     count_consonants_rel (h :: t) n.
 
 Inductive split_words_rel : list ascii -> list (list ascii) -> Prop :=
@@ -53,6 +59,13 @@ Inductive select_words_rel : list (list ascii) -> nat -> list (list ascii) -> Pr
     select_words_rel ws n res ->
     select_words_rel (w :: ws) n res.
 
-Definition select_words_spec (s : list ascii) (n : nat) (output : list (list ascii)) : Prop :=
-  exists words, split_words_rel s words /\ select_words_rel words n output.
+Definition problem_117_pre (s : string) : Prop :=
+  let l := list_ascii_of_string s in
+  Forall (fun c => c = " "%char \/ let n := nat_of_ascii c in (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122)) l.
+
+Definition problem_117_spec (s : string) (n : nat) (output : list string) : Prop :=
+  exists words output_list_ascii,
+    split_words_rel (list_ascii_of_string s) words /\
+    select_words_rel words n output_list_ascii /\
+    output = map string_of_list_ascii output_list_ascii.
 

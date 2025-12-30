@@ -18,14 +18,8 @@ Require Import Coq.Lists.List.
 Require Import Coq.Arith.PeanoNat.
 Import ListNotations.
 
-(* 输入列表长度为 2，且每个字符仅为 '(' 或 ')' *)
-Definition Pre (inputs : list (list ascii)) : Prop :=
-  length inputs = 2 /\ Forall (fun s =>
-    Forall (fun c => c = "("%char \/ c = ")"%char) s) inputs.
-
 (*
   辅助函数 check_parens_inner
-  这个函数保持不变，因为它已经是在处理 list ascii。
 *)
 Fixpoint check_parens_inner (l : list ascii) (counter : nat) : bool :=
   match l with
@@ -51,10 +45,19 @@ Definition match_parens_impl (inputs : list (list ascii)) : string :=
   | [s1; s2] =>
     (* "++" 现在是列表拼接操作符 *)
     if orb (is_balanced (s1 ++ s2)) (is_balanced (s2 ++ s1))
-    then "Yes"
-    else "No"
-  | _ => "No" (* 处理非预期输入，例如列表长度不为2 *)
+    then "Yes"%string
+    else "No"%string
+  | _ => "No"%string (* 处理非预期输入，例如列表长度不为2 *)
   end.
 
-Definition match_parens_spec (inputs : list (list ascii)) (output : string) : Prop :=
-  output = match_parens_impl inputs.
+Definition match_parens (inputs : list string) : string :=
+  match_parens_impl (map list_ascii_of_string inputs).
+
+(* 输入列表长度为 2，且每个字符仅为 '(' 或 ')' *)
+Definition problem_119_pre (inputs : list string) : Prop :=
+  length inputs = 2 /\ Forall (fun s =>
+    let l := list_ascii_of_string s in
+    Forall (fun c => c = "("%char \/ c = ")"%char) l) inputs.
+
+Definition problem_119_spec (inputs : list string) (output : string) : Prop :=
+  output = match_parens inputs.

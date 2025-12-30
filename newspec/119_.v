@@ -44,18 +44,24 @@ Inductive concat_rel : list ascii -> list ascii -> list ascii -> Prop :=
   | concr_base : forall l1 l2, concat_rel l1 l2 (l1 ++ l2).
 
 
-Definition match_parens_spec (inputs : list (list ascii)) (output : string) : Prop :=
+(* 输入列表长度为 2，且每个字符仅为 '(' 或 ')' *)
+Definition problem_119_pre (inputs : list string) : Prop :=
+  length inputs = 2 /\ Forall (fun s =>
+    let l := list_ascii_of_string s in
+    Forall (fun c => c = "("%char \/ c = ")"%char) l) inputs.
+
+Definition problem_119_spec (inputs : list string) (output : string) : Prop :=
   (exists s1 s2 s12,
-     inputs = [s1; s2] /\
+     map list_ascii_of_string inputs = [s1; s2] /\
      concat_rel s1 s2 s12 /\
      is_balanced_rel s12 true /\
      output = "Yes") \/
   (exists s1 s2 s21,
-     inputs = [s1; s2] /\
+     map list_ascii_of_string inputs = [s1; s2] /\
      concat_rel s2 s1 s21 /\
      is_balanced_rel s21 true /\
      output = "Yes") \/
-  ((forall s1 s2, inputs <> [s1; s2] \/
+  ((forall s1 s2, map list_ascii_of_string inputs <> [s1; s2] \/
     (forall s12, concat_rel s1 s2 s12 -> is_balanced_rel s12 false) /\
     (forall s21, concat_rel s2 s1 s21 -> is_balanced_rel s21 false)) /\
    output = "No").

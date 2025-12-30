@@ -60,7 +60,7 @@ Definition nat_to_binary_string (n : nat) : string :=
 Definition solve_impl (N : nat) : string :=
   nat_to_binary_string (sum_decimal_digits N).
 
-Definition Pre (N : nat) : Prop := (N <= 10000)%nat.
+Definition problem_84_pre (N : nat) : Prop := (N <= 10000)%nat.
 
-Definition solve_spec (N : nat) (output : string) : Prop :=
+Definition problem_84_spec (N : nat) (output : string) : Prop :=
   output = solve_impl N.

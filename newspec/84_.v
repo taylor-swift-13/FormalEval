@@ -57,10 +57,10 @@ Inductive nat_to_binary_string_rel : nat -> string -> Prop :=
       nat_to_binary_string_pos_aux_rel n n s ->
       nat_to_binary_string_rel n s.
 
+Definition problem_84_pre (N : nat) : Prop := (N <= 10000)%nat.
 
-Definition solve_spec (N : nat) (output : string) : Prop :=
+Definition problem_84_spec (N : nat) (output : string) : Prop :=
   exists sum bin_str,
-    N <= 10000 /\
     sum_decimal_digits_rel N sum /\
     nat_to_binary_string_rel sum bin_str /\
     output = bin_str.

@@ -67,9 +67,10 @@ Inductive check_all_shifts_rel : list Z -> nat -> bool -> Prop :=
       check_all_shifts_rel arr n result ->
       check_all_shifts_rel arr (S n) result.
 
+(* 输入数组元素互不相同（唯一性），可空列表允许直接返回 True *)
+Definition problem_109_pre (arr : list Z) : Prop := NoDup arr.
 
-
-Definition move_one_ball_spec (arr : list Z) (result : bool) : Prop :=
+Definition problem_109_spec (arr : list Z) (result : bool) : Prop :=
   (arr = [] /\ result = true) \/
   (arr <> [] /\
    check_all_shifts_rel arr (length arr) result).

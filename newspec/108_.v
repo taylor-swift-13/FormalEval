@@ -51,6 +51,9 @@ Inductive count_nums_rel : list Z -> nat -> Prop :=
 | cnr_miss : forall h t n s, sum_digits_rel h s -> (s <= 0%Z) -> count_nums_rel t n ->
    count_nums_rel (h :: t) n.
 
-Definition count_nums_spec (l : list Z) (output : nat) : Prop :=
+(* 输入列表可为任意整数列表 *)
+Definition problem_108_pre (l : list Z) : Prop := True.
+
+Definition problem_108_spec (l : list Z) (output : nat) : Prop :=
   count_nums_rel l output.
 

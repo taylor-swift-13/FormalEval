@@ -19,11 +19,6 @@ Require Import Coq.Bool.Bool.
 
 Import ListNotations.
 
-(* 列表元素均为正整数 *)
-Definition Pre (x : list nat) : Prop := Forall (fun n => n > 0) x.
-
-
-
 (* 辅助定义：判断单个数字是否为奇数 (与之前相同) *)
 Definition is_odd_digit (d : nat) : Prop :=
   d = 1 \/ d = 3 \/ d = 5 \/ d = 7 \/ d = 9.
@@ -107,9 +102,9 @@ Fixpoint sort_list (l : list nat) : list nat :=
 Definition unique_digits_impl (x : list nat) : list nat :=
   sort_list (filter_odd_digits x).
 
-(*
-  最终的程序规约
-*)
 
-Definition unique_digits_spec (x y : list nat) : Prop :=
+(* 列表元素均为正整数 *)
+Definition problem_104_pre (x : list nat) : Prop := Forall (fun n => n > 0) x.
+
+Definition problem_104_spec (x y : list nat) : Prop :=
   y = unique_digits_impl x.

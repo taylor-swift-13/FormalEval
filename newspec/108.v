@@ -9,8 +9,7 @@ e.g. -123 has signed digits -1, 2, and 3.
 Require Import Coq.ZArith.ZArith Coq.Lists.List Coq.Bool.Bool Coq.Init.Nat.
 Import ListNotations.
 
-(* 输入列表可为任意整数列表 *)
-Definition Pre (l : list Z) : Prop := True.
+
 
 Fixpoint nat_sum_digits_aux (n : nat) (fuel : nat) : nat :=
   match fuel with
@@ -34,6 +33,8 @@ Definition sum_digits (z : Z) : Z :=
 Definition count_nums_impl (l : list Z) : nat :=
   length (filter (fun z => Z.gtb (sum_digits z) 0%Z) l).
 
+(* 输入列表可为任意整数列表 *)
+Definition problem_108_pre (l : list Z) : Prop := True.
 
-Definition count_nums_spec (l : list Z) (output : nat) : Prop :=
+Definition problem_108_spec (l : list Z) (output : nat) : Prop :=
   output = count_nums_impl l.

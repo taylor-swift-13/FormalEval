@@ -19,8 +19,7 @@ Integer palindrome are 1, 2, 3, 4, 5, 6, 7, 8, 9, 11. four of them are even, and
 Require Import Coq.Arith.Arith Coq.Lists.List Coq.Bool.Bool.
 Import ListNotations.
 
-(* n 为正整数 *)
-Definition Pre (n : nat) : Prop := n > 0.
+
 
 Fixpoint to_digits_helper (n k : nat) {struct k} : list nat :=
   match k with
@@ -65,6 +64,9 @@ Fixpoint count_in_range (P : nat -> bool) (k : nat) : nat :=
 Definition count_palindromes_impl (n : nat) : nat * nat :=
   (count_in_range is_even_pal n, count_in_range is_odd_pal n).
 
-Definition count_palindromes_spec (n : nat) (output : nat * nat) : Prop :=
+(* n 为正整数 *)
+Definition problem_107_pre (n : nat) : Prop := n > 0.
+
+Definition problem_107_spec (n : nat) (output : nat * nat) : Prop :=
   output = count_palindromes_impl n.
 

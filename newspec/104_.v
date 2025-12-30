@@ -70,8 +70,9 @@ Inductive sort_list_rel : list nat -> list nat -> Prop :=
       insert_sorted_rel h sorted_tail result ->
       sort_list_rel (h :: t) result.
 
+Definition problem_104_pre (x : list nat) : Prop := Forall (fun n => n > 0) x.
 
-Definition unique_digits_spec (x y : list nat) : Prop :=
+Definition problem_104_spec (x y : list nat) : Prop :=
   (forall n, In n x -> n > 0) /\
   exists filtered,
     filter_odd_digits_rel x filtered /\

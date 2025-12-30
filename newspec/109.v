@@ -29,8 +29,7 @@ Require Import Coq.Sorting.Sorted.
 Open Scope Z_scope.
 Import ListNotations.
 
-(* 输入数组元素互不相同（唯一性），可空列表允许直接返回 True *)
-Definition Pre (arr : list Z) : Prop := NoDup arr.
+
 
 Fixpoint is_sorted_bool (l : list Z) : bool :=
   match l with
@@ -69,5 +68,8 @@ Definition move_one_ball_impl (arr : list Z) : bool :=
   | _ :: _ => check_all_shifts arr (length arr)
   end.
 
-Definition move_one_ball_spec (arr : list Z) (result : bool) : Prop :=
+(* 输入数组元素互不相同（唯一性），可空列表允许直接返回 True *)
+Definition problem_109_pre (arr : list Z) : Prop := NoDup arr.
+
+Definition problem_109_spec (arr : list Z) (result : bool) : Prop :=
   result = move_one_ball_impl arr.

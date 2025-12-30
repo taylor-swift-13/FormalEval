@@ -27,8 +27,7 @@ Require Import Permutation.
 Import ListNotations. (* 启用列表的 [a; b; c] 写法 *)
 Open Scope Z_scope.
 
-(* 输入可以包含任意整数 *)
-Definition Pre (l_in : list Z) : Prop := True.
+
 
 (*
   辅助函数 (1):
@@ -54,13 +53,16 @@ Definition digit_to_word (z : Z) : string :=
   | 9 => "Nine"%string
   | _ => ""%string
   end.
+(* 输入可以包含任意整数 *)
+
+Definition problem_105_pre (l_in : list Z) : Prop := True.
 
 (*
   程序规约 (Program Specification):
   这是一个 Prop (命题)，它表达了输入列表 l_in 和输出列表 l_out 之间的关系。
   这次我们使用声明式的方式来定义排序。
 *)
-Definition program_spec (l_in : list Z) (l_out : list string) : Prop :=
+Definition problem_105_spec (l_in : list Z) (l_out : list string) : Prop :=
   (* 步骤 1: 筛选出 l_in 中所有 1 到 9 之间的整数 *)
   let l_filtered := filter is_target_digit l_in in
 

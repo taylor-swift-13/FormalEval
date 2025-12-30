@@ -44,7 +44,10 @@ Inductive count_in_range_rel : (nat -> Prop) -> nat -> nat -> Prop :=
 | cir_miss : forall (P : nat -> Prop) k n, ~ P (S k) -> count_in_range_rel P k n ->
    count_in_range_rel P (S k) n.
 
-Definition count_palindromes_spec (n : nat) (output : nat * nat) : Prop :=
+(* n 为正整数 *)
+Definition problem_107_pre (n : nat) : Prop := n > 0.
+
+Definition problem_107_spec (n : nat) (output : nat * nat) : Prop :=
   let '(e, o) := output in
   count_in_range_rel is_even_pal_rel n e /\
   count_in_range_rel is_odd_pal_rel n o.

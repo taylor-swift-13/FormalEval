@@ -22,14 +22,14 @@ Open Scope Z_scope.
 Open Scope R_scope.
 
 (* 任意实数输入均合法 *)
-Definition Pre (r : R) : Prop := True.
+Definition problem_99_pre (r : R) : Prop := True.
 
 (*
   程序规约 `closest_integer_spec` (已修正类型)
 
   它是一个二元谓词，描述了输入实数 `r` 和输出整数 `res` 之间必须满足的关系。
  *)
-Definition closest_integer_spec (r : R) (res : Z) : Prop :=
+Definition problem_99_spec (r : R) (res : Z) : Prop :=
   (*
     条件1：`res` 是离 `r` 最近的整数之一。
     (此部分无需修改)

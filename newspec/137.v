@@ -11,6 +11,7 @@ compare_one("5,1", "6") ➞ "6"
 compare_one("1", 1) ➞ None
 """ *)
 Require Import Coq.Strings.String.
+Require Import Coq.Strings.Ascii.
 Require Import Coq.ZArith.ZArith.
 Require Import Coq.Reals.Reals.
 Require Import Coq.Reals.RIneq.
@@ -19,8 +20,6 @@ Import ListNotations.
 Open Scope Z_scope.
 Open Scope R_scope.
 
-(* 任意 val 输入均可 *)
-Definition Pre (a b : val) : Prop := True.
 
 (* 三种输入类型 *)
 Inductive val :=
@@ -96,20 +95,20 @@ Definition parse_string (s : string) : option (bool * nat * nat * nat) :=
     end
   end.
 
-(* 最终谓词：字符串表示实数 r *)
-Definition str_represents (s : string) (r : R) : Prop :=
+(* 最终计算：字符串转实数 *)
+Definition string_to_R (s : string) : option R :=
   match parse_string s with
-  | None => False
+  | None => None
   | Some (neg, int_v, frac_v, k) =>
       let base := (INR int_v + (if (k =? 0)%nat then 0 else INR frac_v / pow10 k))%R in
-      if neg then r = - base else r = base
+      Some (if neg then - base else base)
   end.
 
-Definition value_of_impl (v : val) : R :=
+Definition value_of_impl (v : val) : option R :=
   match v with
-  | VInt z => IZR z
-  | VFloat r => r
-  | VStr s => str_represents s
+  | VInt z => Some (IZR z)
+  | VFloat r => Some r
+  | VStr s => string_to_R s
   end.
 
 Definition Rlt_bool (x y : R) : bool :=
@@ -119,11 +118,16 @@ Definition Rlt_bool (x y : R) : bool :=
   end.
 
 Definition compare_one_impl (a b : val) : option val :=
-  let ra := value_of_impl a in
-  let rb := value_of_impl b in
-  if Rlt_bool ra rb then Some b
-  else if Rlt_bool rb ra then Some a
-  else None.
+  match value_of_impl a, value_of_impl b with
+  | Some ra, Some rb =>
+      if Rlt_bool ra rb then Some b
+      else if Rlt_bool rb ra then Some a
+      else None
+  | _, _ => None
+  end.
 
-Definition compare_one_spec (a b : val) (res : option val) : Prop :=
+(* 任意 val 输入均可 *)
+Definition problem_137_pre (a b : val) : Prop := True.
+
+Definition problem_137_spec (a b : val) (res : option val) : Prop :=
   res = compare_one_impl a b.

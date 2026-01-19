@@ -76,7 +76,7 @@ Fixpoint SplitOnSpaces_aux (current_group : list ascii) (S : string) : list stri
 Definition SplitOnSpaces (S : string) : list string :=
   SplitOnSpaces_aux [] S.
 
-Definition problem_19_pre (input output : string) : Prop := True.
+Definition problem_19_pre (input : string) : Prop := True.
 
 Definition problem_19_spec (input output : string) : Prop :=
     let input_list := SplitOnSpaces input in

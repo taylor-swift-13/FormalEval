@@ -19,6 +19,12 @@ Require Import Coq.Arith.Arith.
 
 (* 允许使用列表的标准表示法，例如 [a; b; c] *)
 Import ListNotations.
+Open Scope string_scope.
+
+(**
+ * @spec problem_74_pre
+ * @brief 程序前置条件：接受两个字符串列表作为输入。
+ *)
 
 Definition problem_74_pre (lst1 lst2 : list string) : Prop := True.
 

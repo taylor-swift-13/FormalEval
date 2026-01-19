@@ -26,16 +26,16 @@ Require Import Coq.Lists.List.      (* List基本操作 *)
 Require Import Coq.ZArith.ZArith.    (* 整数Z *)
 Require Import Coq.Sorting.Permutation. (* Permutation定义 *)
 Require Import Coq.Sorting.Sorted.      (* Sorted定义 *)
-
+Import ListNotations.
 (* 打开整数和列表的作用域以便使用相关操作符 *)
 Open Scope Z_scope.
 Open Scope list_scope.
 
 (* 约束：1 <= length arr <= 1000；元素绝对值 <= 1000；0 <= k <= length arr *)
 Definition problem_120_pre (arr : list Z) (k : nat) : Prop :=
-       length arr >= 1 /\ length arr <= 1000 /\
+       (length arr >= 1)%nat /\ (length arr <= 1000)%nat /\
        Forall (fun z => (-1000 <= z /\ z <= 1000)) arr /\
-       k <= length arr.
+       (k <= length arr)%nat.
 
 (*
  * @brief 程序规约：top_k_spec

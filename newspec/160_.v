@@ -36,7 +36,7 @@ Open Scope Z_scope.
 (* 辅助函数：查找满足条件的第一个元素的索引 *)
 Inductive find_index_rel {A} (p : A -> bool) : list A -> option nat -> Prop :=
   | fir_nil : find_index_rel p [] None
-  | fir_found : forall x xs, p x = true -> find_index_rel p (x :: xs) (Some 0)
+  | fir_found : forall x xs, p x = true -> find_index_rel p (x :: xs) (Some 0%nat)
   | fir_skip : forall x xs k, p x = false -> find_index_rel p xs (Some k) -> find_index_rel p (x :: xs) (Some (S k))
   | fir_none : forall x xs, p x = false -> find_index_rel p xs None -> find_index_rel p (x :: xs) None.
 
@@ -46,7 +46,7 @@ Inductive rfind_index_rel {A} (p : A -> bool) (l : list A) (res : option nat) : 
       rev l = rev_l ->
       find_index_rel p rev_l rev_res ->
       (match rev_res with
-       | Some i => res = Some (length l - 1 - i)%nat
+       | Some i => res = Some (List.length l - 1 - i)%nat
        | None => res = None
        end) ->
       rfind_index_rel p l res.
@@ -92,8 +92,8 @@ Inductive eval_rel : list ascii -> list Z -> Z -> Prop :=
 
 Definition problem_160_pre (operators : string) (operands : list Z) : Prop :=
   let ops := list_ascii_of_string operators in
-  S (length ops) = length operands /\
-  (1 <= length ops)%nat /\ (2 <= length operands)%nat /\
+  S (List.length ops) = List.length operands /\
+  (1 <= List.length ops)%nat /\ (2 <= List.length operands)%nat /\
   Forall (fun z => 0 <= z) operands /\
   Forall (fun c => c = "+"%char \/ c = "-"%char \/ c = "*"%char \/ c = "/"%char \/ c = "^"%char) ops.
 

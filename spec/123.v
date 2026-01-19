@@ -50,8 +50,6 @@ Inductive collatz_list (n : Z) : list Z -> Prop :=
   它描述了输入 [n] 和输出 [result] 之间必须满足的关系。
 *)
 Definition get_odd_collatz_spec (n : Z) (result : list Z) : Prop :=
-  (* 前置条件：输入 n 必须是正数 *)
-  n > 0 /\
   (* 存在一个列表 c_seq ... *)
   exists (c_seq : list Z),
     (* ... c_seq 是 n 的 Collatz 序列 ... *)

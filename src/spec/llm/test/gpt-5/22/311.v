@@ -1,0 +1,44 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Import ListNotations.
+
+Parameter Any : Type.
+Definition int := Z.
+Parameter IsInt : Any -> int -> Prop.
+Axiom IsInt_functional : forall v n m, IsInt v n -> IsInt v m -> n = m.
+
+Inductive filter_integers_rel : list Any -> list int -> Prop :=
+| fir_nil : filter_integers_rel [] []
+| fir_cons_int v n vs res :
+    IsInt v n ->
+    filter_integers_rel vs res ->
+    filter_integers_rel (v :: vs) (n :: res)
+| fir_cons_nonint v vs res :
+    (forall n, ~ IsInt v n) ->
+    filter_integers_rel vs res ->
+    filter_integers_rel (v :: vs) res.
+
+Definition filter_integers_spec (values : list Any) (res : list int) : Prop :=
+  filter_integers_rel values res.
+
+Parameter v1 v2 v3 v4 v5 v6 v7 : Any.
+Axiom NI1 : forall n, ~ IsInt v1 n.
+Axiom NI2 : forall n, ~ IsInt v2 n.
+Axiom NI3 : forall n, ~ IsInt v3 n.
+Axiom NI4 : forall n, ~ IsInt v4 n.
+Axiom I5 : IsInt v5 9%Z.
+Axiom NI6 : forall n, ~ IsInt v6 n.
+Axiom NI7 : forall n, ~ IsInt v7 n.
+
+Example test_case_new: filter_integers_spec [v1; v2; v3; v4; v5; v6; v7] [9%Z].
+Proof.
+  unfold filter_integers_spec.
+  eapply fir_cons_nonint; [apply NI1|].
+  eapply fir_cons_nonint; [apply NI2|].
+  eapply fir_cons_nonint; [apply NI3|].
+  eapply fir_cons_nonint; [apply NI4|].
+  eapply fir_cons_int; [apply I5|].
+  eapply fir_cons_nonint; [apply NI6|].
+  eapply fir_cons_nonint; [apply NI7|].
+  constructor.
+Qed.

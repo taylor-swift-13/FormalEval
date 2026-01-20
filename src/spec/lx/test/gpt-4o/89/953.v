@@ -1,0 +1,27 @@
+Require Import Coq.Lists.List.
+Require Import Coq.Strings.Ascii.
+Import ListNotations.
+
+Definition char_relation (c_in c_out : ascii) : Prop :=
+  match c_in with
+  | "a"%char => c_out = "e"%char | "b"%char => c_out = "f"%char | "c"%char => c_out = "g"%char | "d"%char => c_out = "h"%char
+  | "e"%char => c_out = "i"%char | "f"%char => c_out = "j"%char | "g"%char => c_out = "k"%char | "h"%char => c_out = "l"%char
+  | "i"%char => c_out = "m"%char | "j"%char => c_out = "n"%char | "k"%char => c_out = "o"%char | "l"%char => c_out = "p"%char
+  | "m"%char => c_out = "q"%char | "n"%char => c_out = "r"%char | "o"%char => c_out = "s"%char | "p"%char => c_out = "t"%char
+  | "q"%char => c_out = "u"%char | "r"%char => c_out = "v"%char | "s"%char => c_out = "w"%char | "t"%char => c_out = "x"%char
+  | "u"%char => c_out = "y"%char | "v"%char => c_out = "z"%char | "w"%char => c_out = "a"%char | "x"%char => c_out = "b"%char
+  | "y"%char => c_out = "c"%char | "z"%char => c_out = "d"%char
+  | _ => c_out = c_in
+  end.
+
+Definition encrypt_spec (s : list ascii) (output : list ascii) : Prop :=
+  Forall2 char_relation s output.
+
+Example encrypt_test_hi :
+  encrypt_spec
+    ["h"%char; "i"%char; " "%char; " "%char; " "%char; " "%char; "e"%char; "t"%char; " "%char; "a"%char; "a"%char; " "%char; "g"%char; "f"%char; " "%char; "h"%char; "e"%char; "l"%char; "b"%char; "c"%char; "m"%char; "h"%char; "e"%char; "l"%char; "b"%char; "c"%char; "m"%char; "d"%char; "&"%char; "^"%char; "%"%char; "l"%char; "o"%char; "m"%char; "y"%char; "f"%char; "r"%char; "i"%char; "e"%char; "n"%char; "d"%char; "d"%char; "&"%char; "^"%char; "%"%char; "l"%char; "o"%char; " "%char; "m"%char; "y"%char; "f"%char; "r"%char; "i"%char; "e"%char; "n"%char; "d"%char]
+    ["l"%char; "m"%char; " "%char; " "%char; " "%char; " "%char; "i"%char; "x"%char; " "%char; "e"%char; "e"%char; " "%char; "k"%char; "j"%char; " "%char; "l"%char; "i"%char; "p"%char; "f"%char; "g"%char; "q"%char; "l"%char; "i"%char; "p"%char; "f"%char; "g"%char; "q"%char; "h"%char; "&"%char; "^"%char; "%"%char; "p"%char; "s"%char; "q"%char; "c"%char; "j"%char; "v"%char; "m"%char; "i"%char; "r"%char; "h"%char; "h"%char; "&"%char; "^"%char; "%"%char; "p"%char; "s"%char; " "%char; "q"%char; "c"%char; "j"%char; "v"%char; "m"%char; "i"%char; "r"%char; "h"%char].
+Proof.
+  unfold encrypt_spec.
+  repeat constructor; simpl; reflexivity.
+Qed.

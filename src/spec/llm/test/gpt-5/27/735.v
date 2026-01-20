@@ -1,0 +1,46 @@
+Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
+Require Import Coq.Init.Nat.
+Require Import Coq.Bool.Bool.
+
+Local Open Scope string_scope.
+
+Definition is_lower_nat (n : nat) : bool :=
+  andb (Nat.leb 97 n) (Nat.leb n 122).
+
+Definition is_upper_nat (n : nat) : bool :=
+  andb (Nat.leb 65 n) (Nat.leb n 90).
+
+Definition swap_ascii (c : ascii) : ascii :=
+  let n := nat_of_ascii c in
+  if is_lower_nat n then
+    Ascii.ascii_of_nat (n - 32)
+  else if is_upper_nat n then
+    Ascii.ascii_of_nat (n + 32)
+  else if Nat.eqb n 207 then
+    Ascii.ascii_of_nat 206
+  else if Nat.eqb n 142 then
+    Ascii.ascii_of_nat 143
+  else if Nat.eqb n 188 then
+    Ascii.ascii_of_nat 156
+  else if Nat.eqb n 183 then
+    Ascii.ascii_of_nat 151
+  else if Nat.eqb n 189 then
+    Ascii.ascii_of_nat 157
+  else c.
+
+Fixpoint map_string (f : ascii -> ascii) (s : string) : string :=
+  match s with
+  | EmptyString => EmptyString
+  | String c s' => String (f c) (map_string f s')
+  end.
+
+Definition flip_case_spec (s : string) (res : string) : Prop :=
+  res = map_string swap_ascii s.
+
+Example flip_case_greek: flip_case_spec "ώμην" "ΏΜΗΝ".
+Proof.
+  unfold flip_case_spec.
+  simpl.
+  reflexivity.
+Qed.

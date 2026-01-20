@@ -1,0 +1,27 @@
+Require Import Coq.Lists.List.
+Import ListNotations.
+Require Import Coq.ZArith.ZArith.
+
+Open Scope Z_scope.
+
+Definition intersperse_spec (numbers : list Z) (delimeter : Z) (res : list Z) : Prop :=
+  res = match numbers with
+        | [] => []
+        | _ :: _ =>
+          let fix aux (l : list Z) :=
+            match l with
+            | [] => []
+            | [y] => [y]
+            | y :: ys => y :: delimeter :: aux ys
+            end
+          in aux numbers
+        end.
+
+Example intersperse_spec_test_case :
+  intersperse_spec [15%Z; 63%Z; 2%Z; -2%Z; 5%Z; -93%Z; 100%Z; 5%Z; -9%Z] 9%Z
+                   [15%Z; 9%Z; 63%Z; 9%Z; 2%Z; 9%Z; -2%Z; 9%Z; 5%Z; 9%Z; -93%Z; 9%Z; 100%Z; 9%Z; 5%Z; 9%Z; -9%Z].
+Proof.
+  unfold intersperse_spec.
+  simpl.
+  reflexivity.
+Qed.

@@ -1,0 +1,16 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Arith.Arith.
+Import ListNotations.
+
+Open Scope Z_scope.
+
+Definition remove_duplicates_spec (numbers : list Z) (result : list Z) : Prop :=
+  result = filter (fun x => Nat.eqb (count_occ Z.eq_dec numbers x) 1) numbers.
+
+Example test_remove_duplicates : remove_duplicates_spec [10; 0; 10; 9; 8; 9; 10; 10; 10; 10; 15; 10; 10; 10] [0; 8; 15].
+Proof.
+  unfold remove_duplicates_spec.
+  simpl.
+  reflexivity.
+Qed.

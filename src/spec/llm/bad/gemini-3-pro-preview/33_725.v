@@ -1,0 +1,55 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Sorting.Permutation.
+Require Import Coq.Sorting.Sorted.
+Require Import Coq.Arith.PeanoNat.
+Import ListNotations.
+Open Scope Z_scope.
+
+Fixpoint extract_thirds (l : list Z) (i : nat) : list Z :=
+  match l with
+  | [] => []
+  | x :: xs => 
+      if (i mod 3 =? 0)%nat 
+      then x :: extract_thirds xs (S i) 
+      else extract_thirds xs (S i)
+  end.
+
+Definition sort_third_spec (l : list Z) (res : list Z) : Prop :=
+  length res = length l /\
+  (forall i : nat, (i mod 3 <> 0)%nat -> nth_error res i = nth_error l i) /\
+  Permutation (extract_thirds res 0) (extract_thirds l 0) /\
+  Sorted Z.le (extract_thirds res 0).
+
+Example test_case : sort_third_spec 
+  [500; 9; 8; 7; 6; 5; 4; 2; 1; -7; -1; -3; -4; 800; -5; -6; -7; -8; -9; -11; -2] 
+  [-9; 9; 8; -7; 6; 5; -6; 2; 1; -4; -1; -3; 4; 800; -5; 7; -7; -8; 500; -11; -2].
+Proof.
+  unfold sort_third_spec.
+  split.
+  - simpl. reflexivity.
+  - split.
+    + intros i H.
+      do 21 (destruct i; [ simpl; try (intros Hc; discriminate); reflexivity | ]).
+      simpl. reflexivity.
+    + split.
+      * simpl.
+        Ltac solve_perm :=
+          simpl;
+          match goal with
+          | |- Permutation [] [] => apply Permutation_refl
+          | |- Permutation (?x :: ?xs) ?ys =>
+            let rec find_x l acc :=
+              match l with
+              | x :: ?tl =>
+                apply Permutation_trans with (l' := x :: (acc ++ tl));
+                [ apply perm_skip | apply Permutation_middle with (l1 := acc) ]
+              | ?h :: ?tl => find_x tl (acc ++ [h])
+              end
+            in find_x ys (@nil Z); solve_perm
+          end.
+        solve_perm.
+      * simpl.
+        repeat (apply Sorted_cons; [ | apply HdRel_nil || (apply HdRel_cons; compute; discriminate) ]).
+        apply Sorted_nil.
+Qed.

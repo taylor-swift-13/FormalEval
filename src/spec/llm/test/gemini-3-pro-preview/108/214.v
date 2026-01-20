@@ -1,0 +1,36 @@
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Lists.List.
+Import ListNotations.
+Open Scope Z_scope.
+
+Fixpoint digits_of_Z_aux (fuel : nat) (n : Z) : list Z :=
+  match fuel with
+  | O => []
+  | S fuel' =>
+      if n <? 10 then [n]
+      else digits_of_Z_aux fuel' (n / 10) ++ [n mod 10]
+  end.
+
+Definition digits_of_Z (n : Z) : list Z :=
+  if n =? 0 then [0]
+  else digits_of_Z_aux (Z.to_nat n) n.
+
+Definition signed_digits_sum (n : Z) : Z :=
+  let abs_n := Z.abs n in
+  let digits := digits_of_Z abs_n in
+  match digits with
+  | [] => 0
+  | hd :: tl =>
+      let sum_rest := fold_right Z.add 0 tl in
+      if n <? 0 then -hd + sum_rest else hd + sum_rest
+  end.
+
+Definition count_nums_spec (arr : list Z) (res : Z) : Prop :=
+  res = Z.of_nat (length (filter (fun x => signed_digits_sum x >? 0) arr)).
+
+Example test_case_1 : count_nums_spec [1111%Z; 2223%Z; 7%Z; 9999%Z; 4444%Z; -5555%Z; 6666%Z; -7777%Z; 8888%Z; -9999%Z; 1110%Z; -987654%Z; 2219%Z; -3330%Z; 4440%Z; -5550%Z; 6660%Z; -7770%Z; 8880%Z; -9990%Z; -5555%Z; 4444%Z] 22%Z.
+Proof.
+  unfold count_nums_spec.
+  vm_compute.
+  reflexivity.
+Qed.

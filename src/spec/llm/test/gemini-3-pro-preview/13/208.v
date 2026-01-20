@@ -1,0 +1,11 @@
+Require Import Coq.ZArith.ZArith.
+Open Scope Z_scope.
+
+Definition greatest_common_divisor_spec (a b result : Z) : Prop :=
+  result = Z.gcd a b.
+
+Example test_gcd_108_3699636 : greatest_common_divisor_spec 108 3699636 12.
+Proof.
+  unfold greatest_common_divisor_spec.
+  reflexivity.
+Qed.

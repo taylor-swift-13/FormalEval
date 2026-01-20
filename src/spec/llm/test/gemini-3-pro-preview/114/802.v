@@ -1,0 +1,22 @@
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Lists.List.
+Import ListNotations.
+Open Scope Z_scope.
+
+Definition minSubArraySum (nums : list Z) : Z :=
+  match nums with
+  | [] => 0
+  | x :: xs =>
+      let fix aux (l : list Z) (curr : Z) (min_val : Z) : Z :=
+        match l with
+        | [] => min_val
+        | y :: ys =>
+            let curr' := Z.min y (curr + y) in
+            let min_val' := Z.min min_val curr' in
+            aux ys curr' min_val'
+        end
+      in aux xs x x
+  end.
+
+Example test_minSubArraySum: minSubArraySum [-8; -9; 20; -30; 40; -50; 60; 80; -70; 80; -90; 100; -50] = -90.
+Proof. reflexivity. Qed.

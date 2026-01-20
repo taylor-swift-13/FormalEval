@@ -1,0 +1,26 @@
+Require Import Coq.ZArith.ZArith.
+
+Open Scope Z_scope.
+
+Definition get_max_triples_spec (n ans : Z) : Prop :=
+  ans =
+    (if Z.leb n 2 then 0
+     else
+       let one_cnt := 1 + 2 * Z.div (n - 2) 3 + Z.modulo (n - 2) 3 in
+       let zero_cnt := n - one_cnt in
+       Z.div (one_cnt * (one_cnt - 1) * (one_cnt - 2)) 6 +
+       Z.div (zero_cnt * (zero_cnt - 1) * (zero_cnt - 2)) 6).
+
+Example test_case_1 : get_max_triples_spec 5 1.
+Proof.
+  unfold get_max_triples_spec.
+  (* Z.leb 5 2 is false *)
+  (* n - 2 = 3 *)
+  (* Z.div 3 3 = 1, Z.modulo 3 3 = 0 *)
+  (* one_cnt = 1 + 2 * 1 + 0 = 3 *)
+  (* zero_cnt = 5 - 3 = 2 *)
+  (* First term: (3 * 2 * 1) / 6 = 6 / 6 = 1 *)
+  (* Second term: (2 * 1 * 0) / 6 = 0 / 6 = 0 *)
+  (* Result: 1 + 0 = 1 *)
+  reflexivity.
+Qed.

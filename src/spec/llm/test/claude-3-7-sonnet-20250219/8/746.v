@@ -1,0 +1,20 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Import ListNotations.
+
+Open Scope Z_scope.
+
+Definition sum_product_spec (numbers : list Z) (result_sum result_product : Z) : Prop :=
+  result_sum = fold_left Z.add numbers 0 /\
+  result_product = fold_left Z.mul numbers 1.
+
+Example test_sum_product_example :
+  sum_product_spec [-1; 6; 1; 0; 4; 8; 4; 7; 3; 7; 8; 2; 30; -1; 6; 8] 92 0.
+Proof.
+  unfold sum_product_spec.
+  split.
+  - simpl.
+    reflexivity.
+  - simpl.
+    reflexivity.
+Qed.

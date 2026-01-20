@@ -1,0 +1,15 @@
+Require Import Coq.Strings.String.
+
+Definition strlen_spec (s : string) (res : nat) : Prop :=
+  res = String.length s.
+
+Open Scope string_scope.
+
+Example test_strlen_newlines : strlen_spec "   
+
+   " 8.
+Proof.
+  unfold strlen_spec.
+  simpl.
+  reflexivity.
+Qed.

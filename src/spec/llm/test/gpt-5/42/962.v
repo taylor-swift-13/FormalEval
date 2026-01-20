@@ -1,0 +1,18 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Import ListNotations.
+
+Open Scope Z_scope.
+
+Definition incr_list_spec (l : list Z) (res : list Z) : Prop :=
+  res = List.map (fun x => x + 1) l.
+
+Example incr_list_spec_case :
+  incr_list_spec
+    [10000%Z; 49999%Z; 20000%Z; 30000%Z; 40000%Z; 60000%Z; 70000%Z; 14%Z; 100001%Z; 59999%Z]
+    [10001%Z; 50000%Z; 20001%Z; 30001%Z; 40001%Z; 60001%Z; 70001%Z; 15%Z; 100002%Z; 60000%Z].
+Proof.
+  unfold incr_list_spec.
+  vm_compute.
+  reflexivity.
+Qed.

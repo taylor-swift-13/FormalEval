@@ -1,0 +1,39 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.QArith.QArith.
+Require Import Coq.Sorting.Sorted.
+Require Import Coq.Sorting.Permutation.
+Require Import Coq.Init.Nat.
+Require Import Coq.micromega.Psatz.
+
+Import ListNotations.
+
+Open Scope Z_scope.
+Open Scope Q_scope.
+
+Definition median_spec (l : list Z) (m : Q) : Prop :=
+  exists sl,
+    Permutation sl l /\
+    Sorted Z.le sl /\
+    let n := length sl in
+    let mid := Nat.div n 2 in
+    (if Nat.odd n
+     then Nat.lt mid n /\ m = inject_Z (nth mid sl 0%Z)
+     else Nat.le 2 n /\ Nat.lt mid n /\
+          m = (inject_Z (nth (Nat.pred mid) sl 0%Z) + inject_Z (nth mid sl 0%Z)) / (2#1)).
+
+Example test_median : median_spec [3%Z; 1%Z; 2%Z; 4%Z; 5%Z] (3#1).
+Proof.
+  unfold median_spec.
+  exists [1%Z; 2%Z; 3%Z; 4%Z; 5%Z].
+  split.
+  - apply perm_trans with (l' := [1%Z; 3%Z; 2%Z; 4%Z; 5%Z]).
+    + apply perm_skip.
+      apply perm_swap.
+    + apply perm_swap.
+  - split.
+    + repeat constructor; simpl; try lia.
+    + simpl. split.
+      * lia.
+      * reflexivity.
+Qed.

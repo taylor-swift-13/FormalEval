@@ -1,0 +1,31 @@
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Lists.List.
+Require Import Coq.Bool.Bool.
+Import ListNotations.
+Open Scope Z_scope.
+
+Fixpoint first_digit_aux (n : Z) (fuel : nat) : Z :=
+  match fuel with
+  | O => n
+  | S fuel' => if n <? 10 then n else first_digit_aux (n / 10) fuel'
+  end.
+
+Definition first_digit (n : Z) : Z :=
+  first_digit_aux n 100.
+
+Definition specialFilter (nums : list Z) : Z :=
+  let predicate (n : Z) : bool :=
+    if n >? 10 then
+      let f := first_digit n in
+      let l := n mod 10 in
+      andb (Z.odd f) (Z.odd l)
+    else
+      false
+  in
+  Z.of_nat (length (filter predicate nums)).
+
+Example test_specialFilter: specialFilter [24; -25; -876; 9; 37; -71; -18] = 1.
+Proof.
+  compute.
+  reflexivity.
+Qed.

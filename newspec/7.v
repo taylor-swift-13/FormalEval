@@ -21,7 +21,7 @@ Fixpoint contains_substring (s sub : string) : bool :=
   match s with
   | EmptyString => if sub =? EmptyString then true else false
   | String _ rest =>
-      if String.prefix s sub then true
+      if String.prefix sub s then true
       else contains_substring rest sub
   end.
 

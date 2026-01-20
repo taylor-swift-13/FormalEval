@@ -1,0 +1,16 @@
+Require Import Coq.Lists.List.
+Require Import Coq.Strings.String.
+
+Import ListNotations.
+Local Open Scope string_scope.
+
+Definition concatenate_spec (strings : list string) (result : string) : Prop :=
+  result = String.concat "" strings.
+
+Example concatenate_spec_test :
+  concatenate_spec [""%string] ""%string.
+Proof.
+  unfold concatenate_spec.
+  simpl.
+  reflexivity.
+Qed.

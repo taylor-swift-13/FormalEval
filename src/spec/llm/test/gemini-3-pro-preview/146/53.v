@@ -1,0 +1,30 @@
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Lists.List.
+Require Import Coq.Bool.Bool.
+Import ListNotations.
+Open Scope Z_scope.
+
+Definition is_odd (n : Z) : bool := Z.odd n.
+
+Fixpoint get_first_digit_aux (n : Z) (fuel : nat) : Z :=
+  match fuel with
+  | O => n
+  | S fuel' => if n <? 10 then n else get_first_digit_aux (n / 10) fuel'
+  end.
+
+Definition get_first_digit (n : Z) : Z := get_first_digit_aux n 100.
+
+Definition check (n : Z) : bool :=
+  (n >? 10) && (is_odd (n mod 10)) && (is_odd (get_first_digit n)).
+
+Fixpoint specialFilter (nums : list Z) : Z :=
+  match nums with
+  | [] => 0
+  | h :: t => (if check h then 1 else 0) + specialFilter t
+  end.
+
+Example test_specialFilter: specialFilter [39; 155; 240; -339] = 2.
+Proof.
+  compute.
+  reflexivity.
+Qed.

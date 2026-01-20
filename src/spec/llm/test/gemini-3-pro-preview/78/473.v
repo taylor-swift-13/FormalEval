@@ -1,0 +1,34 @@
+Require Import Coq.Strings.String.
+Require Import Coq.Strings.Ascii.
+Require Import Coq.Arith.Arith.
+
+Open Scope string_scope.
+Open Scope char_scope.
+
+Definition is_prime_hex (c : ascii) : bool :=
+  match c with
+  | "2" => true
+  | "3" => true
+  | "5" => true
+  | "7" => true
+  | "B" => true
+  | "D" => true
+  | _ => false
+  end.
+
+Fixpoint count_primes (s : string) : nat :=
+  match s with
+  | EmptyString => 0
+  | String c rest => 
+      (if is_prime_hex c then 1 else 0) + count_primes rest
+  end.
+
+Definition hex_key_spec (num : string) (count : nat) : Prop :=
+  count = count_primes num.
+
+Example test_hex_key : hex_key_spec "AB11DDBC5555753BD1234571234567B275322022EBDCEEFFA7F89ABCDEF002EB333A11DDBC53BD7890ABCDEF12345BBAA2753BDCE02067F89ADBCDEF00EF12345BBAA20200" 73.
+Proof.
+  unfold hex_key_spec.
+  simpl.
+  reflexivity.
+Qed.

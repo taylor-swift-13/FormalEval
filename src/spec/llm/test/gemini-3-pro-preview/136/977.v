@@ -1,0 +1,55 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.micromega.Lia.
+Import ListNotations.
+Open Scope Z_scope.
+
+Definition largest_smallest_integers_spec (lst : list Z) (result : option Z * option Z) : Prop :=
+  let (neg_res, pos_res) := result in
+  (* Specification for the largest negative integer *)
+  (match neg_res with
+   | Some max_neg => 
+       In max_neg lst /\ 
+       max_neg < 0 /\ 
+       (forall x, In x lst -> x < 0 -> x <= max_neg)
+   | None => 
+       forall x, In x lst -> x >= 0
+   end) /\
+  (* Specification for the smallest positive integer *)
+  (match pos_res with
+   | Some min_pos => 
+       In min_pos lst /\ 
+       min_pos > 0 /\ 
+       (forall x, In x lst -> x > 0 -> min_pos <= x)
+   | None => 
+       forall x, In x lst -> x <= 0
+   end).
+
+Example test_largest_smallest_integers : 
+  largest_smallest_integers_spec [0; 2; -1; -1; 2; 1; 8; -2; -95; 15; 0; -7; 2; 2; 0; 0; 0; -7; 0; 7; 8; -2] (Some (-1), Some 1).
+Proof.
+  unfold largest_smallest_integers_spec.
+  split.
+  - (* Negative part: Some (-1) *)
+    split.
+    + (* In (-1) lst *)
+      simpl. do 2 right. left. reflexivity.
+    + split.
+      * (* -1 < 0 *)
+        lia.
+      * (* forall x, In x lst -> x < 0 -> x <= -1 *)
+        intros x H_in H_neg.
+        simpl in H_in.
+        repeat destruct H_in as [H_eq | H_in]; subst; try lia.
+  - (* Positive part: Some 1 *)
+    split.
+    + (* In 1 lst *)
+      simpl. do 5 right. left. reflexivity.
+    + split.
+      * (* 1 > 0 *)
+        lia.
+      * (* forall x, In x lst -> x > 0 -> 1 <= x *)
+        intros x H_in H_pos.
+        simpl in H_in.
+        repeat destruct H_in as [H_eq | H_in]; subst; try lia.
+Qed.

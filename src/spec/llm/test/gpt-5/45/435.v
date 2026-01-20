@@ -1,0 +1,25 @@
+Require Import Coq.Reals.Reals.
+Require Import Coq.micromega.Lra.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Lists.List.
+Import ListNotations.
+
+Open Scope R_scope.
+Open Scope Z_scope.
+
+Definition triangle_area_spec (a h area : R) : Prop :=
+  area = Rdiv (Rmult a h) (INR 2).
+
+Example triangle_area_test :
+  let input := [4.27091147693402%R; 0.001%R] in
+  let output := 0.00213545573846701%R in
+  match input with
+  | a :: h :: _ => triangle_area_spec a h output
+  | _ => False
+  end.
+Proof.
+  simpl.
+  unfold triangle_area_spec.
+  replace (INR 2) with 2%R by reflexivity.
+  lra.
+Qed.

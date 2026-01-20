@@ -1,0 +1,33 @@
+Require Import List.
+Require Import ZArith.
+Require Import Lia.
+Import ListNotations.
+
+Open Scope Z_scope.
+
+Fixpoint sum_list (l : list Z) : Z :=
+  match l with
+  | [] => 0
+  | x :: xs => x + sum_list xs
+  end.
+
+Definition is_palindrome (l : list Z) : Prop :=
+  l = rev l.
+
+Definition will_it_fly_spec (q : list Z) (w : Z) (result : bool) : Prop :=
+  result = true <-> (is_palindrome q /\ sum_list q <= w).
+
+Definition q_test : list Z := [4877540799744989%Z; -48319352731351685%Z; -3883824300310820%Z; -48319352731351685%Z].
+
+Example test_will_it_fly : will_it_fly_spec q_test 2%Z false.
+Proof.
+  unfold will_it_fly_spec.
+  split.
+  - intros H.
+    discriminate H.
+  - intros [H_pal H_sum].
+    unfold is_palindrome in H_pal.
+    unfold q_test in H_pal.
+    simpl in H_pal.
+    discriminate H_pal.
+Qed.

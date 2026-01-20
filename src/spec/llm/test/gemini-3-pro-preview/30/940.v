@@ -1,0 +1,14 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Import ListNotations.
+Open Scope Z_scope.
+
+Definition get_positive_spec (l : list Z) (res : list Z) : Prop :=
+  res = filter (fun x => x >? 0) l.
+
+Example test_get_positive : get_positive_spec [-9; -4; 7; 4; -2; 98; -1; -8; -5; -5; -9; -5] [7; 4; 98].
+Proof.
+  unfold get_positive_spec.
+  simpl.
+  reflexivity.
+Qed.

@@ -1,0 +1,30 @@
+Require Import Coq.Strings.Ascii Coq.Lists.List.
+Require Import Coq.Arith.Arith.
+Import ListNotations.
+
+Definition is_uppercase (c : ascii) : bool :=
+  let n := nat_of_ascii c in
+  (Nat.leb 65 n) && (Nat.leb n 90).
+
+Fixpoint sum_uppercase_ascii (l : list ascii) : nat :=
+  match l with
+  | [] => 0
+  | c :: t =>
+    if is_uppercase c
+    then nat_of_ascii c + sum_uppercase_ascii t
+    else sum_uppercase_ascii t
+  end.
+
+Definition digitSum_spec (l : list ascii) (n : nat) : Prop :=
+  n = sum_uppercase_ascii l.
+
+Example digitSum_test_complex :
+  digitSum_spec
+    (map ascii_of_nat
+      [58; 59; 60; 58; 59; 60; 61; 62; 63; 64; 91; 92; 93; 94; 58; 95; 96; 123; 65; 66; 67; 49; 50; 51; 100; 101; 102; 61; 52; 53; 54; 71; 72; 73; 68; 32; 32; 85; 80; 80; 69; 82; 123; 124; 125; 126])
+    878.
+Proof.
+  unfold digitSum_spec.
+  simpl.
+  reflexivity.
+Qed.

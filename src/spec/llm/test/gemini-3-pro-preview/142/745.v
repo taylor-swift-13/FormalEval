@@ -1,0 +1,26 @@
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Lists.List.
+Require Import Coq.Arith.PeanoNat.
+Import ListNotations.
+Open Scope Z_scope.
+
+Fixpoint sum_squares_aux (lst : list Z) (idx : nat) : Z :=
+  match lst with
+  | [] => 0
+  | x :: xs =>
+      let val := 
+        if (idx mod 3 =? 0)%nat then x * x
+        else if (idx mod 4 =? 0)%nat then x * x * x
+        else x
+      in val + sum_squares_aux xs (S idx)
+  end.
+
+Definition sum_squares_spec (lst : list Z) (result : Z) : Prop :=
+  result = sum_squares_aux lst 0%nat.
+
+Example test_sum_squares : sum_squares_spec [-12; -15; 48; -17; 20; 33; 37; 40; 45; 48; 48; 50; 58; 70; 64; 72; 70; 80; 82; 88; 92; 94; 64] 1249597.
+Proof.
+  unfold sum_squares_spec.
+  vm_compute.
+  reflexivity.
+Qed.

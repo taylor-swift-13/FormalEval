@@ -1,0 +1,22 @@
+Require Import List.
+Require Import ZArith.
+Import ListNotations.
+
+Open Scope Z_scope.
+
+Definition abs_diff (a b : Z) : Z :=
+  Z.abs (a - b).
+
+Fixpoint compare_spec (game : list Z) (guess : list Z) (result : list Z) : Prop :=
+  match game, guess, result with
+  | [], [], [] => True
+  | g :: gs, gu :: gus, r :: rs => r = abs_diff g gu /\ compare_spec gs gus rs
+  | _, _, _ => False
+  end.
+
+Example test_compare_spec :
+  compare_spec [25%Z; 35%Z; 15%Z; 45%Z; 20%Z] [18%Z; 10%Z; 47%Z; 15%Z; 47%Z] [7%Z; 25%Z; 32%Z; 30%Z; 27%Z].
+Proof.
+  unfold compare_spec.
+  repeat split; unfold abs_diff; simpl; reflexivity.
+Qed.

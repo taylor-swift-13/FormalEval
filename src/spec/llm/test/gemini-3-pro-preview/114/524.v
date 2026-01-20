@@ -1,0 +1,22 @@
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Lists.List.
+Import ListNotations.
+Open Scope Z_scope.
+
+Fixpoint min_sub_array_sum_aux (nums : list Z) (current_min : Z) (global_min : Z) : Z :=
+  match nums with
+  | [] => global_min
+  | x :: xs =>
+      let current_min' := Z.min x (current_min + x) in
+      let global_min' := Z.min global_min current_min' in
+      min_sub_array_sum_aux xs current_min' global_min'
+  end.
+
+Definition minSubArraySum (nums : list Z) : Z :=
+  match nums with
+  | [] => 0
+  | x :: xs => min_sub_array_sum_aux xs x x
+  end.
+
+Example test_minSubArraySum: minSubArraySum [-1; -8; 2; -3; 4; 6; 5; -4; -7; 69; -8; 8; -9; 10; 10; 10] = -11.
+Proof. reflexivity. Qed.

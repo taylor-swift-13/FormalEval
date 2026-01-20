@@ -1,0 +1,36 @@
+Require Import Coq.Strings.String.
+Require Import Coq.Init.Nat.
+Require Import Coq.ZArith.ZArith.
+
+Open Scope string_scope.
+
+Parameter str_of_Z : Z -> string.
+Parameter reverse_string : string -> string.
+
+Definition circular_shift_spec (x : Z) (shift : nat) (res : string) : Prop :=
+  let s := str_of_Z x in
+  if Nat.ltb (String.length s) shift then
+    res = reverse_string s
+  else
+    let k := Nat.modulo shift (String.length s) in
+    if Nat.eqb k 0 then
+      res = s
+    else
+      exists u v,
+        s = u ++ v /\
+        String.length v = k /\
+        res = v ++ u.
+
+Axiom str_of_Z_55676 : str_of_Z 55676%Z = "55676".
+Axiom reverse_55676 : reverse_string "55676" = "67655".
+Axiom ltb_55676_huge : Nat.ltb (String.length "55676") (Z.to_nat 1234567890987654323%Z) = true.
+
+Example circular_shift_test :
+  circular_shift_spec 55676%Z (Z.to_nat 1234567890987654323%Z) "67655".
+Proof.
+  unfold circular_shift_spec.
+  rewrite str_of_Z_55676.
+  rewrite ltb_55676_huge.
+  rewrite reverse_55676.
+  reflexivity.
+Qed.

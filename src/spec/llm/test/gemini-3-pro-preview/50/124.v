@@ -1,0 +1,49 @@
+Require Import Coq.Strings.String.
+Require Import Coq.Strings.Ascii.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Lists.List.
+Import ListNotations.
+Open Scope string_scope.
+Open Scope Z_scope.
+
+(* Definition of the base ordinal for 'a' *)
+Definition ord_a : Z := 97.
+
+(* Operation to encode a single character (shift +5) *)
+Definition encode_char_op (c : ascii) : ascii :=
+  let char_code := Z.of_nat (nat_of_ascii c) in
+  let encoded_code := ((char_code + 5 - ord_a) mod 26) + ord_a in
+  ascii_of_nat (Z.to_nat encoded_code).
+
+(* Operation to decode a single character (shift -5) *)
+Definition decode_char_op (c : ascii) : ascii :=
+  let char_code := Z.of_nat (nat_of_ascii c) in
+  let decoded_code := ((char_code - ord_a - 5 + 26) mod 26) + ord_a in
+  ascii_of_nat (Z.to_nat decoded_code).
+
+(* Specification for encoding a string *)
+Definition encode_shift_spec (s : string) (result : string) : Prop :=
+  list_ascii_of_string result = map encode_char_op (list_ascii_of_string s).
+
+(* Specification for decoding a string *)
+Definition decode_shift_spec (s : string) (result : string) : Prop :=
+  list_ascii_of_string result = map decode_char_op (list_ascii_of_string s).
+
+(* 
+   Test Case:
+   Input: "évwxyzîøüñ"
+   Output: "bqrstugquj"
+   
+   We construct the input string from ASCII codes to avoid encoding issues and type errors with Z literals.
+   Codes: é(233), v(118), w(119), x(120), y(121), z(122), î(238), ø(248), ü(252), ñ(241)
+*)
+Definition input_codes : list Z := [233; 118; 119; 120; 121; 122; 238; 248; 252; 241].
+Definition input_str : string := string_of_list_ascii (map (fun z => ascii_of_nat (Z.to_nat z)) input_codes).
+
+Example test_case_decode : decode_shift_spec input_str "bqrstugquj".
+Proof.
+  unfold decode_shift_spec.
+  unfold input_str.
+  vm_compute.
+  reflexivity.
+Qed.

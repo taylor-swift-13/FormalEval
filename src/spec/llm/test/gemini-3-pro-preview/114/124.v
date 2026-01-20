@@ -1,0 +1,23 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Import ListNotations.
+Open Scope Z_scope.
+
+Definition minSubArraySum (nums : list Z) : Z :=
+  match nums with
+  | [] => 0
+  | n :: ns =>
+      let fix helper (l : list Z) (curr : Z) (glob : Z) : Z :=
+        match l with
+        | [] => glob
+        | x :: xs =>
+            let curr' := Z.min x (curr + x) in
+            let glob' := Z.min glob curr' in
+            helper xs curr' glob'
+        end
+      in helper ns n n
+  end.
+
+Example test_minSubArraySum_1:
+  minSubArraySum [1; -1; 1; -1; 1; -1; 1; -1; 1; -1; 1; -1; 1; -1; 1; -1; 30; -1; 1; -1; 1; -1; 1; -1; 1; -1; 1; -1; 1; -1; 1]%Z = -1%Z.
+Proof. reflexivity. Qed.

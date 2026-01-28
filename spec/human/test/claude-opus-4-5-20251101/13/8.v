@@ -1,0 +1,44 @@
+Require Import ZArith.
+Require Import Lia.
+Open Scope Z_scope.
+
+Definition problem_13_pre (a b : Z) : Prop :=
+  a <> 0 \/ b <> 0.
+
+Definition problem_13_spec_gcd (a b output : Z) : Prop :=
+  (a mod output = 0) /\
+  (b mod output = 0) /\
+  (forall x : Z, (a mod x = 0) -> (b mod x = 0) -> x > 0 -> x <= output).
+
+Definition problem_13_spec (a b output : Z) : Prop :=
+  (output mod a = 0) /\
+  (output mod b = 0) /\
+  (forall x : Z, (x mod a = 0) -> (x mod b = 0) -> x > 0 -> x <= output).
+
+Example test_problem_13 : problem_13_spec_gcd 81 27 27.
+Proof.
+  unfold problem_13_spec_gcd.
+  split.
+  - reflexivity.
+  - split.
+    + reflexivity.
+    + intros x H81 H27 Hpos.
+      apply Z.mod_divide in H27; [|lia].
+      destruct H27 as [k Hk].
+      assert (k > 0 \/ k < 0) as Hk_cases by lia.
+      destruct Hk_cases as [Hkpos | Hkneg].
+      * assert (k >= 1) by lia.
+        assert (27 = k * x) by lia.
+        assert (x <= 27).
+        {
+          destruct (Z_le_dec x 27); auto.
+          assert (x >= 28) by lia.
+          assert (k * x >= 28) by lia.
+          lia.
+        }
+        lia.
+      * assert (k <= -1) by lia.
+        assert (27 = k * x) by lia.
+        assert (k * x <= -1) by lia.
+        lia.
+Qed.

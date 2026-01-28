@@ -1,0 +1,17 @@
+Require Import List.
+Require Import ZArith.
+Import ListNotations.
+
+(* Opening Z_scope is necessary to interpret negative integer literals like -1 *)
+Open Scope Z_scope.
+
+Definition get_positive_spec (l : list Z) (result : list Z) : Prop :=
+  result = filter (fun x => Z.gtb x 0) l.
+
+Example test_get_positive:
+  get_positive_spec [-1; -100; -2; -5; -3; -4; 6; 0; 6; 7; -9; 10; 6] [6; 6; 7; 10; 6].
+Proof.
+  unfold get_positive_spec.
+  simpl.
+  reflexivity.
+Qed.

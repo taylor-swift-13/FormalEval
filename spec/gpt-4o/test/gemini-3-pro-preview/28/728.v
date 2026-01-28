@@ -1,0 +1,13 @@
+Require Import Coq.Lists.List.
+Require Import Coq.Strings.String.
+Import ListNotations.
+Open Scope string_scope.
+
+Definition concatenate_spec (strings : list string) (result : string) : Prop :=
+  result = String.concat "" strings.
+
+Example test_concatenate_1 : concatenate_spec ["123"; "456"; "789"; "10"; "11"; "13"; "14"; "15"; "16"; "thea"; "lazy"; "3113"; "18"; "11"; "3113"] "123456789101113141516thealazy311318113113".
+Proof.
+  unfold concatenate_spec.
+  reflexivity.
+Qed.

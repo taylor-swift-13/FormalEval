@@ -1,0 +1,58 @@
+Require Import Coq.Strings.String.
+Require Import Coq.Strings.Ascii.
+Require Import Coq.Lists.List.
+Require Import Coq.Arith.Arith.
+
+Import ListNotations.
+
+(*
+  辅助函数，用于将一个数字字符（如 '0', '1', ...）
+  转换为其对应的自然数（如 0, 1, ...）。
+*)
+Definition nat_of_digit (c : ascii) : nat :=
+  Ascii.nat_of_ascii c - Ascii.nat_of_ascii "0"%char.
+
+(*
+  程序规约 Spec 的定义。
+  - x:      输入的非负整数。
+  - base:   转换的目标基数 (>= 2)。
+  - output: 转换后得到的字符串。
+*)
+(* Pre: base must be at least 2 for a valid base conversion *)
+Definition problem_44_pre (x : nat) (base : nat) : Prop := (base >= 2)%nat /\ (base < 10)%nat.
+
+Definition problem_44_spec (x : nat) (base : nat) (output : list ascii) : Prop :=
+  (* 将字符列表转换为一个由数字组成的列表 *)
+  let digits := List.map nat_of_digit output in
+
+  (*
+    规约的第一个条件：
+    输出字符串中的每一个数字都必须小于基数 base。
+   *)
+  (Forall (fun d => d < base) digits) /\
+
+  (*
+    规约的第二个条件（使用霍纳法则）：
+    字符串所代表的数值，按 base 展开后应等于 x。
+    对于列表 [d_0, d_1, ..., d_k]，该表达式计算：
+    (...((0 * base + d_0) * base + d_1) * ... + d_k)
+    这等价于 ∑ (d_i * base^(k-i))。
+   *)
+  (fold_left (fun acc d => acc * base + d) digits 0 = x).
+
+Example test_case_46_7 : problem_44_spec 46 7 ["6"%char; "4"%char].
+Proof.
+  unfold problem_44_spec.
+  split.
+  - (* Condition 1: Verify all digits are less than base 7 *)
+    (* Reduce the terms to simple naturals first *)
+    vm_compute.
+    (* The goal becomes Forall (fun d => d < 7) [6; 4] *)
+    (* repeat constructor will solve Forall and the inequalities (6 < 7, 4 < 7) *)
+    repeat constructor.
+  - (* Condition 2: Verify the value matches x *)
+    (* Compute the fold_left expression *)
+    vm_compute.
+    (* The goal becomes 46 = 46 *)
+    reflexivity.
+Qed.

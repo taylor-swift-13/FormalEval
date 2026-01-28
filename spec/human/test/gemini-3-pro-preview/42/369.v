@@ -1,0 +1,29 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.micromega.Lia.
+Import ListNotations.
+Open Scope Z_scope.
+
+(* Pre: no special constraints for `incr_list` *)
+Definition problem_42_pre (input : list Z) : Prop := True.
+
+(* Note: explicitly use %nat for the length comparison to avoid conflict with Z_scope *)
+Definition problem_42_spec(input output : list Z) : Prop :=
+  length input = length output /\
+  forall i : nat, (i < length output)%nat -> nth i output 0%Z = ((nth i input 0%Z) + 1)%Z.
+
+(* Test case: input = [1; 4; 8; -4; 20; 16; 15; 20; 4; 15], output = [2; 5; 9; -3; 21; 17; 16; 21; 5; 16] *)
+Example problem_42_example : problem_42_spec [1%Z; 4%Z; 8%Z; -4%Z; 20%Z; 16%Z; 15%Z; 20%Z; 4%Z; 15%Z] [2%Z; 5%Z; 9%Z; -3%Z; 21%Z; 17%Z; 16%Z; 21%Z; 5%Z; 16%Z].
+Proof.
+  unfold problem_42_spec.
+  split.
+  - (* Check length equality *)
+    simpl.
+    reflexivity.
+  - (* Check elements constraint *)
+    intros i H.
+    (* We destruct i for each element in the list *)
+    repeat (destruct i as [|i]; [simpl; reflexivity | simpl in H]).
+    (* The remaining case is when i >= length, which contradicts H *)
+    lia.
+Qed.

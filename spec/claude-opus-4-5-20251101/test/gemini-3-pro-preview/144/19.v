@@ -1,0 +1,24 @@
+Require Import ZArith.
+Require Import Bool.
+Require Import Psatz.
+
+Open Scope Z_scope.
+
+Definition simplify_spec (x1 x2 n1 n2 : Z) (result : bool) : Prop :=
+  x2 > 0 /\ n2 > 0 /\
+  ((x1 * n1) mod (x2 * n2) = 0 <-> result = true).
+
+Example test_simplify_8_11_11_8 : simplify_spec 8 11 11 8 true.
+Proof.
+  unfold simplify_spec.
+  split.
+  - lia.
+  - split.
+    + lia.
+    + split.
+      * intros H.
+        reflexivity.
+      * intros H.
+        vm_compute.
+        reflexivity.
+Qed.

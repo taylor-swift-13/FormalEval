@@ -1,0 +1,108 @@
+(* 导入 Coq 的标准库 *)
+Require Import Coq.Strings.String.
+Require Import Coq.Strings.Ascii.
+Require Import Coq.Lists.List.
+Require Import Coq.Arith.PeanoNat.
+Import ListNotations.
+Open Scope string_scope.
+
+Inductive check_parens_inner_rel : list ascii -> nat -> bool -> Prop :=
+  | cpir_nil_zero : check_parens_inner_rel [] 0 true
+  | cpir_nil_nonzero : forall n, n <> 0 -> check_parens_inner_rel [] n false
+  | cpir_lparen : forall t counter result,
+      check_parens_inner_rel t (S counter) result ->
+      check_parens_inner_rel ("("%char :: t) counter result
+  | cpir_rparen_zero : forall t counter,
+      counter = 0 ->
+      check_parens_inner_rel (")"%char :: t) counter false
+  | cpir_rparen : forall t counter n' result,
+      counter = S n' ->
+      check_parens_inner_rel t n' result ->
+      check_parens_inner_rel (")"%char :: t) counter result
+  | cpir_other : forall c t counter result,
+      c <> "("%char -> c <> ")"%char ->
+      check_parens_inner_rel t counter result ->
+      check_parens_inner_rel (c :: t) counter result.
+
+Inductive is_balanced_rel : list ascii -> bool -> Prop :=
+  | ibr_base : forall l result, check_parens_inner_rel l 0 result -> is_balanced_rel l result.
+
+Inductive concat_rel : list ascii -> list ascii -> list ascii -> Prop :=
+  | concr_base : forall l1 l2, concat_rel l1 l2 (l1 ++ l2).
+
+(* 输入列表长度为 2，且每个字符仅为 '(' 或 ')' *)
+Definition problem_119_pre (inputs : list string) : Prop :=
+  length inputs = 2 /\ Forall (fun s =>
+    let l := list_ascii_of_string s in
+    Forall (fun c => c = "("%char \/ c = ")"%char) l) inputs.
+
+Definition problem_119_spec (inputs : list string) (output : string) : Prop :=
+  (exists s1 s2 s12,
+     map list_ascii_of_string inputs = [s1; s2] /\
+     concat_rel s1 s2 s12 /\
+     is_balanced_rel s12 true /\
+     output = "Yes") \/
+  (exists s1 s2 s21,
+     map list_ascii_of_string inputs = [s1; s2] /\
+     concat_rel s2 s1 s21 /\
+     is_balanced_rel s21 true /\
+     output = "Yes") \/
+  ((forall s1 s2, map list_ascii_of_string inputs <> [s1; s2] \/
+    (forall s12, concat_rel s1 s2 s12 -> is_balanced_rel s12 false) /\
+    (forall s21, concat_rel s2 s1 s21 -> is_balanced_rel s21 false)) /\
+   output = "No").
+
+Example test_problem_119 : problem_119_spec ["()("; ")"] "Yes".
+Proof.
+  (* Unfold the specification to see the disjunctions *)
+  unfold problem_119_spec.
+  
+  (* We want to prove the first case: s1 ++ s2 is balanced *)
+  (* s1 = "()(", s2 = ")" -> s1 ++ s2 = "()()" which is balanced *)
+  left.
+  
+  (* Instantiate the existential variables *)
+  (* list_ascii_of_string "()(" corresponds to s1 *)
+  (* list_ascii_of_string ")" corresponds to s2 *)
+  (* s1 ++ s2 corresponds to s12 *)
+  eexists. eexists. eexists.
+  
+  (* Split the conjunctions *)
+  split.
+  - (* Verify the mapping of inputs to character lists *)
+    simpl. reflexivity.
+    
+  - split.
+    + (* Verify concatenation *)
+      constructor.
+      
+    + split.
+      * (* Verify is_balanced_rel *)
+        constructor.
+        
+        (* Simplify the string to list conversion for "()()" *)
+        (* "()()" becomes ['('; ')'; '('; ')'] *)
+        simpl.
+        
+        (* Trace the check_parens_inner_rel state machine *)
+        
+        (* 1. Process '(' : counter 0 -> 1 *)
+        apply cpir_lparen.
+        
+        (* 2. Process ')' : counter 1 -> 0 *)
+        apply cpir_rparen with (n' := 0).
+        { reflexivity. } (* Proof that 1 = S 0 *)
+        
+        (* 3. Process '(' : counter 0 -> 1 *)
+        apply cpir_lparen.
+        
+        (* 4. Process ')' : counter 1 -> 0 *)
+        apply cpir_rparen with (n' := 0).
+        { reflexivity. } (* Proof that 1 = S 0 *)
+        
+        (* 5. End of string, counter is 0, result is true *)
+        apply cpir_nil_zero.
+        
+      * (* Verify output string matches *)
+        reflexivity.
+Qed.

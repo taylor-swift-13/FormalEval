@@ -1,0 +1,41 @@
+Require Import Coq.Strings.String Coq.Strings.Ascii Coq.Lists.List Coq.ZArith.ZArith.
+Import ListNotations.
+Open Scope string_scope.
+Open Scope Z_scope.
+
+Definition is_prime_hex_digit (c : ascii) : bool :=
+  match c with
+  | "2"%char | "3"%char | "5"%char | "7"%char
+  | "B"%char | "D"%char => true
+  | _ => false
+  end.
+
+Fixpoint count_prime_hex (s : string) : nat :=
+  match s with
+  | "" => 0
+  | String h t =>
+    (if is_prime_hex_digit h then 1 else 0) +
+    count_prime_hex t
+  end.
+
+Definition hex_key_impl (s : string) : nat :=
+  count_prime_hex s.
+
+Definition problem_78_pre (s : string) : Prop := True.
+
+Definition problem_78_spec (s : string) (output : nat) : Prop :=
+  output = hex_key_impl s.
+
+Example problem_78_test_nat : problem_78_spec "AC377ABCDEF20ABCDEF202020CBAABBBBB333A11DDBC555520222E2020CBAABBBBB333A11DDBCEE11ABCD2020D45B67C2022EEEFAD890ABCDEF12345BBAA20200CC22EEFFEEDDCCBBAAEFEADC55553BD53DF12345B767C2022EEEFAD890AB123ABB333A11DDBCBCDEF2020C20CBAABBB2BB333CA11DDBC55554567CEEFAD890ABCDEF12345BBAA2020015E753BD9CEFF231234567890ABCDEF12345BBAA20200BCCBBD4" 163.
+Proof.
+  unfold problem_78_spec, hex_key_impl.
+  simpl.
+  reflexivity.
+Qed.
+
+Example problem_78_test_Z : Z.of_nat (hex_key_impl "AC377ABCDEF20ABCDEF202020CBAABBBBB333A11DDBC555520222E2020CBAABBBBB333A11DDBCEE11ABCD2020D45B67C2022EEEFAD890ABCDEF12345BBAA20200CC22EEFFEEDDCCBBAAEFEADC55553BD53DF12345B767C2022EEEFAD890AB123ABB333A11DDBCBCDEF2020C20CBAABBB2BB333CA11DDBC55554567CEEFAD890ABCDEF12345BBAA2020015E753BD9CEFF231234567890ABCDEF12345BBAA20200BCCBBD4") = 163%Z.
+Proof.
+  unfold hex_key_impl.
+  simpl.
+  reflexivity.
+Qed.

@@ -1,0 +1,38 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Bool.Bool.
+Require Import Coq.micromega.Lia.
+Import ListNotations.
+Open Scope Z_scope.
+
+Inductive sorted_inc : list Z -> Prop :=
+  | sorted_inc_nil : sorted_inc []
+  | sorted_inc_one : forall x, sorted_inc [x]
+  | sorted_inc_cons : forall x y l, x <= y -> sorted_inc (y :: l) -> sorted_inc (x :: y :: l).
+
+Inductive sorted_dec : list Z -> Prop :=
+  | sorted_dec_nil : sorted_dec []
+  | sorted_dec_one : forall x, sorted_dec [x]
+  | sorted_dec_cons : forall x y l, x >= y -> sorted_dec (y :: l) -> sorted_dec (x :: y :: l).
+
+Definition monotonic_spec (l : list Z) (res : bool) : Prop :=
+  res = true <-> (sorted_inc l \/ sorted_dec l).
+
+Example test_monotonic_2 : monotonic_spec [2; 2; 1; 1; 1; 4; 5; 4; 6; 4; 2] false.
+Proof.
+  unfold monotonic_spec.
+  split.
+  - intros H. discriminate H.
+  - intros [Hinc | Hdec].
+    + (* sorted_inc case *)
+      inversion Hinc as [| | ? ? ? Hle1 Hinc1]; subst.
+      inversion Hinc1 as [| | ? ? ? Hle2 Hinc2]; subst.
+      lia.
+    + (* sorted_dec case *)
+      inversion Hdec as [| | ? ? ? Hge1 Hdec1]; subst.
+      inversion Hdec1 as [| | ? ? ? Hge2 Hdec2]; subst.
+      inversion Hdec2 as [| | ? ? ? Hge3 Hdec3]; subst.
+      inversion Hdec3 as [| | ? ? ? Hge4 Hdec4]; subst.
+      inversion Hdec4 as [| | ? ? ? Hge5 Hdec5]; subst.
+      lia.
+Qed.

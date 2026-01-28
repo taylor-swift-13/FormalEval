@@ -1,0 +1,29 @@
+Require Import Coq.Lists.List Coq.ZArith.ZArith.
+Require Import Coq.Bool.Bool.
+Import ListNotations.
+Open Scope Z_scope.
+
+Fixpoint sum_even_at_odd_indices (l : list Z) (n : nat) : Z :=
+  match l with
+  | nil => 0%Z
+  | h :: t =>
+      if andb (Nat.odd n) (Z.even h)
+      then (h + sum_even_at_odd_indices t (S n))%Z
+      else sum_even_at_odd_indices t (S n)
+  end.
+
+Definition add_impl (lst : list Z) : Z := sum_even_at_odd_indices lst 0.
+
+Lemma test_case_1 : add_impl [4; 0; 6; 7] = 0.
+Proof.
+  unfold add_impl.
+  simpl.
+  reflexivity.
+Qed.
+
+Lemma test_case_2 : add_impl [4; 2; 6; 7] = 2.
+Proof.
+  unfold add_impl.
+  simpl.
+  reflexivity.
+Qed.

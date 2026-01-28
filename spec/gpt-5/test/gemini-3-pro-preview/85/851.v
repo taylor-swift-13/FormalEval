@@ -1,0 +1,29 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Arith.PeanoNat.
+Require Import Coq.Bool.Bool.
+
+Import ListNotations.
+Open Scope Z_scope.
+
+Fixpoint sum_even_at_odd_from (i : nat) (l : list Z) : Z :=
+  match l with
+  | [] => 0
+  | x :: xs =>
+      let rest := sum_even_at_odd_from (S i) xs in
+      if (Nat.odd i) && (Z.even x) then x + rest else rest
+  end.
+
+Definition sum_even_at_odd (l : list Z) : Z :=
+  sum_even_at_odd_from 0 l.
+
+Definition add_spec (lst : list Z) (s : Z) : Prop :=
+  s = sum_even_at_odd lst.
+
+Example test_case : add_spec [2%Z; 4%Z; 6%Z; 88%Z; 10%Z; 12%Z; 14%Z; 16%Z; 15%Z; 20%Z; 22%Z; 24%Z; 28%Z; 30%Z; 16%Z; 16%Z; 24%Z] 210%Z.
+Proof.
+  unfold add_spec.
+  unfold sum_even_at_odd.
+  simpl.
+  reflexivity.
+Qed.

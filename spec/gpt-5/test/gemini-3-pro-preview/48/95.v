@@ -1,0 +1,23 @@
+Require Import Coq.Strings.String.
+Require Import Coq.Strings.Ascii.
+
+Open Scope string_scope.
+
+Fixpoint rev_string (s : string) : string :=
+  match s with
+  | EmptyString => EmptyString
+  | String a s' => String.append (rev_string s') (String a EmptyString)
+  end.
+
+Definition is_palindrome_spec (text : string) (result : bool) : Prop :=
+  (result = true /\ text = rev_string text) \/
+  (result = false /\ text <> rev_string text).
+
+Example test_palindrome_case1 : is_palindrome_spec "reWas it a car or a catw Ir saw?ffer" false.
+Proof.
+  unfold is_palindrome_spec.
+  right.
+  split.
+  - reflexivity.
+  - intro H. simpl in H. congruence.
+Qed.

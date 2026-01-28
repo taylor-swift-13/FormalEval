@@ -1,0 +1,93 @@
+Require Import Coq.Strings.String.
+Require Import Coq.Lists.List.
+Require Import Coq.Reals.Reals.
+Require Import Coq.micromega.Lra.
+
+Import ListNotations.
+
+Open Scope R_scope.
+Open Scope string_scope.
+
+Definition grade_relation (gpa : R) (grade : string) : Prop :=
+  (gpa = 4.0 /\ grade = "A+") \/
+  (3.7 < gpa /\ gpa < 4.0 /\ grade = "A") \/
+  (3.3 < gpa /\ gpa <= 3.7 /\ grade = "A-") \/
+  (3.0 < gpa /\ gpa <= 3.3 /\ grade = "B+") \/
+  (2.7 < gpa /\ gpa <= 3.0 /\ grade = "B") \/
+  (2.3 < gpa /\ gpa <= 2.7 /\ grade = "B-") \/
+  (2.0 < gpa /\ gpa <= 2.3 /\ grade = "C+") \/
+  (1.7 < gpa /\ gpa <= 2.0 /\ grade = "C") \/
+  (1.3 < gpa /\ gpa <= 1.7 /\ grade = "C-") \/
+  (1.0 < gpa /\ gpa <= 1.3 /\ grade = "D+") \/
+  (0.7 < gpa /\ gpa <= 1.0 /\ grade = "D") \/
+  (0.0 < gpa /\ gpa <= 0.7 /\ grade = "D-") \/
+  (gpa = 0.0 /\ grade = "E").
+
+Definition problem_81_pre (gpas : list R) : Prop :=
+  Forall (fun g => 0 <= g /\ g <= 4) gpas.
+
+Definition problem_81_spec (gpas : list R) (grades : list string) : Prop :=
+  Forall2 grade_relation gpas grades.
+
+Example problem_81_test :
+  problem_81_spec [3.7; 3.3; 2.3; 1.7; 1.3; 1.2224601670126722; 0.5] ["A-"; "B+"; "C+"; "C-"; "D+"; "D+"; "D-"].
+Proof.
+  unfold problem_81_spec.
+  apply Forall2_cons.
+  - (* 3.7 -> "A-" *)
+    unfold grade_relation.
+    right. right. left.
+    split; [|split].
+    + lra.
+    + lra.
+    + reflexivity.
+  - apply Forall2_cons.
+    + (* 3.3 -> "B+" *)
+      unfold grade_relation.
+      right. right. right. left.
+      split; [|split].
+      * lra.
+      * lra.
+      * reflexivity.
+    + apply Forall2_cons.
+      * (* 2.3 -> "C+" *)
+        unfold grade_relation.
+        right. right. right. right. right. right. left.
+        split; [|split].
+        -- lra.
+        -- lra.
+        -- reflexivity.
+      * apply Forall2_cons.
+        -- (* 1.7 -> "C-" *)
+           unfold grade_relation.
+           right. right. right. right. right. right. right. right. left.
+           split; [|split].
+           ++ lra.
+           ++ lra.
+           ++ reflexivity.
+        -- apply Forall2_cons.
+           ++ (* 1.3 -> "D+" *)
+              unfold grade_relation.
+              right. right. right. right. right. right. right. right. right. left.
+              split; [|split].
+              ** lra.
+              ** lra.
+              ** reflexivity.
+           ++ apply Forall2_cons.
+              ** (* 1.2224601670126722 -> "D+" *)
+                 unfold grade_relation.
+                 right. right. right. right. right. right. right. right. right. left.
+                 split; [|split].
+                 --- lra.
+                 --- lra.
+                 --- reflexivity.
+              ** apply Forall2_cons.
+                 --- (* 0.5 -> "D-" *)
+                     unfold grade_relation.
+                     right. right. right. right. right. right. right. right. right. right. right. left.
+                     split; [|split].
+                     +++ lra.
+                     +++ lra.
+                     +++ reflexivity.
+                 --- apply Forall2_nil.
+Qed.

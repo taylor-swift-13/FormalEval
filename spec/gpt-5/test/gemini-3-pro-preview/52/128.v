@@ -1,0 +1,27 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.micromega.Lia.
+Import ListNotations.
+Open Scope Z_scope.
+
+Definition below_threshold_spec (l : list Z) (t : Z) (res : bool) : Prop :=
+  (res = true <-> Forall (fun x => Z.lt x t) l) /\
+  (res = false <-> exists x, In x l /\ Z.le t x).
+
+Example test_below_threshold : below_threshold_spec [2000000; 8000001; 10000000; 9000000; 10; 8000000; 7000000; 6000000; 2000000] 10000001 true.
+Proof.
+  unfold below_threshold_spec.
+  split.
+  - split.
+    + intros _.
+      repeat constructor; lia.
+    + intros _.
+      reflexivity.
+  - split.
+    + intros H.
+      discriminate H.
+    + intros [x [HIn HLe]].
+      simpl in HIn.
+      repeat (destruct HIn as [H | HIn]; [subst; lia | ]).
+      contradiction.
+Qed.

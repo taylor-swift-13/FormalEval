@@ -1,0 +1,34 @@
+Require Import List String.
+Import ListNotations.
+
+Definition problem_28_pre (input : list string) : Prop := True.
+
+Definition problem_28_spec (input : list string) (output : string) : Prop :=
+  String.concat "" input = output.
+
+Example problem_28_test: problem_28_spec ["313"%string; "456no"%string; "this
+string
+has
+multiple
+newlines"%string; "no
+newline
+this
+is
+a..
+long
+string"%string] ("313456nothis
+string
+has
+multiple
+newlinesno
+newline
+this
+is
+a..
+long
+string"%string).
+Proof.
+  unfold problem_28_spec.
+  simpl.
+  reflexivity.
+Qed.

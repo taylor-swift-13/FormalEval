@@ -1,0 +1,29 @@
+Require Import ZArith.
+Require Import Bool.
+Require Import Psatz.
+
+Open Scope Z_scope.
+
+Definition simplify_spec (x1 x2 n1 n2 : Z) (result : bool) : Prop :=
+  x2 > 0 /\ n2 > 0 /\
+  ((x1 * n1) mod (x2 * n2) = 0 <-> result = true).
+
+Example test_simplify_1119_1_4_3 : simplify_spec 1119 1 4 3 true.
+Proof.
+  unfold simplify_spec.
+  split.
+  - (* Prove x2 > 0 *)
+    lia.
+  - split.
+    + (* Prove n2 > 0 *)
+      lia.
+    + (* Prove the equivalence *)
+      split.
+      * (* Left to Right: (1119 * 4) mod (1 * 3) = 0 -> true = true *)
+        intros H.
+        reflexivity.
+      * (* Right to Left: true = true -> (1119 * 4) mod (1 * 3) = 0 *)
+        intros H.
+        vm_compute.
+        reflexivity.
+Qed.

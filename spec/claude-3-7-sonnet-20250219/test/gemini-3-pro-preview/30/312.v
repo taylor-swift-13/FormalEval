@@ -1,0 +1,45 @@
+Require Import Coq.Lists.List.
+Import ListNotations.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.micromega.Lia.
+Open Scope Z_scope.
+
+Definition get_positive_spec (l: list Z) (res: list Z) : Prop :=
+  (forall x, In x res -> In x l /\ x > 0) /\
+  (forall x, In x l -> x > 0 -> In x res).
+
+Example test_get_positive : get_positive_spec [-1; -2; -5; -3; 8; -4; 6; 0; 11; -6; -9; 10; 7; 7; 10] [8; 6; 11; 10; 7; 7; 10].
+Proof.
+  unfold get_positive_spec.
+  split.
+  - intros x H.
+    simpl in H.
+    destruct H as [H | [H | [H | [H | [H | [H | [H | H]]]]]]]; subst.
+    + split. simpl; tauto. lia.
+    + split. simpl; tauto. lia.
+    + split. simpl; tauto. lia.
+    + split. simpl; tauto. lia.
+    + split. simpl; tauto. lia.
+    + split. simpl; tauto. lia.
+    + split. simpl; tauto. lia.
+    + contradiction.
+  - intros x HIn HPos.
+    simpl in HIn.
+    destruct HIn as [H | [H | [H | [H | [H | [H | [H | [H | [H | [H | [H | [H | [H | [H | [H | H]]]]]]]]]]]]]]]; subst.
+    + lia.
+    + lia.
+    + lia.
+    + lia.
+    + simpl; tauto.
+    + lia.
+    + simpl; tauto.
+    + lia.
+    + simpl; tauto.
+    + lia.
+    + lia.
+    + simpl; tauto.
+    + simpl; tauto.
+    + simpl; tauto.
+    + simpl; tauto.
+    + contradiction.
+Qed.

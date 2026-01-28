@@ -1,0 +1,22 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.micromega.Lia.
+
+Import ListNotations.
+Open Scope Z_scope.
+
+Definition max_element_spec (l : list Z) (m : Z) : Prop :=
+  l <> nil /\ In m l /\ forall x, In x l -> x <= m.
+
+Example test_max_element : max_element_spec [1; 3; 3; 5; 6; 5; 6; 8; 8; 9; 9; 9; 9; 10; 10; 10; 12; 12; 13; 13; 13; 13; 13; 14; 14; 15; 15; 999993; 17; 18; 19; 20; 3] 999993.
+Proof.
+  unfold max_element_spec.
+  repeat split.
+  - discriminate.
+  - simpl.
+    repeat (first [left; reflexivity | right]).
+  - intros x H.
+    simpl in H.
+    repeat (destruct H as [H | H]; [subst; lia | idtac]).
+    contradiction.
+Qed.

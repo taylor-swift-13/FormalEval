@@ -1,0 +1,48 @@
+Require Import List.
+Require Import String.
+Import ListNotations.
+
+Open Scope string_scope.
+
+Fixpoint contains_substring (s sub : string) : bool :=
+  match s with
+  | EmptyString => if String.eqb sub EmptyString then true else false
+  | String _ rest =>
+      if String.prefix sub s then true
+      else contains_substring rest sub
+  end.
+
+Fixpoint filter_by_substring_impl (input : list string) (sub : string) : list string :=
+  match input with
+  | [] => []
+  | h :: t =>
+    if contains_substring h sub then
+      h :: filter_by_substring_impl t sub
+    else
+      filter_by_substring_impl t sub
+  end.
+
+Definition problem_7_spec (input output : list string) (sub : string) : Prop :=
+  output = filter_by_substring_impl input sub.
+
+Example test_case_1 :
+  problem_7_spec
+    ["antidisesshmentarianism"; "floccinaucinihilipilification"; "floccinaucinihilipilificatnion"; "floccinaucinihilipilificatilinion"]
+    ["floccinaucinihilipilification"; "floccinaucinihilipilificatnion"; "floccinaucinihilipilificatilinion"]
+    "ili".
+Proof.
+  unfold problem_7_spec.
+  simpl.
+  (* contains_substring "antidisesshmentarianism" "ili" *)
+  (* prefix "ili" "antidisesshmentarianism" = false *)
+  (* contains_substring "ntidisesshmentarianism" "ili" = false *)
+  (* And so on, no occurrences of "ili" in "antidisesshmentarianism" *)
+  (* So this element excluded *)
+  (* contains_substring "floccinaucinihilipilification" "ili" *)
+  (* prefix "ili" "floccinaucinihilipilification" = false *)
+  (* contains_substring "loccinaucinihilipilification" "ili" = false *)
+  (* ... eventually contains substring at "ili" starting here yields true *)
+  (* So included *)
+  (* Similarly for "floccinaucinihilipilificatnion" and "floccinaucinihilipilificatilinion" *)
+  reflexivity.
+Qed.

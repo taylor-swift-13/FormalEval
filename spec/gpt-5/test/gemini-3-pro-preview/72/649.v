@@ -1,0 +1,21 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Import ListNotations.
+
+Open Scope Z_scope.
+
+Definition sum_Z (l : list Z) : Z := fold_right Z.add 0%Z l.
+
+Definition will_it_fly_spec (q : list Z) (w : Z) (res : bool) : Prop :=
+  res = true <-> q = rev q /\ sum_Z q <= w.
+
+Example test_will_it_fly : will_it_fly_spec [2; 4; 6; 8; 10; 12; 14; 16; 18; 20; 14] 20 false.
+Proof.
+  unfold will_it_fly_spec.
+  split.
+  - intros H. discriminate.
+  - intros [_ H_sum].
+    unfold sum_Z in H_sum.
+    vm_compute in H_sum.
+    contradiction.
+Qed.

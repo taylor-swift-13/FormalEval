@@ -1,0 +1,32 @@
+Require Import Coq.Strings.Ascii Coq.Lists.List Coq.Strings.String.
+Require Import Coq.Arith.Arith.
+Import ListNotations.
+Open Scope string_scope.
+
+Definition is_uppercase (c : ascii) : bool :=
+  let n := nat_of_ascii c in (Nat.leb 65 n) && (Nat.leb n 90).
+
+Fixpoint sum_uppercase_ascii (s : string) : nat :=
+  match s with
+  | "" => 0
+  | String c s' => if is_uppercase c then nat_of_ascii c + sum_uppercase_ascii s'
+              else sum_uppercase_ascii s'
+  end.
+
+Definition digitSum_impl (s : string) : nat := sum_uppercase_ascii s.
+
+Definition problem_66_pre (s : string) : Prop := True.
+
+Definition problem_66_spec (s : string) (output : nat) : Prop :=
+  output = digitSum_impl s.
+
+Example Example_test : problem_66_spec "tabsBCDEFTGHIJKLMNOPQRSTUVThis
+is	tabiThissBCDEFGHIJKLMNOPQRS
+istabsWXYZ5nm5t4K5t5ms5t5m5t5n5t5r5t5s5t5n5n5M5t5s5t5m5t5sn5ST5TS5t5n5t5n5t5Ar5t5pn5t5shr5t5SS5t5v5t5sn5t5M5t5n	a	test	with
+newlines	a	test	tabsWDXYZ" 4759.
+Proof.
+  unfold problem_66_spec.
+  unfold digitSum_impl.
+  vm_compute.
+  reflexivity.
+Qed.

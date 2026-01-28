@@ -1,0 +1,22 @@
+Require Import String.
+Require Import Coq.Strings.String.
+Require Import Coq.Arith.PeanoNat.
+
+Definition problem_23_pre (input : string) : Prop := True.
+
+Definition problem_23_spec(input : string) (output : nat) : Prop :=
+  output = length input.
+
+Example test_strlen_long :
+  problem_23_spec
+    "one
+twot
+thrThis is a long string that has many characters in itee
+four
+five"
+    76.
+Proof.
+  unfold problem_23_spec.
+  simpl.
+  reflexivity.
+Qed.

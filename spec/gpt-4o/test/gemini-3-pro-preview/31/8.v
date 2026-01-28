@@ -1,0 +1,31 @@
+Require Import Coq.Init.Nat.
+Require Import Coq.Arith.Arith.
+Require Import Coq.micromega.Lia.
+Require Import Coq.Lists.List.
+Import ListNotations.
+
+(* Note: The specification provided in the description contained ambiguity 
+   regarding the scope of quantifiers and implication. 
+   Parentheses have been added to the hypotheses of the implications 
+   to ensure the logical definition of primality is correct and provable. *)
+
+Definition is_prime_spec (n : nat) (result : bool) : Prop :=
+  (n <= 1 -> result = false) /\
+  (n > 1 ->
+   ((exists i, 2 <= i < n /\ n mod i = 0) -> result = false) /\
+   ((forall i, 2 <= i < n -> n mod i <> 0) -> result = true)).
+
+Example test_is_prime_5 : is_prime_spec 5 true.
+Proof.
+  unfold is_prime_spec.
+  split.
+  - intros H_le.
+    lia.
+  - intros H_gt.
+    split.
+    + intros [i [H_bounds H_mod]].
+      assert (i = 2 \/ i = 3 \/ i = 4) as H_cases by lia.
+      destruct H_cases as [H_eq | [H_eq | H_eq]]; rewrite H_eq in H_mod; simpl in H_mod; discriminate.
+    + intros H_forall.
+      reflexivity.
+Qed.

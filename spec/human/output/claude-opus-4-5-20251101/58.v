@@ -1,0 +1,50 @@
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Lists.List.
+Require Import Sorting.Sorted.
+Require Import Lia.
+Import ListNotations.
+
+Definition problem_58_pre (l1 l2 : list Z) : Prop := True.
+
+Definition problem_58_spec (l1 l2 l_out: list Z) : Prop :=
+  (forall x: Z, In x l_out <-> (In x l1 /\ In x l2)) /\
+  Sorted Z.le l_out /\
+  NoDup l_out.
+
+Example test_common_1 :
+  problem_58_spec [1%Z; 4%Z; 3%Z; 34%Z; 653%Z; 2%Z; 5%Z] 
+                  [5%Z; 7%Z; 1%Z; 5%Z; 9%Z; 653%Z; 121%Z] 
+                  [1%Z; 5%Z; 653%Z].
+Proof.
+  unfold problem_58_spec.
+  split; [| split].
+  - (* Condition 1: common elements *)
+    intro x.
+    split.
+    + (* In x l_out -> In x l1 /\ In x l2 *)
+      intro H.
+      simpl in H.
+      destruct H as [H | [H | [H | H]]].
+      * subst x. split; simpl; auto.
+      * subst x. split; simpl; auto 10.
+      * subst x. split; simpl; auto 10.
+      * contradiction.
+    + (* In x l1 /\ In x l2 -> In x l_out *)
+      intros [H1 H2].
+      simpl in H1, H2.
+      simpl.
+      destruct H1 as [H1 | [H1 | [H1 | [H1 | [H1 | [H1 | [H1 | H1]]]]]]];
+      destruct H2 as [H2 | [H2 | [H2 | [H2 | [H2 | [H2 | [H2 | H2]]]]]]];
+      try subst x; try (left; reflexivity); try (right; left; reflexivity); 
+      try (right; right; left; reflexivity); try contradiction; try lia.
+  - (* Condition 2: sorted *)
+    repeat constructor; lia.
+  - (* Condition 3: no duplicates *)
+    constructor.
+    + simpl. intros [H | [H | H]]; lia.
+    + constructor.
+      * simpl. intros [H | H]; lia.
+      * constructor.
+        -- simpl. intros H. contradiction.
+        -- constructor.
+Qed.

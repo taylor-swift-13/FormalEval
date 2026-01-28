@@ -1,0 +1,14 @@
+Require Import List.
+Require Import String.
+Import ListNotations.
+Open Scope string_scope.
+
+Definition concatenate_spec (strings : list string) (result : string) : Prop :=
+  result = String.concat "" strings.
+
+Example test_concatenate_complex: concatenate_spec ["123"; "789"; "10"; "11"; "12"; ""; "🐯"; "13"; "15"; "123"; "16"; "17"; "18"] "123789101112🐯1315123161718".
+Proof.
+  unfold concatenate_spec.
+  simpl.
+  reflexivity.
+Qed.

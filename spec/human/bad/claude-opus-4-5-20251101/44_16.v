@@ -1,0 +1,43 @@
+Require Import Coq.Strings.String.
+Require Import Coq.Strings.Ascii.
+Require Import Coq.Lists.List.
+Require Import Coq.Arith.Arith.
+Require Import Lia.
+
+Import ListNotations.
+
+Definition nat_of_digit (c : ascii) : nat :=
+  Ascii.nat_of_ascii c - Ascii.nat_of_ascii "0"%char.
+
+Definition problem_44_pre (x : nat) (base : nat) : Prop := (base >= 2)%nat /\ (base < 10)%nat.
+
+Definition problem_44_spec (x : nat) (base : nat) (output : list ascii) : Prop :=
+  let digits := List.map nat_of_digit output in
+  (Forall (fun d => d < base) digits) /\
+  (fold_left (fun acc d => acc * base + d) digits 0 = x).
+
+Lemma nat_of_ascii_0 : Ascii.nat_of_ascii "0"%char = 48.
+Proof. reflexivity. Qed.
+
+Lemma nat_of_ascii_4 : Ascii.nat_of_ascii "4"%char = 52.
+Proof. reflexivity. Qed.
+
+Lemma nat_of_ascii_5 : Ascii.nat_of_ascii "5"%char = 53.
+Proof. reflexivity. Qed.
+
+Example test_change_base_33_7 : 
+  problem_44_pre 33 7 /\ problem_44_spec 33 7 ["4"%char; "5"%char].
+Proof.
+  split.
+  - unfold problem_44_pre. lia.
+  - unfold problem_44_spec.
+    simpl.
+    split.
+    + unfold nat_of_digit.
+      repeat constructor; 
+      rewrite ?nat_of_ascii_4, ?nat_of_ascii_5, ?nat_of_ascii_0; lia.
+    + unfold nat_of_digit.
+      rewrite nat_of_ascii_4, nat_of_ascii_5, nat_of_ascii_0.
+      simpl.
+      reflexivity.
+Qed.

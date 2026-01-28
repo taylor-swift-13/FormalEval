@@ -1,0 +1,58 @@
+Require Import Coq.Strings.String Coq.Strings.Ascii.
+Require Import Coq.Lists.List.
+Require Import Arith.
+Import ListNotations.
+Open Scope string_scope.
+
+(* 辅助函数：检查一个字符是否是元音 *)
+Definition is_vowel (c : ascii) : bool :=
+  match c with
+  | "a"%char | "e"%char | "i"%char | "o"%char | "u"%char => true
+  | "A"%char | "E"%char | "I"%char | "O"%char | "U"%char => true
+  | _ => false
+  end.
+
+(* 辅助函数：转换字母的大小写 *)
+Definition swap_case (c : ascii) : ascii :=
+  let n := nat_of_ascii c in
+  if andb (leb 65 n) (leb n 90)
+  then ascii_of_nat (n + 32)
+  else if andb (leb 97 n) (leb n 122)
+  then ascii_of_nat (n - 32)
+  else c.
+
+(* 辅助函数：将元音替换为两个位置之后的字母 *)
+Definition replace_vowel (c : ascii) : ascii :=
+  match c with
+  | "a"%char => "c"%char | "e"%char => "g"%char | "i"%char => "k"%char | "o"%char => "q"%char | "u"%char => "w"%char
+  | "A"%char => "C"%char | "E"%char => "G"%char | "I"%char => "K"%char | "O"%char => "Q"%char | "U"%char => "W"%char
+  | _ => c
+  end.
+
+Definition encode_char_spec (c_in c_out : ascii) : Prop :=
+  let c_swapped := swap_case c_in in
+  if is_vowel c_in
+  then c_out = replace_vowel c_swapped
+  else c_out = c_swapped.
+
+Definition problem_93_spec (s_in s_out : string) : Prop :=
+  let l_in := list_ascii_of_string s_in in
+  let l_out := list_ascii_of_string s_out in
+  Forall2 encode_char_spec l_in l_out.
+
+Example test_encode_function : problem_93_spec "Testing encode function" "tGSTKNG GNCQDG FWNCTKQN".
+Proof.
+  unfold problem_93_spec.
+  simpl.
+  repeat constructor; unfold encode_char_spec; simpl; 
+  (* For each character in the input string, provide the corresponding proof step *)
+  (* The proof relies on the fact that for each character, the encode_char_spec holds true *)
+  (* Since the characters are fixed, we verify each accordingly *)
+  (* First, "T" -> "t" *)
+  (* swap_case "T" = "t", "T" is uppercase, not vowel, so output "t" *)
+  (* Similarly process each character *)
+  (* To proceed, we evaluate each character's proof *)
+  (* The proof will be simplified assuming each character matches expected output *)
+  (* We can do this by explicit reflexivity for each pair when unfoldings match *)
+  simpl; reflexivity.
+Qed.

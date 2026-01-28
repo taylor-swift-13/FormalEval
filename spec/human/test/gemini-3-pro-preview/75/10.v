@@ -1,0 +1,23 @@
+Require Import Arith.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.ZArith.Znumtheory.
+Require Import Coq.micromega.Psatz.
+Open Scope Z_scope.
+
+Definition problem_75_pre (a : Z) : Prop := a < 100.
+
+Definition problem_75_spec (a : Z) (b : bool) : Prop :=
+  (b = true <-> exists p1 p2 p3, prime p1 /\ prime p2 /\ prime p3 /\ a = p1 * p2 * p3).
+
+Example test_case : problem_75_spec 6 false.
+Proof.
+  unfold problem_75_spec.
+  split.
+  - intros H.
+    inversion H.
+  - intros (p1 & p2 & p3 & Hp1 & Hp2 & Hp3 & Heq).
+    apply prime_ge_2 in Hp1.
+    apply prime_ge_2 in Hp2.
+    apply prime_ge_2 in Hp3.
+    nia.
+Qed.

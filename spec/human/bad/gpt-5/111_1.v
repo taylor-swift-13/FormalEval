@@ -1,0 +1,78 @@
+Require Import Coq.Lists.List.
+Require Import Coq.Strings.Ascii.
+Require Import Coq.Strings.String.
+Require Import Coq.Arith.Arith.
+Import ListNotations.
+
+(* 辅助函数：过滤掉空格 *)
+Definition filter_spaces (l : list ascii) : list ascii :=
+  filter (fun c => if ascii_dec c " "%char then false else true) l.
+
+(* 辅助函数：计算字符在列表中的出现次数 *)
+Definition count_char (letters : list ascii) (c : ascii) : nat :=
+  count_occ ascii_dec letters c.
+
+(* 辅助函数：计算列表中出现次数最多的次数 *)
+Definition get_max_count (letters : list ascii) : nat :=
+  let unique_letters := nodup ascii_dec letters in
+  let counts := map (count_char letters) unique_letters in
+  fold_right max 0 counts.
+
+(* 仅包含空格或小写字母 *)
+Definition problem_111_pre (s : string) : Prop :=
+  let letters := list_ascii_of_string s in
+  Forall (fun c => c = " "%char \/ let n := nat_of_ascii c in 97 <= n /\ n <= 122) letters.
+
+(*
+  程序规约 Spec
+  输入：s : string (一个由字符组成的字符串)
+  输出：res : list (ascii * nat) (一个由 (字符, 计数值) 对组成的列表)
+*)
+Definition problem_111_spec (s : string) (res : list (ascii * nat)) : Prop :=
+  let raw_letters := list_ascii_of_string s in
+  let letters := filter_spaces raw_letters in
+  let unique_letters := nodup ascii_dec letters in
+  match unique_letters with
+  | [] => res = [] (* 如果输入列表为空，则输出也为空 *)
+  | _ :: _ => (* 如果列表不为空 *)
+    let max_count := get_max_count letters in
+
+    (* 规约的核心：输出 res 必须精确地包含所有出现次数最多的字符及其计数值。 *)
+    (* 1. "Soundness": 输出 res 中的每一个元素都必须是正确的。 *)
+    (forall (p : ascii * nat), In p res ->
+      let (c, n) := p in
+      n = max_count /\ count_char letters c = max_count) /\
+
+    (* 2. "Completeness": 每一个符合条件的字符都必须出现在输出 res 中。 *)
+    (forall c, In c unique_letters ->
+      count_char letters c = max_count ->
+      In (c, max_count) res)
+  end.
+
+Example histogram_test_case_a_b_b_a :
+  problem_111_spec "a b b a"%string [("a"%char, 2); ("b"%char, 2)].
+Proof.
+  unfold problem_111_spec.
+  vm_compute.
+  split.
+  - intros [c n] Hin.
+    simpl in Hin.
+    destruct Hin as [Hin | Hin].
+    + inversion Hin; subst; simpl.
+      split; [reflexivity|].
+      vm_compute; reflexivity.
+    + destruct Hin as [Hin | Hin].
+      * inversion Hin; subst; simpl.
+        split; [reflexivity|].
+        vm_compute; reflexivity.
+      * contradiction.
+  - intros c Hin Hcount.
+    repeat (simpl in Hin).
+    destruct (ascii_dec c "a"%char) as [Hca|Hcna].
+    + subst. simpl. left. reflexivity.
+    + destruct (ascii_dec c "b"%char) as [Hcb|Hcnb].
+      * subst. simpl. right. left. reflexivity.
+      * destruct Hin as [Ha|Hb].
+        -- apply Hcna in Ha. contradiction.
+        -- apply Hcnb in Hb. contradiction.
+Qed.

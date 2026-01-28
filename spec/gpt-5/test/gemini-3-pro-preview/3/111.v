@@ -1,0 +1,34 @@
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Lists.List.
+Require Import Coq.micromega.Lia.
+Import ListNotations.
+Open Scope Z_scope.
+
+Definition sum_list (l : list Z) : Z :=
+  fold_left Z.add l 0%Z.
+
+Definition below_zero_spec (operations : list Z) (result : bool) : Prop :=
+  (result = true <-> exists prefix suffix, operations = prefix ++ suffix /\ sum_list prefix < 0%Z) /\
+  (result = false <-> forall prefix suffix, operations = prefix ++ suffix -> 0%Z <= sum_list prefix).
+
+Example test_below_zero_large : below_zero_spec [1%Z; 2%Z; -3%Z; 4%Z; -5%Z; 6%Z; -7%Z; 8%Z; -9%Z; 10%Z; -11%Z; 12%Z; -13%Z; 14%Z; -15%Z; 16%Z; -17%Z; 18%Z; -19%Z; 20%Z; -21%Z; 22%Z; -23%Z; 24%Z; -25%Z; 26%Z; -27%Z; 28%Z; -29%Z; 30%Z; -31%Z] true.
+Proof.
+  unfold below_zero_spec.
+  split.
+  - split.
+    + intros _.
+      exists [1%Z; 2%Z; -3%Z; 4%Z; -5%Z].
+      exists [6%Z; -7%Z; 8%Z; -9%Z; 10%Z; -11%Z; 12%Z; -13%Z; 14%Z; -15%Z; 16%Z; -17%Z; 18%Z; -19%Z; 20%Z; -21%Z; 22%Z; -23%Z; 24%Z; -25%Z; 26%Z; -27%Z; 28%Z; -29%Z; 30%Z; -31%Z].
+      split.
+      * reflexivity.
+      * unfold sum_list. simpl. lia.
+    + intros _. reflexivity.
+  - split.
+    + intro H. discriminate H.
+    + intro H.
+      specialize (H [1%Z; 2%Z; -3%Z; 4%Z; -5%Z] [6%Z; -7%Z; 8%Z; -9%Z; 10%Z; -11%Z; 12%Z; -13%Z; 14%Z; -15%Z; 16%Z; -17%Z; 18%Z; -19%Z; 20%Z; -21%Z; 22%Z; -23%Z; 24%Z; -25%Z; 26%Z; -27%Z; 28%Z; -29%Z; 30%Z; -31%Z]).
+      assert (Heq: [1%Z; 2%Z; -3%Z; 4%Z; -5%Z; 6%Z; -7%Z; 8%Z; -9%Z; 10%Z; -11%Z; 12%Z; -13%Z; 14%Z; -15%Z; 16%Z; -17%Z; 18%Z; -19%Z; 20%Z; -21%Z; 22%Z; -23%Z; 24%Z; -25%Z; 26%Z; -27%Z; 28%Z; -29%Z; 30%Z; -31%Z] = [1%Z; 2%Z; -3%Z; 4%Z; -5%Z] ++ [6%Z; -7%Z; 8%Z; -9%Z; 10%Z; -11%Z; 12%Z; -13%Z; 14%Z; -15%Z; 16%Z; -17%Z; 18%Z; -19%Z; 20%Z; -21%Z; 22%Z; -23%Z; 24%Z; -25%Z; 26%Z; -27%Z; 28%Z; -29%Z; 30%Z; -31%Z]).
+      { reflexivity. }
+      apply H in Heq.
+      unfold sum_list in Heq. simpl in Heq. lia.
+Qed.

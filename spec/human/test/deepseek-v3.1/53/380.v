@@ -1,0 +1,18 @@
+Require Import Coq.ZArith.ZArith.
+
+Open Scope Z_scope.
+
+Definition problem_53_pre (x y : Z) : Prop := True.
+
+Definition problem_53_spec (x : Z) (y : Z) (output : Z) : Prop :=
+  output = x + y.
+
+Example test_add_1002_1002 : 
+  problem_53_pre 1002 1002 -> 
+  problem_53_spec 1002 1002 2004.
+Proof.
+  intro Hpre.
+  unfold problem_53_spec.
+  simpl.
+  reflexivity.
+Qed.

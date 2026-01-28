@@ -1,0 +1,22 @@
+Require Import List String.
+Import ListNotations.
+
+Definition problem_28_pre (input : list string) : Prop := True.
+
+Definition problem_28_spec (input : list string) (output : string) : Prop :=
+  String.concat "" input = output.
+
+Example problem_28_test: problem_28_spec ["🐻"%string; "🦊"%string; "quick"%string; "🐼"%string; "🐯"%string; "🦛"%string; "188"%string; "🦌"%string; "🦢"%string; "this
+string
+has
+mulntiple
+newlines"%string; "🦉"%string; "could🐢"%string; "!!"%string; "🐢"%string; "🦉"%string] ("🐻🦊quick🐼🐯🦛188🦌🦢this
+string
+has
+mulntiple
+newlines🦉could🐢!!🐢🦉"%string).
+Proof.
+  unfold problem_28_spec.
+  simpl.
+  reflexivity.
+Qed.

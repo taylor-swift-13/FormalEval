@@ -1,0 +1,1 @@
+生成响应失败: Error code: 503 - {'error': {'message': 'No available channels for model gpt-5 in group official_Claude (request id: 20260114193955987576269ASU239jJ)', 'message_zh': '当前分组 official_Claude 下对于模型 gpt-5 无可用渠道', 'type': 'new_api_error'}}

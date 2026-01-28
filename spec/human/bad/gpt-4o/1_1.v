@@ -1,0 +1,1 @@
+Failed to generate response: Error code: 503 - {'error': {'message': 'No available channels for model gpt-4o in group 优质gemini (request id: 20260128165505291539847BiGbEMEi)', 'message_zh': '当前分组 优质gemini 下对于模型 gpt-4o 无可用渠道', 'type': 'new_api_error'}}

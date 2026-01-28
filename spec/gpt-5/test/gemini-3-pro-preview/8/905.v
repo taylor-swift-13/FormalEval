@@ -1,0 +1,27 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+
+Import ListNotations.
+Open Scope Z_scope.
+
+Fixpoint sum_list (l : list Z) : Z :=
+  match l with
+  | [] => 0
+  | x :: xs => x + sum_list xs
+  end.
+
+Fixpoint prod_list (l : list Z) : Z :=
+  match l with
+  | [] => 1
+  | x :: xs => x * prod_list xs
+  end.
+
+Definition sum_product_spec (numbers : list Z) (res : Z * Z) : Prop :=
+  res = (sum_list numbers, prod_list numbers).
+
+Example test_sum_product : sum_product_spec [78; -77; 91; -36; 6; -2; -74; 20; 27; 93] (126, 877442962556160).
+Proof.
+  unfold sum_product_spec.
+  simpl.
+  reflexivity.
+Qed.

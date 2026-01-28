@@ -1,0 +1,79 @@
+Require Import Coq.ZArith.ZArith Coq.Lists.List Coq.Arith.Arith Coq.Bool.Bool.
+Require Import Coq.micromega.Lia.
+Import ListNotations.
+Open Scope Z_scope.
+
+Inductive digits_of_posZ : Z -> list nat -> Prop :=
+| dop_zero : digits_of_posZ 0%Z []
+| dop_step : forall n (d : nat) ds,
+   0 < n -> (0 <= Z.of_nat d < 10%Z) ->
+   Z.of_nat d = n mod 10 ->
+   digits_of_posZ (n / 10) ds ->
+   digits_of_posZ n (d :: ds).
+
+Definition absZ (n : Z) : Z := Z.abs n.
+
+Inductive digits_of_Z : Z -> list nat -> Prop :=
+| doz_zero_empty : digits_of_Z 0%Z []
+| doz_pos : forall n ds, 0 < n -> digits_of_posZ n ds -> digits_of_Z n ds
+| doz_neg : forall n ds, n < 0 -> digits_of_posZ (absZ n) ds -> digits_of_Z n ds.
+
+Inductive count_even_odd_list : list nat -> nat -> nat -> Prop :=
+| ceo_nil : count_even_odd_list [] 0%nat 0%nat
+| ceo_cons_even : forall d t e o,
+    Nat.even d = true ->
+    count_even_odd_list t e o ->
+    count_even_odd_list (d :: t) (S e) o
+| ceo_cons_odd : forall d t e o,
+    Nat.even d = false ->
+    count_even_odd_list t e o ->
+    count_even_odd_list (d :: t) e (S o).
+
+Definition problem_155_pre (num : Z) : Prop := True.
+
+Definition problem_155_spec (num : Z) (output : nat * nat) : Prop :=
+  let '(e, o) := output in
+  exists ds : list nat, digits_of_Z num ds /\ count_even_odd_list ds e o.
+
+Example even_odd_count_test_neg_593 :
+  problem_155_spec (-593%Z) (0%nat, 3%nat).
+Proof.
+  unfold problem_155_spec.
+  simpl.
+  exists [3%nat; 9%nat; 5%nat].
+  split.
+  - apply doz_neg.
+    + lia.
+    + replace (absZ (-593%Z)) with 593%Z by (vm_compute; reflexivity).
+      apply (dop_step 593%Z 3%nat [9%nat; 5%nat]).
+      * lia.
+      * split; lia.
+      * replace (Z.of_nat 3%nat) with 3%Z by reflexivity.
+        assert (Hmod593 : 593%Z mod 10%Z = 3%Z) by (vm_compute; reflexivity).
+        rewrite Hmod593. reflexivity.
+      * assert (Hdiv593 : 593%Z / 10%Z = 59%Z) by (vm_compute; reflexivity).
+        rewrite Hdiv593.
+        apply (dop_step 59%Z 9%nat [5%nat]).
+        -- lia.
+        -- split; lia.
+        -- replace (Z.of_nat 9%nat) with 9%Z by reflexivity.
+           assert (Hmod59 : 59%Z mod 10%Z = 9%Z) by (vm_compute; reflexivity).
+           rewrite Hmod59. reflexivity.
+        -- assert (Hdiv59 : 59%Z / 10%Z = 5%Z) by (vm_compute; reflexivity).
+           rewrite Hdiv59.
+           apply (dop_step 5%Z 5%nat []).
+           ++ lia.
+           ++ split; lia.
+           ++ replace (Z.of_nat 5%nat) with 5%Z by reflexivity.
+              symmetry. apply Z.mod_small; split; lia.
+           ++ assert (Hdiv5 : 5%Z / 10%Z = 0%Z) by (apply Z.div_small; split; lia).
+              rewrite Hdiv5.
+              apply dop_zero.
+  - apply ceo_cons_odd.
+    + simpl. reflexivity.
+    + apply ceo_cons_odd.
+      * simpl. reflexivity.
+      * apply ceo_cons_odd.
+        -- simpl. reflexivity.
+        -- apply ceo_nil.
+Qed.

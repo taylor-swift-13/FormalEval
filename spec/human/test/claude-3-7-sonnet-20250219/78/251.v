@@ -1,0 +1,39 @@
+Require Import Coq.Strings.String Coq.Strings.Ascii Coq.Lists.List.
+Import ListNotations.
+Open Scope string_scope.
+
+Definition is_prime_hex_digit (c : ascii) : bool :=
+  match c with
+  | "2"%char | "3"%char | "5"%char | "7"%char
+  | "B"%char | "D"%char => true
+  | _ => false
+  end.
+
+Fixpoint count_prime_hex (s : string) : nat :=
+  match s with
+  | "" => 0
+  | String h t =>
+    (if is_prime_hex_digit h then 1 else 0) +
+    count_prime_hex t
+  end.
+
+Definition hex_key_impl (s : string) : nat :=
+  count_prime_hex s.
+
+Definition problem_78_pre (s : string) : Prop := True.
+
+Definition problem_78_spec (s : string) (output : nat) : Prop :=
+  output = hex_key_impl s.
+
+Example test_FAD1234567CEEFAD890ABCD73ABB333A11DDBCBCDEF202020CBAABBB2BB333CA11DDBC55550753BD :
+  problem_78_spec
+    "FAD1234567CEEFAD890ABCD73ABB333A11DDBCBCDEF202020CBAABBB2BB333CA11DDBC55550753BD" 45.
+Proof.
+  unfold problem_78_spec.
+  unfold hex_key_impl.
+  simpl.
+  unfold is_prime_hex_digit.
+  (* The proof proceeds by unfolding the count for each character in the string and summing 1 for each prime hex digit (2,3,5,7,B,D) and 0 otherwise.
+     After processing all characters in the string, the total count is 45. *)
+  reflexivity.
+Qed.

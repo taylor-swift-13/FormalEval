@@ -1,0 +1,67 @@
+Require Import Coq.Strings.String.
+Require Import Coq.Strings.Ascii.
+Require Import Coq.Lists.List.
+Require Import Coq.Bool.Bool.
+Import ListNotations.
+Open Scope string_scope.
+
+(* 定义字符串是否为小写的谓词 *)
+Definition is_lowercase (s : string) : Prop :=
+  Forall (fun c => (("a" <=? c)%char && (c <=? "z")%char) = true) (list_ascii_of_string s).
+
+(* 定义字符串是否为大写的谓词 *)
+Definition is_uppercase (s : string) : Prop :=
+  Forall (fun c => (("A" <=? c)%char && (c <=? "Z")%char) = true) (list_ascii_of_string s).
+
+(* 定义键的类型，可以是字符串或其他类型 *)
+Inductive KeyType :=
+  | KeyString (s : string)
+  | KeyOther.
+
+(* 定义字典的类型，键为 KeyType，值为字符串 *)
+Definition dictionary := list (KeyType * string).
+
+(* 字典类型已保证键值均为字符串，无附加约束；空字典由规约处理 *)
+Definition problem_95_pre (d : dictionary) : Prop := True.
+
+(* check_dict_case 函数的规约 *)
+Definition problem_95_spec (d : dictionary) (output : bool) : Prop :=
+  match d with
+  | [] => output = false
+  | _ =>
+    ( (forall k v, In (k, v) d -> match k with KeyString s => is_lowercase s | KeyOther => False end) \/
+      (forall k v, In (k, v) d -> match k with KeyString s => is_uppercase s | KeyOther => False end) )
+    <-> output = true
+  end.
+
+Example test_problem_95 : problem_95_spec [(KeyString "p", "pineapple"); (KeyString "5", "banana"); (KeyString "a", "apple")] false.
+Proof.
+  unfold problem_95_spec.
+  simpl.
+  split.
+  - intros [H_lower | H_upper].
+    + (* Case: All keys are lowercase *)
+      (* Contradiction: Key "5" is not lowercase *)
+      assert (H_in : In (KeyString "5", "banana") [(KeyString "p", "pineapple"); (KeyString "5", "banana"); (KeyString "a", "apple")]).
+      { simpl. right. left. reflexivity. }
+      specialize (H_lower (KeyString "5") "banana" H_in).
+      simpl in H_lower.
+      unfold is_lowercase in H_lower.
+      simpl in H_lower.
+      inversion H_lower; subst.
+      vm_compute in H1.
+      discriminate H1.
+    + (* Case: All keys are uppercase *)
+      (* Contradiction: Key "p" is not uppercase *)
+      assert (H_in : In (KeyString "p", "pineapple") [(KeyString "p", "pineapple"); (KeyString "5", "banana"); (KeyString "a", "apple")]).
+      { simpl. left. reflexivity. }
+      specialize (H_upper (KeyString "p") "pineapple" H_in).
+      simpl in H_upper.
+      unfold is_uppercase in H_upper.
+      simpl in H_upper.
+      inversion H_upper; subst.
+      vm_compute in H1.
+      discriminate H1.
+  - intros H_false.
+    discriminate H_false.
+Qed.

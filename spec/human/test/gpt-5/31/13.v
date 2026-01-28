@@ -1,0 +1,26 @@
+Require Import Arith.
+Require Import Lia.
+Require Import ZArith.
+
+Definition IsPrime (n : nat) : Prop :=
+  1 < n /\ (forall d : nat, n mod d = 0 -> d = 1 \/ d = n).
+
+Definition problem_31_pre (n : nat) : Prop := True.
+
+Definition problem_31_spec (n : nat) (output : bool) : Prop :=
+  IsPrime n <-> output = true.
+
+Example problem_31_test_case_neg5 : problem_31_spec (Z.to_nat (-5%Z)) false.
+Proof.
+  unfold problem_31_spec.
+  assert (Hzn : Z.to_nat (-5%Z) = 0) by reflexivity.
+  rewrite Hzn.
+  split.
+  - intros H.
+    exfalso.
+    unfold IsPrime in H.
+    destruct H as [Hlt _].
+    lia.
+  - intros Hfalse.
+    discriminate Hfalse.
+Qed.

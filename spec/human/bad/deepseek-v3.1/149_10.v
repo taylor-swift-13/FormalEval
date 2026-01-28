@@ -1,0 +1,46 @@
+Require Import Coq.Lists.List Coq.Strings.Ascii Coq.Strings.String Coq.Arith.PeanoNat.
+Import ListNotations.
+
+Fixpoint lex_le (s1 s2 : string) : bool :=
+  match s1,s2 with
+  | EmptyString, _ => true
+  | String _ _, EmptyString => false
+  | String c1 t1, String c2 t2 =>
+    match Ascii.compare c1 c2 with
+    | Lt => true | Gt => false | Eq => lex_le t1 t2
+    end
+  end.
+
+Definition string_le (s1 s2 : string) : bool :=
+  match Nat.compare (length s1) (length s2) with
+  | Lt => true | Gt => false | Eq => lex_le s1 s2
+  end.
+
+Definition has_even_length (s : string) : bool := Nat.even (length s).
+
+Fixpoint insert_by (le : string -> string -> bool) (x : string) (l:list string) : list string :=
+  match l with []=>[x] | h::t => if le x h then x::l else h::insert_by le x t end.
+Fixpoint sort_by (le : string -> string -> bool) (l:list string) : list string :=
+  match l with []=>[] | h::t => insert_by le h (sort_by le t) end.
+
+Definition list_sort_impl (lst_in : list string) : list string :=
+  sort_by string_le (filter has_even_length lst_in).
+
+Definition problem_150_pre (input : list string) : Prop := True.
+
+Definition problem_150_spec (input : list string) (output : list string) : Prop :=
+  output = list_sort_impl input.
+
+Definition abcd : string := "abcd"%string.
+Definition efgh : string := "efgh"%string.
+Definition ijkl : string := "ijkl"%string.
+Definition mnop : string := "mnop"%string.
+
+Example test_case_150 : problem_150_spec [abcd; efgh; ijkl; mnop] [abcd; efgh; ijkl; mnop].
+Proof.
+  unfold problem_150_spec, list_sort_impl.
+  simpl.
+  reflexivity.
+Qed.
+
+Qed.

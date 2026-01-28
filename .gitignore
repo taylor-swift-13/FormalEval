@@ -2,6 +2,27 @@
 .vscode/
 docs/
 
-# (optional) Ignore compiled Coq files
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Logs
+log/
+*.log
+
+# Coq compiled files
 *.vo
 *.vosX
+*.vok
+*.glob
+.*.aux
+
+# OS
+.DS_Store
+Thumbs.db

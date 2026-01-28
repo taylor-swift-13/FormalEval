@@ -1,0 +1,12 @@
+Require Import Coq.Strings.String.
+Require Import Coq.Arith.PeanoNat.
+
+Definition strlen_spec (s : string) (result : nat) : Prop :=
+  result = String.length s.
+
+Example test_strlen_complex : strlen_spec "  Th!s 1s 4 str1ng wtest5ymb0ls !nsampleto 1t
+" 46.
+Proof.
+  unfold strlen_spec.
+  reflexivity.
+Qed.

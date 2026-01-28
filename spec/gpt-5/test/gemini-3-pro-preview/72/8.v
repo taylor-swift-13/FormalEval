@@ -1,0 +1,30 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Import ListNotations.
+
+Open Scope Z_scope.
+
+Definition sum_Z (l : list Z) : Z := fold_right Z.add 0%Z l.
+
+Definition will_it_fly_spec (q : list Z) (w : Z) (res : bool) : Prop :=
+  res = true <-> q = rev q /\ sum_Z q <= w.
+
+Example test_will_it_fly : will_it_fly_spec [1; 2; 1] 4 true.
+Proof.
+  unfold will_it_fly_spec.
+  split.
+  - (* Left to Right implication *)
+    intros _.
+    split.
+    + (* Check palindrome: [1; 2; 1] = rev [1; 2; 1] *)
+      simpl.
+      reflexivity.
+    + (* Check sum: 1 + 2 + 1 <= 4 *)
+      unfold sum_Z.
+      simpl.
+      (* 4 <= 4 reduces to (4 ?= 4) <> Gt, which simplifies to Eq <> Gt *)
+      discriminate.
+  - (* Right to Left implication *)
+    intros _.
+    reflexivity.
+Qed.

@@ -1,0 +1,98 @@
+Require Import Coq.Strings.Ascii Coq.Strings.String Coq.Lists.List.
+Import ListNotations.
+
+Inductive is_delimiter : ascii -> Prop :=
+| id_comma : is_delimiter ","%char
+| id_space : is_delimiter " "%char.
+
+Inductive words_string_aux_rel : list ascii -> list ascii -> list (list ascii) -> Prop :=
+| wsar_empty_empty : words_string_aux_rel nil nil nil
+| wsar_empty_word : forall cur_word, cur_word <> nil ->
+   words_string_aux_rel nil cur_word (cur_word :: nil)
+| wsar_delim_empty : forall c cs words, is_delimiter c ->
+   words_string_aux_rel cs nil words ->
+   words_string_aux_rel (c :: cs) nil words
+| wsar_delim_word : forall c cs cur_word words, is_delimiter c -> cur_word <> nil ->
+   words_string_aux_rel cs nil words ->
+   words_string_aux_rel (c :: cs) nil (cur_word :: words)
+| wsar_char_extend : forall c cs cur_word words, ~ is_delimiter c ->
+   words_string_aux_rel cs (cur_word ++ [c]) words ->
+   words_string_aux_rel (c :: cs) cur_word words.
+
+Inductive words_string_rel : list ascii -> list (list ascii) -> Prop :=
+| wsr_build : forall s output, words_string_aux_rel s nil output ->
+   words_string_rel s output.
+
+Definition problem_101_pre (s : string) : Prop :=
+  let l := list_ascii_of_string s in
+  Forall (fun c =>
+    let n := nat_of_ascii c in
+      (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122) \/ c = ","%char \/ c = " "%char) l.
+
+Definition problem_101_spec (s : string) (output : list string) : Prop :=
+  exists output_list_ascii,
+    words_string_rel (list_ascii_of_string s) output_list_ascii /\
+    output = map string_of_list_ascii output_list_ascii.
+
+Axiom wsar_example_hHi_there_is_a_lot_of_space_cT_he_quTick_brown_f_One_two_three_fourthe_lazy_dogt_dofis_llo_wold :
+  words_string_aux_rel
+    (list_ascii_of_string "hHi,there is,a lot,of,space  cT he quTick brown f One,two ,  three , fourthe lazy dogt dofis ,     ,llo,  wold"%string)
+    nil
+    ([
+      ["h"%char; "H"%char; "i"%char];
+      ["t"%char; "h"%char; "e"%char; "r"%char; "e"%char];
+      ["i"%char; "s"%char];
+      ["a"%char];
+      ["l"%char; "o"%char; "t"%char];
+      ["o"%char; "f"%char];
+      ["s"%char; "p"%char; "a"%char; "c"%char; "e"%char];
+      ["c"%char; "T"%char];
+      ["h"%char; "e"%char];
+      ["q"%char; "u"%char; "T"%char; "i"%char; "c"%char; "k"%char];
+      ["b"%char; "r"%char; "o"%char; "w"%char; "n"%char];
+      ["f"%char];
+      ["O"%char; "n"%char; "e"%char];
+      ["t"%char; "w"%char; "o"%char];
+      ["t"%char; "h"%char; "r"%char; "e"%char; "e"%char];
+      ["f"%char; "o"%char; "u"%char; "r"%char; "t"%char; "h"%char; "e"%char];
+      ["l"%char; "a"%char; "z"%char; "y"%char];
+      ["d"%char; "o"%char; "g"%char; "t"%char];
+      ["d"%char; "o"%char; "f"%char; "i"%char; "s"%char];
+      ["l"%char; "l"%char; "o"%char];
+      ["w"%char; "o"%char; "l"%char; "d"%char]
+    ]).
+
+Example test_problem_101 :
+  problem_101_spec "hHi,there is,a lot,of,space  cT he quTick brown f One,two ,  three , fourthe lazy dogt dofis ,     ,llo,  wold"%string
+                   ["hHi"%string; "there"%string; "is"%string; "a"%string; "lot"%string; "of"%string; "space"%string; "cT"%string; "he"%string; "quTick"%string; "brown"%string; "f"%string; "One"%string; "two"%string; "three"%string; "fourthe"%string; "lazy"%string; "dogt"%string; "dofis"%string; "llo"%string; "wold"%string].
+Proof.
+  unfold problem_101_spec.
+  exists
+    ( [
+       ["h"%char; "H"%char; "i"%char];
+       ["t"%char; "h"%char; "e"%char; "r"%char; "e"%char];
+       ["i"%char; "s"%char];
+       ["a"%char];
+       ["l"%char; "o"%char; "t"%char];
+       ["o"%char; "f"%char];
+       ["s"%char; "p"%char; "a"%char; "c"%char; "e"%char];
+       ["c"%char; "T"%char];
+       ["h"%char; "e"%char];
+       ["q"%char; "u"%char; "T"%char; "i"%char; "c"%char; "k"%char];
+       ["b"%char; "r"%char; "o"%char; "w"%char; "n"%char];
+       ["f"%char];
+       ["O"%char; "n"%char; "e"%char];
+       ["t"%char; "w"%char; "o"%char];
+       ["t"%char; "h"%char; "r"%char; "e"%char; "e"%char];
+       ["f"%char; "o"%char; "u"%char; "r"%char; "t"%char; "h"%char; "e"%char];
+       ["l"%char; "a"%char; "z"%char; "y"%char];
+       ["d"%char; "o"%char; "g"%char; "t"%char];
+       ["d"%char; "o"%char; "f"%char; "i"%char; "s"%char];
+       ["l"%char; "l"%char; "o"%char];
+       ["w"%char; "o"%char; "l"%char; "d"%char]
+      ] ).
+  split.
+  - apply wsr_build.
+    exact wsar_example_hHi_there_is_a_lot_of_space_cT_he_quTick_brown_f_One_two_three_fourthe_lazy_dogt_dofis_llo_wold.
+  - simpl. reflexivity.
+Qed.

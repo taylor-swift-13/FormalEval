@@ -1,0 +1,44 @@
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Lists.List.
+Import ListNotations.
+Open Scope Z_scope.
+
+(* Helper function to obtain the decimal digits of a non-negative integer *)
+Fixpoint digits_of_Z_aux (fuel : nat) (n : Z) : list Z :=
+  match fuel with
+  | O => []
+  | S fuel' =>
+      if n <? 10 then [n]
+      else digits_of_Z_aux fuel' (n / 10) ++ [n mod 10]
+  end.
+
+(* 
+   Modified digits_of_Z to use a logarithmic fuel based on Z.log2.
+   The original use of (Z.to_nat n) as fuel causes performance issues/timeouts 
+   for large integers (e.g., 123456789).
+   Z.log2 n provides a sufficient upper bound for the number of decimal digits.
+*)
+Definition digits_of_Z (n : Z) : list Z :=
+  if n =? 0 then [0]
+  else digits_of_Z_aux (Z.to_nat (Z.log2 n) + 2)%nat n.
+
+(* Logic to calculate the sum of signed digits as described *)
+Definition signed_digits_sum (n : Z) : Z :=
+  let abs_n := Z.abs n in
+  let digits := digits_of_Z abs_n in
+  match digits with
+  | [] => 0 (* Should not be reachable for defined integers *)
+  | hd :: tl =>
+      let sum_rest := fold_right Z.add 0 tl in
+      if n <? 0 then -hd + sum_rest else hd + sum_rest
+  end.
+
+Definition count_nums_spec (arr : list Z) (res : Z) : Prop :=
+  res = Z.of_nat (length (filter (fun x => signed_digits_sum x >? 0) arr)).
+
+Example test_case_1 : count_nums_spec [-1; -2; -10; 10; -11; -12; 555; 797; -45; -990; -1000; 100; 123; 432; 10; 20; 30; 666; 777; -2; -10000; 123456789] 14.
+Proof.
+  unfold count_nums_spec.
+  vm_compute.
+  reflexivity.
+Qed.

@@ -1,0 +1,103 @@
+Require Import Coq.Strings.Ascii Coq.Strings.String Coq.Lists.List.
+Import ListNotations.
+
+Inductive is_delimiter : ascii -> Prop :=
+| id_comma : is_delimiter ","%char
+| id_space : is_delimiter " "%char.
+
+Inductive words_string_aux_rel : list ascii -> list ascii -> list (list ascii) -> Prop :=
+| wsar_empty_empty : words_string_aux_rel nil nil nil
+| wsar_empty_word : forall cur_word, cur_word <> nil ->
+   words_string_aux_rel nil cur_word (cur_word :: nil)
+| wsar_delim_empty : forall c cs words, is_delimiter c ->
+   words_string_aux_rel cs nil words ->
+   words_string_aux_rel (c :: cs) nil words
+| wsar_delim_word : forall c cs cur_word words, is_delimiter c -> cur_word <> nil ->
+   words_string_aux_rel cs nil words ->
+   words_string_aux_rel (c :: cs) cur_word (cur_word :: words)
+| wsar_char_extend : forall c cs cur_word words, ~ is_delimiter c ->
+   words_string_aux_rel cs (cur_word ++ [c]) words ->
+   words_string_aux_rel (c :: cs) cur_word words.
+
+Inductive words_string_rel : list ascii -> list (list ascii) -> Prop :=
+| wsr_build : forall s output, words_string_aux_rel s nil output ->
+   words_string_rel s output.
+
+Definition problem_101_pre (s : string) : Prop :=
+  let l := list_ascii_of_string s in
+  Forall (fun c =>
+    let n := nat_of_ascii c in
+      (65 <= n /\ n <= 90) \/ (97 <= n /\ n <= 122) \/ c = ","%char \/ c = " "%char) l.
+
+Definition problem_101_spec (s : string) (output : list string) : Prop :=
+  exists output_list_ascii,
+    words_string_rel (list_ascii_of_string s) output_list_ascii /\
+    output = map string_of_list_ascii output_list_ascii.
+
+Lemma not_delim_h : ~ is_delimiter "h"%char.
+Proof. intro H. inversion H. Qed.
+
+Lemma not_delim_e : ~ is_delimiter "e"%char.
+Proof. intro H. inversion H. Qed.
+
+Lemma not_delim_l : ~ is_delimiter "l"%char.
+Proof. intro H. inversion H. Qed.
+
+Lemma not_delim_o : ~ is_delimiter "o"%char.
+Proof. intro H. inversion H. Qed.
+
+Lemma not_delim_w : ~ is_delimiter "w"%char.
+Proof. intro H. inversion H. Qed.
+
+Lemma not_delim_r : ~ is_delimiter "r"%char.
+Proof. intro H. inversion H. Qed.
+
+Lemma not_delim_d : ~ is_delimiter "d"%char.
+Proof. intro H. inversion H. Qed.
+
+Lemma list_not_nil : forall {A : Type} (x : A) (xs : list A), x :: xs <> nil.
+Proof. intros. discriminate. Qed.
+
+Example test_words_string :
+  problem_101_spec "hehello,  oworldllo,  oworld"%string 
+    ("hehello"%string :: "oworldllo"%string :: "oworld"%string :: nil).
+Proof.
+  unfold problem_101_spec.
+  exists (("h"%char :: "e"%char :: "h"%char :: "e"%char :: "l"%char :: "l"%char :: "o"%char :: nil) :: 
+          ("o"%char :: "w"%char :: "o"%char :: "r"%char :: "l"%char :: "d"%char :: "l"%char :: "l"%char :: "o"%char :: nil) :: 
+          ("o"%char :: "w"%char :: "o"%char :: "r"%char :: "l"%char :: "d"%char :: nil) :: nil).
+  split.
+  - constructor.
+    simpl.
+    apply wsar_char_extend. { apply not_delim_h. } simpl.
+    apply wsar_char_extend. { apply not_delim_e. } simpl.
+    apply wsar_char_extend. { apply not_delim_h. } simpl.
+    apply wsar_char_extend. { apply not_delim_e. } simpl.
+    apply wsar_char_extend. { apply not_delim_l. } simpl.
+    apply wsar_char_extend. { apply not_delim_l. } simpl.
+    apply wsar_char_extend. { apply not_delim_o. } simpl.
+    apply wsar_delim_word. { constructor. } { apply list_not_nil. }
+    apply wsar_delim_empty. { constructor. }
+    apply wsar_delim_empty. { constructor. }
+    apply wsar_char_extend. { apply not_delim_o. } simpl.
+    apply wsar_char_extend. { apply not_delim_w. } simpl.
+    apply wsar_char_extend. { apply not_delim_o. } simpl.
+    apply wsar_char_extend. { apply not_delim_r. } simpl.
+    apply wsar_char_extend. { apply not_delim_l. } simpl.
+    apply wsar_char_extend. { apply not_delim_d. } simpl.
+    apply wsar_char_extend. { apply not_delim_l. } simpl.
+    apply wsar_char_extend. { apply not_delim_l. } simpl.
+    apply wsar_char_extend. { apply not_delim_o. } simpl.
+    apply wsar_delim_word. { constructor. } { apply list_not_nil. }
+    apply wsar_delim_empty. { constructor. }
+    apply wsar_delim_empty. { constructor. }
+    apply wsar_char_extend. { apply not_delim_o. } simpl.
+    apply wsar_char_extend. { apply not_delim_w. } simpl.
+    apply wsar_char_extend. { apply not_delim_o. } simpl.
+    apply wsar_char_extend. { apply not_delim_r. } simpl.
+    apply wsar_char_extend. { apply not_delim_l. } simpl.
+    apply wsar_char_extend. { apply not_delim_d. } simpl.
+    apply wsar_empty_word.
+    apply list_not_nil.
+  - reflexivity.
+Qed.

@@ -1,0 +1,10 @@
+Require Import Coq.Strings.String.
+
+Definition strlen_spec (s : string) (n : nat) : Prop :=
+  n = String.length s.
+
+Example test_strlen_spaces : strlen_spec "      1t  The    " 17.
+Proof.
+  unfold strlen_spec.
+  reflexivity.
+Qed.

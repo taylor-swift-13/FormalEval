@@ -1,0 +1,14 @@
+Require Import Coq.Lists.List.
+Require Import Coq.Strings.String.
+Import ListNotations.
+Open Scope string_scope.
+
+Definition filter_by_prefix_spec (strings : list string) (pref : string) (result : list string) : Prop :=
+  result = filter (fun s => prefix pref s) strings.
+
+Example test_filter_by_prefix_complex : filter_by_prefix_spec ["abc"; "ABC"; "ab1c"; "_abc"; "1cabc"; "abc_"; "abc1"; "1abc"; "abc_"] "aa" [].
+Proof.
+  unfold filter_by_prefix_spec.
+  simpl.
+  reflexivity.
+Qed.

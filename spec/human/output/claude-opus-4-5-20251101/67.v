@@ -1,0 +1,75 @@
+Require Import ZArith Strings.String.
+Require Import Coq.Strings.Ascii.
+
+Definition char_to_digit (c : ascii) : nat :=
+  nat_of_ascii c - nat_of_ascii "0"%char.
+
+(* 辅助函数：将字符串转换为自然数 *)
+Fixpoint string_to_nat_aux (s : string) (acc : nat) : nat :=
+  match s with
+  | EmptyString => acc
+  | String c s' => string_to_nat_aux s' (acc * 10 + char_to_digit c)
+  end.
+
+(* 主函数：将字符串转换为自然数 *)
+Definition string_to_nat (s : string) : nat :=
+  string_to_nat_aux s 0.
+
+(*
+  辅助规约: parse_fruit_string
+  这个规约描述了从输入字符串 s 中解析出苹果和橘子数量的逻辑。
+*)
+Definition parse_fruit_string (s : string) (apples oranges : nat) : Prop :=
+  exists s_apples s_oranges,
+    apples = string_to_nat s_apples /\
+    oranges = string_to_nat s_oranges /\
+    s = (s_apples ++ " apples and " ++ s_oranges ++ " oranges")%string.
+       
+
+Definition problem_67_pre (s : string) (n : nat) : Prop := True.
+
+Definition problem_67_spec (s : string) (n : nat) (ret : nat) : Prop :=
+  exists apples oranges,
+    parse_fruit_string s apples oranges /\
+    ret = n - (apples + oranges).
+
+(* Helper lemma to compute string_to_nat for "5" *)
+Lemma string_to_nat_5 : string_to_nat "5" = 5.
+Proof.
+  unfold string_to_nat, string_to_nat_aux.
+  unfold char_to_digit.
+  simpl.
+  reflexivity.
+Qed.
+
+(* Helper lemma to compute string_to_nat for "6" *)
+Lemma string_to_nat_6 : string_to_nat "6" = 6.
+Proof.
+  unfold string_to_nat, string_to_nat_aux.
+  unfold char_to_digit.
+  simpl.
+  reflexivity.
+Qed.
+
+(* Verify the string concatenation *)
+Lemma string_concat_check : 
+  ("5" ++ " apples and " ++ "6" ++ " oranges")%string = "5 apples and 6 oranges"%string.
+Proof.
+  simpl.
+  reflexivity.
+Qed.
+
+Example problem_67_test : problem_67_spec "5 apples and 6 oranges" 19 8.
+Proof.
+  unfold problem_67_spec.
+  exists 5, 6.
+  split.
+  - unfold parse_fruit_string.
+    exists "5"%string, "6"%string.
+    split.
+    + exact string_to_nat_5.
+    + split.
+      * exact string_to_nat_6.
+      * reflexivity.
+  - simpl. reflexivity.
+Qed.

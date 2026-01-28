@@ -1,0 +1,47 @@
+Require Import Coq.Strings.String.
+Require Import Coq.Init.Nat.
+Require Import Coq.ZArith.ZArith.
+
+Open Scope string_scope.
+Open Scope Z_scope.
+
+(* Concrete definitions for the parameters to allow execution of the test case *)
+Definition str_of_Z (z : Z) : string :=
+  if Z.eqb z 341209 then "341209" else "".
+
+Fixpoint reverse_string (s : string) : string :=
+  match s with
+  | EmptyString => EmptyString
+  | String c s' => (reverse_string s') ++ (String c EmptyString)
+  end.
+
+Definition circular_shift_spec (x : Z) (shift : nat) (res : string) : Prop :=
+  let s := str_of_Z x in
+  if Nat.ltb (String.length s) shift then
+    res = reverse_string s
+  else
+    let k := Nat.modulo shift (String.length s) in
+    if Nat.eqb k 0 then
+      res = s
+    else
+      exists u v,
+        s = u ++ v /\
+        String.length v = k /\
+        res = v ++ u.
+
+Example test_circular_shift : circular_shift_spec 341209 5%nat "412093".
+Proof.
+  unfold circular_shift_spec.
+  unfold str_of_Z.
+  (* Simplify the expression to evaluate the conditionals *)
+  simpl.
+  (* The goal becomes: exists u v : string, "341209" = u ++ v /\ String.length v = 5 /\ "412093" = v ++ u *)
+  exists "3".
+  exists "41209".
+  (* Prove the conjunctions explicitly *)
+  split.
+  - reflexivity. (* Check "341209" = "3" ++ "41209" *)
+  - split.
+    + reflexivity. (* Check String.length "41209" = 5 *)
+    + reflexivity. (* Check "412093" = "41209" ++ "3" *)
+Qed.

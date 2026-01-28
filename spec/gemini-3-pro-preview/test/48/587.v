@@ -1,0 +1,23 @@
+Require Import Coq.Strings.String.
+Require Import Coq.Bool.Bool.
+Open Scope string_scope.
+
+Fixpoint string_rev (s : string) : string :=
+  match s with
+  | EmptyString => EmptyString
+  | String c s' => (string_rev s') ++ (String c EmptyString)
+  end.
+
+Definition is_palindrome_spec (text : string) (result : bool) : Prop :=
+  result = true <-> text = string_rev text.
+
+Example test_palindrome_complex : is_palindrome_spec "A 12zZ2geeseaea@@@@!3Tacoman,d3!@@@2name1a a plan, geesea canal: PanamaDoTaco not" false.
+Proof.
+  unfold is_palindrome_spec.
+  simpl.
+  split.
+  - intros H.
+    inversion H.
+  - intros H.
+    discriminate.
+Qed.

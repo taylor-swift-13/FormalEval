@@ -1,0 +1,17 @@
+Require Import List.
+Require Import ZArith.
+Import ListNotations.
+Open Scope Z_scope.
+
+Definition smallest_change_spec (arr : list Z) (cnt : Z) : Prop :=
+  let arr_reversed := rev arr in
+  cnt = fold_left (fun acc i =>
+    if Z.eqb (nth i arr 0) (nth i arr_reversed 0) then acc else acc + 1)
+    (seq 0 (length arr / 2)%nat) 0.
+
+Example test_smallest_change : smallest_change_spec [37; -9; -8; -7; -6; 0; -5; 17; -8; -4; -3; -2; -1; -1; 49; 1; 2; 3; 4; 5; 6; 7; 8; -7; 9; 10; -3] 12.
+Proof.
+  unfold smallest_change_spec.
+  vm_compute.
+  reflexivity.
+Qed.

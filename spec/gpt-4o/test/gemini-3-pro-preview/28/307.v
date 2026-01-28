@@ -1,0 +1,21 @@
+Require Import Coq.Lists.List.
+Require Import Coq.Strings.String.
+Import ListNotations.
+Open Scope string_scope.
+
+Definition concatenate_spec (strings : list string) (result : string) : Prop :=
+  result = String.concat "" strings.
+
+Example test_concatenate_complex : concatenate_spec ["12"; "jum"; "this
+string
+has
+multiple
+newlines"; "jumps"; "jumps"; "jums"; "jumps"] "12jumthis
+string
+has
+multiple
+newlinesjumpsjumpsjumsjumps".
+Proof.
+  unfold concatenate_spec.
+  reflexivity.
+Qed.

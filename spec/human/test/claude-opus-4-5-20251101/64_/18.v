@@ -1,0 +1,88 @@
+Require Import Coq.Strings.String Coq.Strings.Ascii Coq.Arith.Arith Coq.Bool.Bool.
+Open Scope string_scope.
+
+Inductive is_vowel_char : ascii -> Prop :=
+| ivc_a : is_vowel_char "a"%char
+| ivc_e : is_vowel_char "e"%char
+| ivc_i : is_vowel_char "i"%char
+| ivc_o : is_vowel_char "o"%char
+| ivc_u : is_vowel_char "u"%char
+| ivc_A : is_vowel_char "A"%char
+| ivc_E : is_vowel_char "E"%char
+| ivc_I : is_vowel_char "I"%char
+| ivc_O : is_vowel_char "O"%char
+| ivc_U : is_vowel_char "U"%char.
+
+Inductive is_y : ascii -> Prop :=
+| iy_lower : is_y "y"%char
+| iy_upper : is_y "Y"%char.
+
+Inductive vowels_count_rel : string -> nat -> Prop :=
+| vcr_empty : vowels_count_rel "" 0%nat
+| vcr_vowel : forall c s n, is_vowel_char c -> vowels_count_rel s n -> vowels_count_rel (String c s) (S n)
+| vcr_y_end : forall c s n, is_y c -> s = "" -> n = 0%nat -> vowels_count_rel (String c s) (S n)
+| vcr_other : forall c s n, ~ is_vowel_char c -> ~ (is_y c /\ s = "") -> vowels_count_rel s n -> vowels_count_rel (String c s) n.
+
+Definition problem_64_pre (s : string) : Prop := True.
+
+Definition problem_64_spec (s : string) (output : nat) : Prop :=
+  vowels_count_rel s output.
+
+Lemma not_vowel_J : ~ is_vowel_char "J"%char.
+Proof. intro H; inversion H. Qed.
+
+Lemma not_vowel_B : ~ is_vowel_char "B"%char.
+Proof. intro H; inversion H. Qed.
+
+Lemma not_vowel_X : ~ is_vowel_char "X"%char.
+Proof. intro H; inversion H. Qed.
+
+Lemma not_vowel_F : ~ is_vowel_char "F"%char.
+Proof. intro H; inversion H. Qed.
+
+Lemma not_vowel_H : ~ is_vowel_char "H"%char.
+Proof. intro H; inversion H. Qed.
+
+Lemma not_y_J : ~ is_y "J"%char.
+Proof. intro H; inversion H. Qed.
+
+Lemma not_y_B : ~ is_y "B"%char.
+Proof. intro H; inversion H. Qed.
+
+Lemma not_y_X : ~ is_y "X"%char.
+Proof. intro H; inversion H. Qed.
+
+Lemma not_y_F : ~ is_y "F"%char.
+Proof. intro H; inversion H. Qed.
+
+Lemma not_y_O : ~ is_y "O"%char.
+Proof. intro H; inversion H. Qed.
+
+Lemma not_y_H : ~ is_y "H"%char.
+Proof. intro H; inversion H. Qed.
+
+Example problem_64_test1 : problem_64_spec "JBXFOFH" 1%nat.
+Proof.
+  unfold problem_64_spec.
+  apply vcr_other.
+  { apply not_vowel_J. }
+  { intro H. destruct H as [Hy _]. inversion Hy. }
+  apply vcr_other.
+  { apply not_vowel_B. }
+  { intro H. destruct H as [Hy _]. inversion Hy. }
+  apply vcr_other.
+  { apply not_vowel_X. }
+  { intro H. destruct H as [Hy _]. inversion Hy. }
+  apply vcr_other.
+  { apply not_vowel_F. }
+  { intro H. destruct H as [Hy _]. inversion Hy. }
+  apply vcr_vowel.
+  { apply ivc_O. }
+  apply vcr_other.
+  { apply not_vowel_F. }
+  { intro H. destruct H as [Hy _]. inversion Hy. }
+  apply vcr_other.
+  { apply not_vowel_H. }
+  { intro H. destruct H as [Hy Hs]. inversion Hy. }
+  apply vcr_empty.
+Qed.

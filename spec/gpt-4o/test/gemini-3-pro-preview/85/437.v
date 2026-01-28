@@ -1,0 +1,13 @@
+Require Import List.
+Require Import Nat.
+Import ListNotations.
+
+Definition add_spec (lst : list nat) (s : nat) : Prop :=
+  s = fold_left Nat.add (filter Nat.even (map (fun i => nth i lst 0) (filter Nat.odd (seq 0 (length lst))))) 0.
+
+Example test_add_spec : add_spec [3; 5; 7; 12; 9; 2; 6; 187; 10; 556; 3; 187; 23; 920; 42; 37; 30; 7; 8; 187; 7; 3] 1490.
+Proof.
+  unfold add_spec.
+  simpl.
+  reflexivity.
+Qed.

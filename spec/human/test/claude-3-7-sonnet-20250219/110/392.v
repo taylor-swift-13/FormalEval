@@ -1,0 +1,26 @@
+Require Import Coq.Lists.List.
+Require Import Coq.Strings.String.
+Require Import Coq.Arith.Arith.
+Import ListNotations.
+
+Definition problem_110_pre (lst1 lst2 : list nat) : Prop := lst1 <> [] /\ lst2 <> [].
+
+Definition problem_110_spec (lst1 lst2 : list nat) (result : string) : Prop :=
+  let odds_in_lst1 := List.length (List.filter Nat.odd lst1) in
+  let evens_in_lst2 := List.length (List.filter Nat.even lst2) in
+  if Nat.leb odds_in_lst1 evens_in_lst2
+  then result = "YES"%string
+  else result = "NO"%string.
+
+Example test_exchange_1 :
+  problem_110_spec [2;2;2;2;2;2;7;2;2] [2;2;2;2;2;2;7;2;2] "YES".
+Proof.
+  unfold problem_110_spec.
+  simpl.
+  (* Count odds in lst1 *)
+  (* Odds in [2;2;2;2;2;2;7;2;2] is only 7, so length = 1 *)
+  (* Count evens in lst2 *)
+  (* Evens in [2;2;2;2;2;2;7;2;2] are all 2's (8 times), so length = 8 *)
+  (* Nat.leb 1 8 is true *)
+  reflexivity.
+Qed.

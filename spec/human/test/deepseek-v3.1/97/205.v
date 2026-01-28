@@ -1,0 +1,12 @@
+Require Import ZArith.
+Open Scope Z_scope.
+
+Definition problem_97_spec (a b r : Z) : Prop :=
+  r = (Z.abs a mod 10) * (Z.abs b mod 10).
+
+Example test_negative_numbers : problem_97_spec (-987655) (-123457) 35.
+Proof.
+  unfold problem_97_spec.
+  simpl.
+  reflexivity.
+Qed.

@@ -1,0 +1,21 @@
+Require Import ZArith.
+Require Import List.
+Require Import Bool.
+Import ListNotations.
+Open Scope bool_scope.
+Open Scope Z_scope.
+
+Definition problem_151_pre (l : list Z) : Prop := True.
+
+Definition problem_151_spec (l : list Z) (res : Z) : Prop :=
+  res = fold_left (fun acc h => if (Z.leb 0 h) && (Z.odd h)
+                          then Z.add acc (Z.mul h h)
+                          else acc) l 0.
+
+Example problem_151_test_case :
+  problem_151_spec [2%Z; 3%Z; (-16)%Z; (-7)%Z; 8%Z; 11%Z; 12%Z; (-13)%Z; (-15)%Z; 17%Z; 18%Z; (-20)%Z; 21%Z; 21%Z] 1301%Z.
+Proof.
+  unfold problem_151_spec.
+  vm_compute.
+  reflexivity.
+Qed.

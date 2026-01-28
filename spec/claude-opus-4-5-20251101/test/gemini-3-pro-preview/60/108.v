@@ -1,0 +1,11 @@
+Require Import ZArith.
+Open Scope Z_scope.
+
+Definition sum_to_n_spec (n : Z) (result : Z) : Prop :=
+  result = (n * (n + 1)) / 2.
+
+Example test_sum_to_n_499998 : sum_to_n_spec 499998 124999250001.
+Proof.
+  unfold sum_to_n_spec.
+  reflexivity.
+Qed.

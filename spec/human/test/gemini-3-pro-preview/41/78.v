@@ -1,0 +1,13 @@
+Require Import Arith.
+
+Definition problem_41_pre (input : nat) : Prop := True.
+
+Definition problem_41_spec(input output : nat) : Prop :=
+  output = input * input.
+
+Example test_problem_41 : problem_41_spec 53 2809.
+Proof.
+  unfold problem_41_spec.
+  simpl.
+  reflexivity.
+Qed.

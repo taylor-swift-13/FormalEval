@@ -1,0 +1,36 @@
+Require Import Coq.Strings.String Coq.Strings.Ascii Coq.Lists.List.
+Import ListNotations.
+Open Scope string_scope.
+
+Inductive is_prime_hex_digit : ascii -> Prop :=
+| iphd_2 : is_prime_hex_digit "2"%char
+| iphd_3 : is_prime_hex_digit "3"%char
+| iphd_5 : is_prime_hex_digit "5"%char
+| iphd_7 : is_prime_hex_digit "7"%char
+| iphd_B : is_prime_hex_digit "B"%char
+| iphd_D : is_prime_hex_digit "D"%char.
+
+Inductive count_prime_hex_rel : string -> nat -> Prop :=
+| cphr_nil : count_prime_hex_rel "" 0%nat
+| cphr_prime : forall h t n, is_prime_hex_digit h -> count_prime_hex_rel t n ->
+    count_prime_hex_rel (String h t) (S n)
+| cphr_not_prime : forall h t n, ~ is_prime_hex_digit h -> count_prime_hex_rel t n ->
+    count_prime_hex_rel (String h t) n.
+
+Definition problem_78_pre (s : string) : Prop := True.
+
+Definition problem_78_spec (s : string) (output : nat) : Prop :=
+  count_prime_hex_rel s output.
+
+Example test_case_1 : problem_78_spec "ACDF11118872753BD159CEFF723BCCBB333A191BD7BB11ABCD22020DDBB2CC22EECEA5F3BDCEEFAD20201234512134567582290ABCDEFAACDF11118872159CEFF23BCCBBD4A006789CDEF04" 66.
+Proof.
+  unfold problem_78_spec.
+  Ltac solve_step :=
+    match goal with
+    | [ |- count_prime_hex_rel "" 0 ] => apply cphr_nil
+    | [ |- count_prime_hex_rel (String _ _) _ ] =>
+        (apply cphr_prime; [ constructor | ]) ||
+        (apply cphr_not_prime; [ let H := fresh "H" in intro H; inversion H | ])
+    end.
+  repeat solve_step.
+Qed.

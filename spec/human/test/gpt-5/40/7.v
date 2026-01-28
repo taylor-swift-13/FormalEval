@@ -1,0 +1,33 @@
+Require Import Coq.Lists.List.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.micromega.Lia.
+Import ListNotations.
+Open Scope Z_scope.
+
+Definition problem_40_pre (input : list Z) : Prop := True.
+
+Definition problem_40_spec (input : list Z) (output : bool) : Prop :=
+  (exists i j k : nat,
+    (i <> j) /\ (i <> k) /\ (j <> k) /\
+    (i < length input)%nat /\
+    (j < length input)%nat /\
+    (k < length input)%nat /\
+    (nth i input 0 + nth j input 0 + nth k input 0 = 0))
+  <-> (output = true).
+
+Definition l : list Z := [1%Z].
+
+Example problem_40_test_case_1 :
+  problem_40_spec l false.
+Proof.
+  unfold problem_40_spec.
+  split.
+  - intros Hex. exfalso.
+    destruct Hex as [i [j [k [Hij [Hik [Hjk [Hi [Hj [Hk Hz]]]]]]]]].
+    unfold l in *; simpl in *.
+    destruct i as [|i]; [| lia].
+    destruct j as [|j]; [| lia].
+    destruct k as [|k]; [| lia].
+    apply Hij. reflexivity.
+  - intros Hfeq. exfalso. discriminate Hfeq.
+Qed.

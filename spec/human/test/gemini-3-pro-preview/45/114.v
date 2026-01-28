@@ -1,0 +1,16 @@
+Require Import Reals.
+Require Import Lra.
+Open Scope R_scope.
+
+(* Pre: side and high should be non-negative for a valid triangle area *)
+Definition problem_45_pre (side high : R) : Prop := side >= 0 /\ high >= 0.
+
+Definition problem_45_spec(side high output : R) : Prop :=
+	output = side * high / 2.
+
+(* Test case: input = [2.5171570275185937; 4], output = 5.034314055037187 *)
+Example problem_45_test : problem_45_spec 2.5171570275185937 4 5.0343140550371874.
+Proof.
+  unfold problem_45_spec.
+  lra.
+Qed.

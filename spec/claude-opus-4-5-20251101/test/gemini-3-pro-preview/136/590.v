@@ -1,0 +1,82 @@
+Require Import ZArith.
+Require Import List.
+Require Import Coq.Init.Datatypes.
+Require Import Lia.
+
+Import ListNotations.
+
+Open Scope Z_scope.
+
+Definition is_negative (x : Z) : bool := x <? 0.
+Definition is_positive (x : Z) : bool := x >? 0.
+
+Definition largest_negative (lst : list Z) : option Z :=
+  let negatives := filter (fun x => is_negative x) lst in
+  match negatives with
+  | nil => None
+  | h :: t => Some (fold_left Z.max t h)
+  end.
+
+Definition smallest_positive (lst : list Z) : option Z :=
+  let positives := filter (fun x => is_positive x) lst in
+  match positives with
+  | nil => None
+  | h :: t => Some (fold_left Z.min t h)
+  end.
+
+Definition largest_smallest_integers_spec (lst : list Z) (result : option Z * option Z) : Prop :=
+  let negatives := filter (fun x => is_negative x) lst in
+  let positives := filter (fun x => is_positive x) lst in
+  (fst result = match negatives with
+                | nil => None
+                | h :: t => Some (fold_left Z.max t h)
+                end) /\
+  (snd result = match positives with
+                | nil => None
+                | h :: t => Some (fold_left Z.min t h)
+                end) /\
+  (match fst result with
+   | None => negatives = nil
+   | Some a => In a negatives /\ a < 0 /\ (forall x, In x negatives -> x <= a)
+   end) /\
+  (match snd result with
+   | None => positives = nil
+   | Some b => In b positives /\ b > 0 /\ (forall x, In x positives -> b <= x)
+   end).
+
+Example test_case_1 : largest_smallest_integers_spec [-20; -11; -20; -17; 10; 5; 0; -20] (Some (-11), Some 5).
+Proof.
+  unfold largest_smallest_integers_spec.
+  simpl.
+  split.
+  - (* Verify fst result calculation *)
+    reflexivity.
+  - split.
+    + (* Verify snd result calculation *)
+      reflexivity.
+    + split.
+      * (* Verify properties of negative result (Some -11) *)
+        split.
+        -- (* In -11 negatives *)
+           simpl. lia.
+        -- split.
+           ++ (* -11 < 0 *)
+              lia.
+           ++ (* Verify -11 is the largest *)
+              intros x H.
+              simpl in H.
+              (* Decompose the disjunctions from In x [-20; -11; -20; -17; -20] *)
+              destruct H as [H | [H | [H | [H | [H | H]]]]]; subst; lia.
+      * (* Verify properties of positive result (Some 5) *)
+        split.
+        -- (* In 5 positives *)
+           simpl. lia.
+        -- split.
+           ++ (* 5 > 0 *)
+              lia.
+           ++ (* Verify 5 is the smallest *)
+              intros x H.
+              simpl in H.
+              (* Decompose the disjunctions from In x [10; 5] *)
+              destruct H as [H | [H | H]]; subst; lia.
+Qed.

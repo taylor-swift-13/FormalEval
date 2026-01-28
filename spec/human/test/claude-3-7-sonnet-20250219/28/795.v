@@ -1,0 +1,18 @@
+Require Import List String.
+Import ListNotations.
+
+Local Open Scope string_scope.
+
+Definition problem_28_pre (input : list string) : Prop := True.
+
+Definition problem_28_spec (input : list string) (output : string) : Prop :=
+  String.concat "" input = output.
+
+Example test_case_complex_string_list :
+  problem_28_spec ["123"; "amuchb"; "789"; "10"; "78"; "newlines"; "1long"; "13"; "14"; "15"; "16"; "lazy"; "iif3🧐"; "18"; "11"; "789"]
+    "123amuchb7891078newlines1long13141516lazyiif3🧐1811789".
+Proof.
+  unfold problem_28_spec.
+  simpl.
+  reflexivity.
+Qed.

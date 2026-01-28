@@ -1,0 +1,239 @@
+Require Import Coq.Strings.String.
+Require Import Coq.Strings.Ascii.
+Require Import Coq.ZArith.ZArith.
+Require Import Coq.Reals.Reals.
+Require Import Coq.Lists.List.
+Import ListNotations.
+Open Scope Z_scope.
+Open Scope R_scope.
+
+(* ==================== 输入类型 ==================== *)
+
+(* 三种输入类型：整数、浮点数、字符串 *)
+Inductive val :=
+| VInt : Z -> val
+| VFloat : R -> val
+| VStr : string -> val.
+
+(* ==================== 字符判断谓词 ==================== *)
+
+(* 判断是否是十进制数字字符 '0'-'9' *)
+Definition is_digit (c : ascii) : bool :=
+  let n := nat_of_ascii c in
+  andb (48 <=? n)%nat (n <=? 57)%nat.
+
+(* 将数字字符转换为其数值 0..9 *)
+Definition digit_val (c : ascii) : nat :=
+  Nat.sub (nat_of_ascii c) 48.
+
+(* 判断是否为小数点分隔符 '.' (ASCII 46) 或 ',' (ASCII 44) *)
+Definition is_sep (c : ascii) : bool :=
+  let n := nat_of_ascii c in
+  orb (Nat.eqb n 46) (Nat.eqb n 44).
+
+(* 判断是否为负号 '-' (ASCII 45) *)
+Definition is_minus (c : ascii) : bool :=
+  Nat.eqb (nat_of_ascii c) 45.
+
+(* 判断是否为正号 '+' (ASCII 43) *)
+Definition is_plus (c : ascii) : bool :=
+  Nat.eqb (nat_of_ascii c) 43.
+
+(* ==================== 数字解析关系 ==================== *)
+
+(* 关系：将一串数字字符转成 nat（按十进制，使用累加器）
+   digits_to_nat chars acc result 表示从 chars 解析，初始累加器为 acc，结果为 result
+   例如: digits_to_nat ['1';'2';'3'] 0 123 *)
+Inductive digits_to_nat : list ascii -> nat -> nat -> Prop :=
+| dtn_nil : forall acc,
+    digits_to_nat [] acc acc
+| dtn_cons : forall c tl acc result,
+    is_digit c = true ->
+    digits_to_nat tl (acc * 10 + digit_val c) result ->
+    digits_to_nat (c :: tl) acc result.
+
+(* ==================== 字符串分割关系 ==================== *)
+
+(* 关系：在首个分隔符处分割字符列表为整数部分和小数部分
+   split_on_sep chars int_part frac_part
+   例如: split_on_sep ['1';'2';'.';'3';'4'] ['1';'2'] ['3';'4']
+         split_on_sep ['1';'2';'3'] ['1';'2';'3'] [] *)
+Inductive split_on_sep : list ascii -> list ascii -> list ascii -> Prop :=
+| sos_nil :
+    split_on_sep [] [] []
+| sos_sep : forall c tl,
+    is_sep c = true ->
+    split_on_sep (c :: tl) [] tl
+| sos_cons : forall c tl int_part frac_part,
+    is_sep c = false ->
+    split_on_sep tl int_part frac_part ->
+    split_on_sep (c :: tl) (c :: int_part) frac_part.
+
+(* ==================== 10 的幂次关系 ==================== *)
+
+(* 关系：10^n = r *)
+Inductive pow10 : nat -> R -> Prop :=
+| pow10_O :
+    pow10 0%nat 1%R
+| pow10_S : forall n p,
+    pow10 n p ->
+    pow10 (S n) (10 * p)%R.
+
+(* ==================== 字符串解析关系 ==================== *)
+
+(* 关系：解析字符串为 (neg, int_v, frac_v, frac_len)
+   parse_string s neg int_v frac_v frac_len 表示：
+   - neg: 是否为负数
+   - int_v: 整数部分的值
+   - frac_v: 小数部分的值（作为整数）
+   - frac_len: 小数部分的位数
+*)
+Inductive parse_string : string -> bool -> nat -> nat -> nat -> Prop :=
+| ps_neg_with_frac : forall s c rest int_chars frac_chars int_v frac_v,
+    (* 负号，有小数部分: "-12.34" *)
+    list_ascii_of_string s = c :: rest ->
+    is_minus c = true ->
+    split_on_sep rest int_chars frac_chars ->
+    int_chars <> [] ->
+    frac_chars <> [] ->
+    digits_to_nat int_chars 0 int_v ->
+    digits_to_nat frac_chars 0 frac_v ->
+    parse_string s true int_v frac_v (length frac_chars)
+| ps_neg_no_frac : forall s c rest int_chars int_v,
+    (* 负号，无小数部分: "-123" *)
+    list_ascii_of_string s = c :: rest ->
+    is_minus c = true ->
+    split_on_sep rest int_chars [] ->
+    int_chars <> [] ->
+    digits_to_nat int_chars 0 int_v ->
+    parse_string s true int_v 0 0
+| ps_pos_with_frac : forall s c rest int_chars frac_chars int_v frac_v,
+    (* 正号，有小数部分: "+12.34" *)
+    list_ascii_of_string s = c :: rest ->
+    is_plus c = true ->
+    split_on_sep rest int_chars frac_chars ->
+    int_chars <> [] ->
+    frac_chars <> [] ->
+    digits_to_nat int_chars 0 int_v ->
+    digits_to_nat frac_chars 0 frac_v ->
+    parse_string s false int_v frac_v (length frac_chars)
+| ps_pos_no_frac : forall s c rest int_chars int_v,
+    (* 正号，无小数部分: "+123" *)
+    list_ascii_of_string s = c :: rest ->
+    is_plus c = true ->
+    split_on_sep rest int_chars [] ->
+    int_chars <> [] ->
+    digits_to_nat int_chars 0 int_v ->
+    parse_string s false int_v 0 0
+| ps_no_sign_with_frac : forall s chars int_chars frac_chars int_v frac_v c tl,
+    (* 无符号，有小数部分: "12.34" *)
+    list_ascii_of_string s = chars ->
+    chars = c :: tl ->
+    is_minus c = false ->
+    is_plus c = false ->
+    split_on_sep chars int_chars frac_chars ->
+    int_chars <> [] ->
+    frac_chars <> [] ->
+    digits_to_nat int_chars 0 int_v ->
+    digits_to_nat frac_chars 0 frac_v ->
+    parse_string s false int_v frac_v (length frac_chars)
+| ps_no_sign_no_frac : forall s chars int_chars int_v c tl,
+    (* 无符号，无小数部分: "123" *)
+    list_ascii_of_string s = chars ->
+    chars = c :: tl ->
+    is_minus c = false ->
+    is_plus c = false ->
+    split_on_sep chars int_chars [] ->
+    int_chars <> [] ->
+    digits_to_nat int_chars 0 int_v ->
+    parse_string s false int_v 0 0.
+
+(* ==================== 字符串表示实数关系 ==================== *)
+
+(* 关系：字符串 s 表示实数 r *)
+Inductive str_represents : string -> R -> Prop :=
+| sr_positive : forall s int_v frac_v frac_len p,
+    parse_string s false int_v frac_v frac_len ->
+    pow10 frac_len p ->
+    str_represents s (INR int_v + (if (frac_len =? 0)%nat then 0 else INR frac_v / p))%R
+| sr_negative : forall s int_v frac_v frac_len p,
+    parse_string s true int_v frac_v frac_len ->
+    pow10 frac_len p ->
+    str_represents s (- (INR int_v + (if (frac_len =? 0)%nat then 0 else INR frac_v / p)))%R.
+
+(* ==================== 值转换关系 ==================== *)
+
+(* 关系：val 类型的值对应的实数 *)
+Inductive value_of : val -> R -> Prop :=
+| vo_int : forall z,
+    value_of (VInt z) (IZR z)
+| vo_float : forall r,
+    value_of (VFloat r) r
+| vo_str : forall s r,
+    str_represents s r ->
+    value_of (VStr s) r.
+
+(* ==================== 实数比较关系 ==================== *)
+
+(* 关系：实数比较结果 *)
+Inductive Rcompare : R -> R -> comparison -> Prop :=
+| Rcmp_lt : forall x y,
+    (x < y)%R ->
+    Rcompare x y Lt
+| Rcmp_eq : forall x y,
+    (x = y)%R ->
+    Rcompare x y Eq
+| Rcmp_gt : forall x y,
+    (x > y)%R ->
+    Rcompare x y Gt.
+
+(* ==================== 主规范 ==================== *)
+
+(* 前置条件：任意 val 输入均可 *)
+Definition problem_137_pre (a b : val) : Prop := True.
+
+(* 规范：compare_one 的行为 *)
+Inductive problem_137_spec : val -> val -> option val -> Prop :=
+| spec_a_lt_b : forall a b ra rb,
+    (* a < b：返回 b *)
+    value_of a ra ->
+    value_of b rb ->
+    Rcompare ra rb Lt ->
+    problem_137_spec a b (Some b)
+| spec_a_gt_b : forall a b ra rb,
+    (* a > b：返回 a *)
+    value_of a ra ->
+    value_of b rb ->
+    Rcompare ra rb Gt ->
+    problem_137_spec a b (Some a)
+| spec_a_eq_b : forall a b ra rb,
+    (* a = b：返回 None *)
+    value_of a ra ->
+    value_of b rb ->
+    Rcompare ra rb Eq ->
+    problem_137_spec a b None.
+
+(* ==================== Test Case Proof ==================== *)
+
+Example test_case_1 : problem_137_spec (VStr "1") (VInt 1) None.
+Proof.
+  eapply spec_a_eq_b with (ra := 1%R) (rb := 1%R).
+  - apply vo_str.
+    eapply sr_positive with (int_v := 1%nat) (frac_v := 0%nat) (frac_len := 0%nat) (p := 1%R).
+    + eapply ps_no_sign_no_frac with (chars := ["1"]%char) (c := "1"%char) (tl := []).
+      * compute. reflexivity.
+      * reflexivity.
+      * reflexivity.
+      * reflexivity.
+      * eapply sos_cons.
+        -- reflexivity.
+        -- apply sos_nil.
+      * intro H. discriminate H.
+      * eapply dtn_cons.
+        -- reflexivity.
+        -- simpl. apply dtn_nil.
+    + apply pow10_O.
+    + simpl. rewrite Rplus_0_r. reflexivity.
+  - apply vo_int.
+  - apply Rcmp_eq. reflexivity.
+Qed.

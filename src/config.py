@@ -28,5 +28,4 @@ class LLMConfig:
     api_key: str = "sk-uTP4bW0qlJ927dODSZ81Ww5QsspvYE2pGRXynvPjf66lXjkS"
     base_url: str = "https://yunwu.ai/v1"
     api_temperature: float = 0.7  # Temperature parameter for API calls
-    think_mode_enabled: bool = False
 

@@ -50,14 +50,10 @@ TYPE = "human"
 
 # Model configuration
 MODEL_NAME = "gemini-3-pro-preview"
-INPUT_MODEL_NAME = "gemini-3-pro-preview"
 
 # Dataset path
 DATASET_PATH = "/home/yangfp/HumanEval/HumanEvalPlus.jsonl"
 
-# Proof generation settings
-MAX_ITERATIONS = 3         # Maximum iteration count
-SKIP_ON_FIRST_FAIL = True  # Stop on first failure
 
 # LLM API configuration
 LLMConfig:
@@ -213,7 +209,6 @@ Output to iso/output/
 | Directory | Purpose |
 |-----------|---------|
 | `spec/` | Original Coq specification files |
-| `newspec/` | Updated specification files (including underscore versions) |
 | `negative/input/{TYPE}/` | Negative testing input |
 | `negative/output/{model}/` | Negative testing output |
 | `negative/fail_all/{model}/` | Specifications that passed negative testing |

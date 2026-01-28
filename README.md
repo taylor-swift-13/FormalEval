@@ -1,6 +1,8 @@
 
 # Coins
 
+![Coins Overview](images/main.png)
+
 Coins is a Coq-based formal verification framework for evaluating HumanEval code specifications. It uses LLMs to automatically generate Coq proofs and verify the correctness and robustness of specifications.
 
 ## Project Structure
@@ -21,9 +23,21 @@ coins/
 │   ├── negative_batch_proof.py   # Batch negative testing
 │   ├── equl_proof_gen.py         # Specification implication proof generation
 │   └── equl_proof_batch.py       # Batch implication proof generation
-├── spec/                         # Original specification files (0-163.v)
-├── newspec/                      # Updated specification files
+├── spec/                         # Specification files organized by source
+│   ├── human/                    # Human-written specifications
+│   ├── gemini-3-pro-preview/     # Gemini 3 Pro generated specs
+│   ├── gpt-4o/                   # GPT-4o generated specs
+│   ├── gpt-5/                    # GPT-5 generated specs
+│   ├── claude-3-7-sonnet-*/      # Claude 3.7 Sonnet generated specs
+│   ├── claude-opus-4-5-*/        # Claude Opus 4.5 generated specs
+│   └── deepseek-v3.1/            # DeepSeek v3.1 generated specs
+├── equ/                          # Equivalence/implication proofs
+│   ├── input/                    # Input specs (human/, llm/)
+│   └── output/                   # Generated implication proofs
 ├── negative/                     # Negative cases testing
+│   ├── input/                    # Input by model type
+│   └── negative_cases.jsonl      # Negative test cases
+├── images/                       # Documentation images
 ├── log/                          # Log output directory
 └── README.md
 ```
@@ -195,26 +209,26 @@ Any proof succeeded? → BAD (spec too weak)
 ### 3. Implication Verification Workflow
 
 ```
-Human spec (iso/input/human/*.v)
-LLM spec (iso/input/llm/*.v)
+Human spec (equ/input/human/*.v)
+LLM spec (equ/input/llm/*.v)
         ↓
 Generate human → llm proof (*_l.v)
 Generate llm → human proof (*_r.v)
         ↓
-Output to iso/output/
+Output to equ/output/
 ```
 
 ## Directory Conventions
 
 | Directory | Purpose |
 |-----------|---------|
-| `spec/` | Original Coq specification files |
-| `negative/input/{TYPE}/` | Negative testing input |
-| `negative/output/{model}/` | Negative testing output |
-| `negative/fail_all/{model}/` | Specifications that passed negative testing |
-| `iso/input/human/` | Human-written specifications |
-| `iso/input/llm/` | LLM-generated specifications |
-| `iso/output/` | Implication proofs |
+| `spec/{model}/` | Coq specification files organized by model |
+| `spec/human/` | Human-written specifications |
+| `negative/input/{model}/` | Negative testing input |
+| `negative/negative_cases.jsonl` | Negative test cases data |
+| `equ/input/human/` | Human-written specifications for equivalence |
+| `equ/input/llm/` | LLM-generated specifications for equivalence |
+| `equ/output/` | Implication proofs |
 | `log/` | Runtime logs |
 
 ## File Naming Conventions
